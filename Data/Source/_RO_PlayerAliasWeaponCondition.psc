@@ -47,7 +47,8 @@ Event OnHit(ObjectReference akAggressor, Form akSource, Projectile akProjectile,
 		if (sourceWeapon == RightHandWeapon || sourceWeapon == LeftHandWeapon)
 			;Damage is from weapon and not enchantments
 			if abHitBlocked
-				if target.GetEquippedShield()
+				Armor shield = target.GetEquippedShield()
+				if shield
 					; TODO: Damage shield
 				else
 					if weaponIndex >= 0 && weaponIndex < _RO_WeaponConditionSpells.GetSize()

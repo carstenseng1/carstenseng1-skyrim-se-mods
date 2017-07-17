@@ -5,15 +5,26 @@ SPELL Property sitSpell Auto
 SPELL Property _RO_RoleplayingSpell Auto
 GlobalVariable Property _RO_Roleplaying  Auto
 GlobalVariable Property GameHour  Auto
+Int Property pCarryWeight  Auto
 
 Int scriptVersion
+Bool roleplayingSitBonusEarned = false
 
 
 Event OnInit()
 	UpdateScript()
 endEvent
 
-Bool roleplayingSitBonusEarned = false
+; Event is only sent to the player actor. This would probably be on a magic effect or alias script
+Event OnPlayerLoadGame()
+	UpdateScript()
+endEvent
+
+Event OnCellLoad()
+	; Debug.Notification("Player load")
+	UpdateScript()
+endEvent
+
 
 Event OnSleepStop(bool abInterrupted)
 	if abInterrupted
@@ -21,10 +32,6 @@ Event OnSleepStop(bool abInterrupted)
 		; Penalty to starting roleplaying value when sleep is inturrupted
 		_RO_Roleplaying.SetValue(-0.25)
 	else
-		if scriptVersion != pScriptVersion
-			UpdateScript()
-		endIf
-		
 		roleplayingSitBonusEarned = false
 		
 		Actor player = Game.GetPlayer()
@@ -41,15 +48,17 @@ Event OnSleepStop(bool abInterrupted)
 			_RO_Roleplaying.SetValue(0)
 		endIf
 		
-		Debug.Notification("Roleplaying: " + _RO_Roleplaying.GetValue())
+		; Debug.Notification("Roleplaying: " + _RO_Roleplaying.GetValue())
 	endIf
 endEvent
+
 
 Float sitGameHour = 0.0
 Event OnSit(ObjectReference akFurniture)
 	Game.GetPlayer().AddSpell(sitSpell, false)
 	sitGameHour = GameHour.GetValue() ; Get game time
 endEvent
+
 
 Event OnGetUp(ObjectReference akFurniture)
 	if roleplayingSitBonusEarned == false && GameHour.GetValue() > sitGameHour + 1
@@ -64,12 +73,18 @@ endEvent
 
 Function UpdateScript()
 	
-	scriptVersion = pScriptVersion
-	
-	Debug.Notification("Player Alias Script Version: " + scriptVersion)
-
-	; Register for events on which to update the script
-	RegisterForSleep()
+	if scriptVersion != pScriptVersion
+		scriptVersion = pScriptVersion
+		Debug.Notification(" Roleplaying Overhaul Player Alias v" + scriptVersion)
+		
+		; Register for events on which to update the script
+		RegisterForSleep()
+	endIf
+		
+	if pCarryWeight > 0
+		GetActorRef().SetActorValue("CarryWeight", pCarryWeight)
+		; Debug.Notification("CarryWeight: " + GetActorRef().GetActorValue("CarryWeight"))
+	endIf
 	
 endFunction
 

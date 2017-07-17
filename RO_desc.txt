@@ -1,0 +1,83 @@
+Fjør Tal is a roleplaying overhaul which adds a number of roleplaying and simulation features as well as other changes for more varied, challenging, and realistic gameplay.
+
+
+*** Features ***
+
+Immersion (Roleplaying Bonus):
+New player stat. When full, the player is granted a bonus to XP earning rate. Immersion resets when the player sleeps.
+
+Sit and Talk:
+Sit when talking to characters to have better chances to succeed with persuasion attempts, better prices with vendors, and earn extra Speechcraft XP from conversations.
+
+Unencumbered Rest:
+Rest while carrying less weight to wake with a higher Immersion value.
+
+Daily Immersion Action:
+Doing any one of the following actions grants a bonus to Immersion until the player sleeps.
+- Sitting for an hour or more (Game Time)
+- Working at a crafting station for an hour or more
+
+Damaged Weapons and Armor:
+Weapons and armor can become damaged and be repaired at a forge.  Only basic and crafted weapons and armor can be damaged.  A weapon may be damaged when striking or parrying an attack. Taking a hit can damage armor.  The player's Immersion and Stamina affect the likelyhood that equipment will be damaged.
+
+Curse of the Undead:
+Taking gold and other treasure from crypts may cuse the player to incur the "Curse of the Undead".  When cursed the player does half damage to undead.
+
+Drunkenness:
+New visual effects from drinking alcohol.
+
+
+*** Gameplay Adjustments ***
+
+Arrow Weight 0.1
+Carry Weight Reduction
+Bandit Equipment
+
+
+*** Enemy Resistance, Weakness, and Ability Increases ***
+
+Atronach (Flame/Frost): Weakness to (Frost/Fire) 33 >> 66
+Atronac (Flame/Frost/Shock): Cloak Spell Damage 10 > 15
+Draugr: Resist Damage 50 (Added)
+Draugr: Resist Frost 50 >> 100
+Draugr: Weakness to Magic 33 >> 66 (Added to AbDragr)
+Draugr: Weakness to Fire 50 (Added)
+Dwarven Automatron: Resist Magic 25 >> 50
+Falmer: Blindness 80 >> 90
+Frost Troll: Fortify Combat Heal Rate 1.0 (Added, Less than basic troll ability)
+Frost Troll: Resist Frost 33 >> 66
+Giant: Resist Magic 33 >> 66
+Horker: Resist Frost 50 >> 75
+Ice Wolf: Resist Frost 50 >> 75
+Ice Wraith : Weakness to Fire 25 >> 50
+Lurker: Resist Magic 25 >> 50
+Mammoth: Resist Frost 33 >> 66
+Skeleton: Resist Frost 25 >> 50
+Snow Bear: Resist Frost 50 >> 75
+Snow Sabercat: Resist Frost 50 >> 75
+Spider (Fostbite/Giant/Large): Resist Frost 50 >> 75
+Spriggan: Weakness to Fire 33 >> 66
+Spriggan: Fortify Combat Heal Rate 0.5 (Added)
+Troll: Fortify Combat Heal Rate 0.5 >> 2.0
+Troll (Normal/Frost): Weakness to Fire 50 >> 75
+Vampire (Creature): Resist Frost, Weakness to Fire 50 >> 75
+Werewolf: Fortify Health 50 >> 100
+Werewolf: Resist Damage 50 (Added)
+Wisp: Fortify Comat Healing 0.25 >> 0.5
+
+- DLC Enemies -
+Fire Wym: Weakness to Frost 25 >> 50
+
+
+*** Version History ***
+
+Version 1.0:
+Initial Alpha Upload
+
+Version 2.0:
+Fixed missing perk for managing weapon conditions
+
+Version 3.0:
+Reduced timescale to 10 (Default = 20)
+Base carry weight set to 100 (Fixed carry weight being reset to vanilla 300)
+Added options menu
