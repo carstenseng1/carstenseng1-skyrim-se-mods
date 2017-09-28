@@ -1,20 +1,19 @@
 Scriptname _RO_PlayerAliasArrowWeight extends ReferenceAlias  
 
-Int Property pScriptVersion Auto
+GlobalVariable Property _RO_Version Auto
+GlobalVariable Property _RO_Debug Auto
 FormList Property _RO_ArrowList Auto
 MiscObject Property _RO_ArrowWeight Auto
 
-Int scriptVersion = 0
+Float scriptVersion = 0.0
 
 Event OnInit()
-	InitScript()
+	UpdateScript()
 endEvent
 
 ; Event is only sent to the player actor. This would probably be on a magic effect or alias script
 Event OnPlayerLoadGame()
-	if scriptVersion != pScriptVersion
-		InitScript()
-	endIf
+	UpdateScript()
 endEvent
 
 Event OnUpdate()
@@ -36,8 +35,21 @@ Event OnItemRemoved(Form akBaseItem, int aiItemCount, ObjectReference akItemRefe
 endEvent
 
 
-Function InitScript()
-	scriptVersion = pScriptVersion
+Function UpdateScript()
+	if scriptVersion == _RO_Version.GetValue()
+		return
+	endIf
+
+	scriptVersion = _RO_Version.GetValue()
+	_RO_DebugNotification("Arrow Weight v" + scriptVersion)
+	
+	RemoveAllInventoryEventFilters()
 	AddInventoryEventFilter(_RO_ArrowList)
 	RegisterForSingleUpdate(0)
+endFunction
+
+Function _RO_DebugNotification(String text)
+	if _RO_Debug.GetValue() == 1
+		Debug.Notification(text)
+	endIf
 endFunction

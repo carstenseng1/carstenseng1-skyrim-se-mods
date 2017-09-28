@@ -29,10 +29,11 @@ New visual effects from drinking alcohol.
 
 *** Gameplay Adjustments ***
 
+Reduced TimeScale: 20 >> 10 (Game time progress at half speed)
 Arrow Weight 0.1
 Carry Weight Reduction
 Bandit Equipment
-
+Player Starting Spells: Healing Only
 
 *** Enemy Resistance, Weakness, and Ability Increases ***
 
@@ -65,19 +66,37 @@ Werewolf: Fortify Health 50 >> 100
 Werewolf: Resist Damage 50 (Added)
 Wisp: Fortify Comat Healing 0.25 >> 0.5
 
+*** Enemy Poisons Overhaul ***
+Enemy poison durations greatly increased, but damaged decreased
+Additional paralysis effect added to some poison attacks
+Additional visual effects added to some poison effects
+
 - DLC Enemies -
 Fire Wym: Weakness to Frost 25 >> 50
 
 
+*** Weapon & Armor Balance ***
+Stormcloak Cuirass: Rating 21 >> 23 (To match guard armor rating)
+Stormcloak Helmet: Rating 10 >> 11 (To match guard armor rating)
+Fur Armor(s): Rating 23 >> 21 (Reduced to match vanilla Stormcloak armor) 
+Fur Boots: Rating 5 >> 6 (to match fur shoes)
+Fur Guantlets: Rating 5 >> 6 (to match fur bracers)
+
+
 *** Version History ***
 
-Version 1.0:
+Version 0.0:
 Initial Alpha Upload
 
-Version 2.0:
+Version 0.1:
 Fixed missing perk for managing weapon conditions
 
-Version 3.0:
+Version 0.2:
 Reduced timescale to 10 (Default = 20)
 Base carry weight set to 100 (Fixed carry weight being reset to vanilla 300)
 Added options menu
+
+Version 0.3:
+Debug notifications for drunkenness
+Fixed: Damaged weapons able to be tempered
+Re-export external files for upload

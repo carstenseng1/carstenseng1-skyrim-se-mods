@@ -1,27 +1,25 @@
 Scriptname _RO_PlayerAlias extends ReferenceAlias  
 
-Int Property pScriptVersion Auto
+GlobalVariable Property _RO_Version  Auto
+GlobalVariable Property _RO_Debug  Auto  
+SPELL[] Property DefaultSpells  Auto
+
 SPELL Property sitSpell Auto
 SPELL Property _RO_RoleplayingSpell Auto
 GlobalVariable Property _RO_Roleplaying  Auto
 GlobalVariable Property GameHour  Auto
-Int Property pCarryWeight  Auto
+FormList Property _RO_FoodList  Auto
 
-Int scriptVersion
+Float version = 0.0
 Bool roleplayingSitBonusEarned = false
+Bool roleplayingFoodBonusEarned = true
 
 
 Event OnInit()
 	UpdateScript()
 endEvent
 
-; Event is only sent to the player actor. This would probably be on a magic effect or alias script
 Event OnPlayerLoadGame()
-	UpdateScript()
-endEvent
-
-Event OnCellLoad()
-	; Debug.Notification("Player load")
 	UpdateScript()
 endEvent
 
@@ -30,9 +28,10 @@ Event OnSleepStop(bool abInterrupted)
 	if abInterrupted
 		; inturrupted
 		; Penalty to starting roleplaying value when sleep is inturrupted
-		_RO_Roleplaying.SetValue(-0.25)
+		_RO_Roleplaying.SetValue(0)
 	else
 		roleplayingSitBonusEarned = false
+		roleplayingFoodBonusEarned = false
 		
 		Actor player = Game.GetPlayer()
 		player.removeSpell(_RO_RoleplayingSpell)
@@ -48,7 +47,7 @@ Event OnSleepStop(bool abInterrupted)
 			_RO_Roleplaying.SetValue(0)
 		endIf
 		
-		; Debug.Notification("Roleplaying: " + _RO_Roleplaying.GetValue())
+		_RO_DebugNotification("Immersion: " + _RO_Roleplaying.GetValue())
 	endIf
 endEvent
 
@@ -64,27 +63,49 @@ Event OnGetUp(ObjectReference akFurniture)
 	if roleplayingSitBonusEarned == false && GameHour.GetValue() > sitGameHour + 1
 		AddRoleplayingValue(0.5)
 		roleplayingSitBonusEarned = true
-		Debug.Notification("You are better prepared for the day.")
+		; Debug.Notification("Rest and meditation help you reflect on this day.")
 	endIf
 	sitGameHour = 0
 	Game.GetPlayer().RemoveSpell(sitSpell)
 endEvent
 
+Event OnObjectEquipped(Form akBaseObject, ObjectReference akReference)
+	if roleplayingFoodBonusEarned == false
+		roleplayingFoodBonusEarned = true
+		_RO_DebugNotification("Immersion object equipped")
+		AddRoleplayingValue(0.25)
+	endIf
+endEvent
+	
+
 
 Function UpdateScript()
 	
-	if scriptVersion != pScriptVersion
-		scriptVersion = pScriptVersion
-		Debug.Notification(" Roleplaying Overhaul Player Alias v" + scriptVersion)
-		
-		; Register for events on which to update the script
-		RegisterForSleep()
+	if version == _RO_Version.GetValue()
+		return
 	endIf
-		
-	if pCarryWeight > 0
-		GetActorRef().SetActorValue("CarryWeight", pCarryWeight)
-		; Debug.Notification("CarryWeight: " + GetActorRef().GetActorValue("CarryWeight"))
-	endIf
+	
+	version = _RO_Version.GetValue()
+	Debug.Notification("Roleplaying Overhaul v" + version)
+	
+	Actor player = Game.GetPlayer()
+	
+	; Add default spells
+	Int i = 0
+	While i < DefaultSpells.Length
+		Bool bNotify = false
+		if _RO_Debug.GetValue() == 1
+			bNotify = true
+		endIf
+		player.AddSpell(DefaultSpells[i], bNotify)
+		i = i + 1	
+	endWhile
+	
+	; Register for events on which to update the script
+	RegisterForSleep()
+	
+	; Watch for using food
+	AddInventoryEventFilter(_RO_FoodList)
 	
 endFunction
 
@@ -92,11 +113,21 @@ Function AddRoleplayingValue(Float aValue)
 
 	if _RO_Roleplaying.GetValue() < 1.0
 		_RO_Roleplaying.Mod(aValue)
-		Debug.Notification("Roleplaying value added: " + aValue + " >> " + _RO_Roleplaying.GetValue())
+		_RO_DebugNotification("Immersion added: " + aValue + " >> " + _RO_Roleplaying.GetValue())
+
 		if _RO_Roleplaying.GetValue() >= 1.0
 			; Apply roleplaying bonus for the day
-			Game.GetPlayer().AddSpell(_RO_RoleplayingSpell)
+			Game.GetPlayer().AddSpell(_RO_RoleplayingSpell, false)
+			Debug.Notification("You are better prepared for the day.")
 		endIf
+	endIf
+
+endFunction
+
+Function _RO_DebugNotification(string text)
+
+	if _RO_Debug.GetValue() == 1
+		Debug.Notification(text)
 	endIf
 
 endFunction

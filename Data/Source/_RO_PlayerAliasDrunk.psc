@@ -1,27 +1,41 @@
 Scriptname _RO_PlayerAliasDrunk extends ReferenceAlias  
 
-Int Property pScriptVersion Auto
+GlobalVariable Property _RO_Version Auto
+GlobalVariable Property _RO_Debug Auto
 SPELL Property _RO_DrunkAbility  Auto  
 FormList Property AlcoholicDrinksList  Auto  
 
-Int scriptVersion = 0
+Float version = 0.0
 
 Event OnInit()
 	UpdateScript()
 endEvent
 
 Event OnPlayerLoadGame()
-	if scriptVersion != pScriptVersion
-		UpdateScript()
-	endIf
+	UpdateScript()
 endEvent
 
 Event OnObjectEquipped(Form akBaseObject, ObjectReference akReference)
-	GetActorRef().AddSpell(_RO_DrunkAbility, true)
+	if AlcoholicDrinksList.Find(akBaseObject) != -1
+		GetActorRef().AddSpell(_RO_DrunkAbility, _RO_Debug.GetValue())
+	endIf
 endEvent
 
 
 Function updateScript()
-	scriptVersion = pScriptVersion
+	if version == _RO_Version.GetValue()
+		return
+	endIf
+	
+	version = _RO_Version.GetValue()
+	RO_DebugNotification("Drunk Script: v" + version)
+	
+	RemoveAllInventoryEventFilters()
 	AddInventoryEventFilter(AlcoholicDrinksList)
+endFunction
+
+Function RO_DebugNotification(String text)
+	if _RO_Debug.GetValue() == 1
+		Debug.Notification(text)
+	endIf
 endFunction

@@ -1,5 +1,7 @@
 Scriptname _RO_PlayerAliasArmorCondition extends ReferenceAlias  
 
+GlobalVariable Property _RO_Debug Auto
+
 FormList Property _RO_ArmorBaseLists  Auto  
 FormList Property _RO_ArmorDamagedLists  Auto  
 FormList Property _RO_EquippedArmor  Auto  
@@ -15,9 +17,9 @@ Event OnObjectEquipped(Form akBaseObject, ObjectReference akReference)
 		
 		Int index = _RO_EquippedArmor.Find(akBaseObject)
 		if index >= 0
-			Debug.Notification("Armor added. index: " + index)
+			_RO_DebugNotification("Armor added. index: " + index)
 		else
-			Debug.Notification("Faild to add armor.")
+			_RO_DebugNotification("Faild to add armor.")
 		endIf
 	endIf
 
@@ -31,7 +33,7 @@ Event OnObjectUnequipped(Form akBaseObject, ObjectReference akReference)
 		
 		Int index = _RO_EquippedArmor.Find(akBaseObject)
 		if index < 0
-			Debug.Notification("Armor removed")
+			_RO_DebugNotification("Armor removed")
 		endIf
 	endIf
 
@@ -76,7 +78,7 @@ Function DamageRandomArmor()
 	
 	Armor targetArmor = _RO_EquippedArmor.GetAt(randIndex) as Armor
 	if !targetArmor
-		Debug.Notification("No armor at index: " + randIndex)
+		_RO_DebugNotification("No armor at index: " + randIndex)
 		return
 	endIf
 	
@@ -87,13 +89,13 @@ endFunction
 Function DamageArmor(Armor akArmor)
 	
 	if (!akArmor)
-		Debug.Notification("No armor given to damage")
+		_RO_DebugNotification("No armor given to damage")
 		return
 	endIf
 	
 	Actor actorRef = self.GetActorRef() as Actor
 	if !actorRef.IsEquipped(akArmor)
-		Debug.Notification("Cannot damage armor that is not equipped.")
+		_RO_DebugNotification("Cannot damage armor that is not equipped.")
 		return
 	endIf
 	
@@ -113,10 +115,17 @@ Function DamageArmor(Armor akArmor)
 				; actorRef.AddItem(damagedArmor)
 				actorRef.EquipItem(damagedArmor)
 			else
-				Debug.Notification("No damaged armor at index: " + foundIndex)
+				_RO_DebugNotification("No damaged armor at index: " + foundIndex)
 			endIf
 		endIf
 	endWhile
 
 endFunction
 
+Function _RO_DebugNotification(string text)
+
+	if _RO_Debug.GetValue() == 1
+		Debug.Notification(text)
+	endIf
+
+endFunction

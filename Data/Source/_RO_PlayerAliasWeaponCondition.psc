@@ -1,5 +1,7 @@
 Scriptname _RO_PlayerAliasWeaponCondition extends ReferenceAlias  
 
+GlobalVariable Property _RO_Debug Auto
+
 FormList Property _RO_WeaponBaseLists  Auto  
 FormList Property _RO_WeaponDamagedLists  Auto  
 FormList Property _RO_WeaponConditionPerks Auto
@@ -52,7 +54,7 @@ Event OnHit(ObjectReference akAggressor, Form akSource, Projectile akProjectile,
 					; TODO: Damage shield
 				else
 					if weaponIndex >= 0 && weaponIndex < _RO_WeaponConditionSpells.GetSize()
-						Debug.Notification("Block:  weapon index: " + weaponIndex)
+						_RO_DebugNotification("Block:  weapon index: " + weaponIndex)
 						Spell weaponConditionSpell = _RO_WeaponConditionSpells.GetAt(weaponIndex) as Spell
 						weaponConditionSpell.Cast(target, NONE)
 					endIf
@@ -79,7 +81,7 @@ endFunction
 Function AddWeaponConditionPerk(Actor akTarget, Weapon akWeapon)
 	
 	if (!akWeapon)
-		Debug.Notification("No weapon")
+		_RO_DebugNotification("No weapon")
 		return
 	endIf
 	
@@ -96,12 +98,18 @@ Function AddWeaponConditionPerk(Actor akTarget, Weapon akWeapon)
 			Perk weaponConditionPerk = _RO_WeaponConditionPerks.GetAt(i) as Perk
 			if weaponConditionPerk
 				akTarget.AddPerk(weaponConditionPerk)
-				Debug.Notification("Added weapon condition perk: " + i)
+				_RO_DebugNotification("Added weapon condition perk: " + i)
 				i = 0
 			else
-				Debug.Notification("Error: No perk at found index: " + i)
+				_RO_DebugNotification("Error: No perk at found index: " + i)
 			endIf
 		endIf
 	EndWhile
 
+endFunction
+
+Function _RO_DebugNotification(string text)
+	if _RO_Debug.GetValue() == 1
+		Debug.Notification(text)
+	endIf
 endFunction
