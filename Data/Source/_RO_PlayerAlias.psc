@@ -10,6 +10,8 @@ GlobalVariable Property _RO_Roleplaying  Auto
 GlobalVariable Property GameHour  Auto
 FormList Property _RO_FoodList  Auto
 
+Perk Property _RO_DestructibleWeaponPerk  Auto  
+
 Float version = 0.0
 Bool roleplayingSitBonusEarned = false
 Bool roleplayingFoodBonusEarned = true
@@ -81,7 +83,7 @@ endEvent
 
 Function UpdateScript()
 	
-	if version == _RO_Version.GetValue()
+	if version != 0 && version == _RO_Version.GetValue()
 		return
 	endIf
 	
@@ -106,6 +108,9 @@ Function UpdateScript()
 	
 	; Watch for using food
 	AddInventoryEventFilter(_RO_FoodList)
+	
+	; Enable destructible weapons
+	player.AddPerk(_RO_DestructibleWeaponPerk)
 	
 endFunction
 

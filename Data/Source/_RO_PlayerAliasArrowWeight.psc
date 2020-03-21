@@ -36,7 +36,7 @@ endEvent
 
 
 Function UpdateScript()
-	if scriptVersion == _RO_Version.GetValue()
+	if scriptVersion != 0 && scriptVersion == _RO_Version.GetValue()
 		return
 	endIf
 
