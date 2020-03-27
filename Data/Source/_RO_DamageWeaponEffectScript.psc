@@ -1,30 +1,52 @@
 Scriptname _RO_DamageWeaponEffectScript extends ActiveMagicEffect  
 
+_RO_QuestScript Property _RO_Quest  Auto
+
+Float Property pStaminaFactor = 0.0 Auto
+
 
 Event OnEffectStart(Actor akTarget, Actor akCaster)
 	
 	Actor player = Game.GetPlayer()
-	Weapon playerWeapon =  player.GetEquippedWeapon()
 	
-	if playerWeapon as _RO_DestructibleWeapon
-		 _RO_DestructibleWeapon destructible =  playerWeapon as _RO_DestructibleWeapon
-		DamageWeapon(player, playerWeapon as _RO_DestructibleWeapon)
-	EndIf
+	; Find weapon to hit
+	; Choose between left or right hand weapon when dual wielding
+	_RO_DestructibleWeapon rhWeapon =  player.GetEquippedWeapon() as _RO_DestructibleWeapon
+	_RO_DestructibleWeapon lhWeapon =  player.GetEquippedWeapon(true) as _RO_DestructibleWeapon
+	_RO_DestructibleWeapon hitWeapon
+	if rhWeapon && lhWeapon
+		; 3 : 2 odds to hit right vs. left
+		if Utility.RandomInt(1, 5) <= 3
+			hitWeapon = rhWeapon
+		else
+			hitWeapon = lhWeapon
+		endIf
+	elseIf rhWeapon
+		hitWeapon = rhWeapon
+	elseIf lhWeapon
+		hitWeapon = lhWeapon
+	endIf
+	
+	if hitWeapon
+		DamageWeapon(player, hitWeapon)
+	endIf
 	
 endEvent
 
 
 Function DamageWeapon(Actor akTarget, _RO_DestructibleWeapon akWeapon)
 
-	Float durability = akWeapon.Durability.GetValue()
+	; Get random base factor to damage weapon
+	Float damage = Utility.RandomFloat()
 	
 	; Stamina effect on chance to damage weapon
-	Float staminaMult = 0.75 + 0.25 * akTarget.GetActorValuePercentage("Stamina")
-		
-	Float fRand = Utility.RandomFloat()
+	Float staminaDamageBonus = pStaminaFactor * (1.0 - akTarget.GetActorValuePercentage("Stamina"))
 	
-	if fRand >= durability * staminaMult
-
+	; Get weapon durability
+	Float durability = akWeapon.Durability.GetValue()
+	
+	_RO_Quest.Notification("Hit Weapon " + damage + staminaDamageBonus + "  Durability " + durability)
+	if damage + staminaDamageBonus > durability
 		; Remove the weapon
 		akTarget.RemoveItem(akWeapon, 1, true)
 

@@ -1,32 +1,63 @@
 Scriptname _RO_PlayerAlias extends ReferenceAlias  
 
 GlobalVariable Property _RO_Version  Auto
-GlobalVariable Property _RO_Debug  Auto  
-SPELL[] Property DefaultSpells  Auto
+Float version = 0.0
 
-SPELL Property sitSpell Auto
-SPELL Property _RO_RoleplayingSpell Auto
+_RO_QuestScript Property _RO_Quest  Auto  
+GlobalVariable Property _RO_Debug Auto
+
 GlobalVariable Property _RO_Roleplaying  Auto
 GlobalVariable Property GameHour  Auto
+SPELL Property _RO_RoleplayingSpell Auto
+
+SPELL Property sitSpell Auto
+Bool roleplayingSitBonusEarned = false
+
+Bool roleplayingFoodBonusEarned = true
 FormList Property _RO_FoodList  Auto
 
 Perk Property _RO_DestructibleWeaponPerk  Auto  
 
-Float version = 0.0
-Bool roleplayingSitBonusEarned = false
-Bool roleplayingFoodBonusEarned = true
-
 
 Event OnInit()
-	UpdateScript()
+	Maintenance()
 endEvent
 
+
 Event OnPlayerLoadGame()
-	UpdateScript()
+	_RO_Quest.Maintenance()
+	Maintenance()
 endEvent
+
+
+Function Maintenance()
+	
+	if version != 0.0 && version == _RO_Version.GetValue()
+		return
+	endIf
+	version = _RO_Version.GetValue()
+	
+	_RO_Quest.Notification("Player Alias Update")
+	
+	; Clean up invetory event filters
+	RemoveAllInventoryEventFilters()
+	
+	; Unregister for previously registered events
+	UnregisterForSleep()
+	
+	; Perform updates
+	
+	; Register for events on which to update the script
+	RegisterForSleep()
+	
+	; Watch for using food
+	AddInventoryEventFilter(_RO_FoodList)
+
+endFunction
 
 
 Event OnSleepStop(bool abInterrupted)
+
 	if abInterrupted
 		; inturrupted
 		; Penalty to starting roleplaying value when sleep is inturrupted
@@ -49,76 +80,52 @@ Event OnSleepStop(bool abInterrupted)
 			_RO_Roleplaying.SetValue(0)
 		endIf
 		
-		_RO_DebugNotification("Immersion: " + _RO_Roleplaying.GetValue())
+		_RO_Quest.Notification("Immersion: " + _RO_Roleplaying.GetValue())
 	endIf
+
 endEvent
 
 
 Float sitGameHour = 0.0
+
 Event OnSit(ObjectReference akFurniture)
+
 	Game.GetPlayer().AddSpell(sitSpell, false)
 	sitGameHour = GameHour.GetValue() ; Get game time
+
 endEvent
 
 
 Event OnGetUp(ObjectReference akFurniture)
+
 	if roleplayingSitBonusEarned == false && GameHour.GetValue() > sitGameHour + 1
 		AddRoleplayingValue(0.5)
 		roleplayingSitBonusEarned = true
-		; Debug.Notification("Rest and meditation help you reflect on this day.")
+		Debug.Notification("Rest and meditation help you reflect on this day.")
 	endIf
+	
 	sitGameHour = 0
 	Game.GetPlayer().RemoveSpell(sitSpell)
+
 endEvent
+
 
 Event OnObjectEquipped(Form akBaseObject, ObjectReference akReference)
+
 	if roleplayingFoodBonusEarned == false
 		roleplayingFoodBonusEarned = true
-		_RO_DebugNotification("Immersion object equipped")
+		_RO_Quest.Notification("Immersion object equipped")
 		AddRoleplayingValue(0.25)
 	endIf
+
 endEvent
-	
 
-
-Function UpdateScript()
-	
-	if version != 0 && version == _RO_Version.GetValue()
-		return
-	endIf
-	
-	version = _RO_Version.GetValue()
-	Debug.Notification("Roleplaying Overhaul v" + version)
-	
-	Actor player = Game.GetPlayer()
-	
-	; Add default spells
-	Int i = 0
-	While i < DefaultSpells.Length
-		Bool bNotify = false
-		if _RO_Debug.GetValue() == 1
-			bNotify = true
-		endIf
-		player.AddSpell(DefaultSpells[i], bNotify)
-		i = i + 1	
-	endWhile
-	
-	; Register for events on which to update the script
-	RegisterForSleep()
-	
-	; Watch for using food
-	AddInventoryEventFilter(_RO_FoodList)
-	
-	; Enable destructible weapons
-	player.AddPerk(_RO_DestructibleWeaponPerk)
-	
-endFunction
 
 Function AddRoleplayingValue(Float aValue)
 
 	if _RO_Roleplaying.GetValue() < 1.0
 		_RO_Roleplaying.Mod(aValue)
-		_RO_DebugNotification("Immersion added: " + aValue + " >> " + _RO_Roleplaying.GetValue())
+		_RO_Quest.Notification("Immersion added: " + aValue + " >> " + _RO_Roleplaying.GetValue())
 
 		if _RO_Roleplaying.GetValue() >= 1.0
 			; Apply roleplaying bonus for the day
@@ -129,10 +136,3 @@ Function AddRoleplayingValue(Float aValue)
 
 endFunction
 
-Function _RO_DebugNotification(string text)
-
-	if _RO_Debug.GetValue() == 1
-		Debug.Notification(text)
-	endIf
-
-endFunction

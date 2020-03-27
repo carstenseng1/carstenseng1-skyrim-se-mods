@@ -3,6 +3,9 @@ Fjør Tal is a roleplaying overhaul which adds a number of roleplaying and simula
 
 *** Features ***
 
+Damaged Weapons and Armor:
+Weapons and armor can become damaged and be repaired at a forge.  Only basic and crafted weapons and armor can be damaged.  A weapon may be damaged when striking or parrying an attack. Taking a hit can damage armor.  The player's Immersion and Stamina affect the likelyhood that equipment will be damaged.
+
 Immersion (Roleplaying Bonus):
 New player stat. When full, the player is granted a bonus to XP earning rate. Immersion resets when the player sleeps.
 
@@ -17,22 +20,21 @@ Doing any one of the following actions grants a bonus to Immersion until the pla
 - Sitting for an hour or more (Game Time)
 - Working at a crafting station for an hour or more
 
-Damaged Weapons and Armor:
-Weapons and armor can become damaged and be repaired at a forge.  Only basic and crafted weapons and armor can be damaged.  A weapon may be damaged when striking or parrying an attack. Taking a hit can damage armor.  The player's Immersion and Stamina affect the likelyhood that equipment will be damaged.
-
 Curse of the Undead:
 Taking gold and other treasure from crypts may cuse the player to incur the "Curse of the Undead".  When cursed the player does half damage to undead.
 
 Drunkenness:
 New visual effects from drinking alcohol.
 
+Craft Ingots from Arrows:
+Melt down 20 arrows to an ingot of their respective type
 
 *** Gameplay Adjustments ***
 
 Reduced TimeScale: 20 >> 10 (Game time progress at half speed)
 Arrow Weight 0.1
 Carry Weight Reduction
-Bandit Equipment
+Bandit equipment remains low level (Fur, Iron, Steel)
 Player Starting Spells: Healing Only
 
 *** Enemy Resistance, Weakness, and Ability Increases ***
@@ -78,25 +80,6 @@ Fire Wym: Weakness to Frost 25 >> 50
 *** Weapon & Armor Balance ***
 Stormcloak Cuirass: Rating 21 >> 23 (To match guard armor rating)
 Stormcloak Helmet: Rating 10 >> 11 (To match guard armor rating)
-Fur Armor(s): Rating 23 >> 21 (Reduced to match vanilla Stormcloak armor) 
+Fur Armor(s): Rating 23 >> 18-21 (Reduced rating and weight based on style) 
 Fur Boots: Rating 5 >> 6 (to match fur shoes)
 Fur Guantlets: Rating 5 >> 6 (to match fur bracers)
-
-
-*** Version History ***
-
-Version 0.0:
-Initial Alpha Upload
-
-Version 0.1:
-Fixed missing perk for managing weapon conditions
-
-Version 0.2:
-Reduced timescale to 10 (Default = 20)
-Base carry weight set to 100 (Fixed carry weight being reset to vanilla 300)
-Added options menu
-
-Version 0.3:
-Debug notifications for drunkenness
-Fixed: Damaged weapons able to be tempered
-Re-export external files for upload

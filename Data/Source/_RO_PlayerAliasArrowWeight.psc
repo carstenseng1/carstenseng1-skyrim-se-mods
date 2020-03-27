@@ -1,55 +1,65 @@
 Scriptname _RO_PlayerAliasArrowWeight extends ReferenceAlias  
 
-GlobalVariable Property _RO_Version Auto
-GlobalVariable Property _RO_Debug Auto
+GlobalVariable Property _RO_Version  Auto
+Float version = 0.0
+
+_RO_QuestScript Property _RO_Quest  Auto
 FormList Property _RO_ArrowList Auto
 MiscObject Property _RO_ArrowWeight Auto
 
-Float scriptVersion = 0.0
 
 Event OnInit()
-	UpdateScript()
+	Maintenance()
 endEvent
 
-; Event is only sent to the player actor. This would probably be on a magic effect or alias script
+
 Event OnPlayerLoadGame()
-	UpdateScript()
+	Maintenance()
 endEvent
+
+
+Function Maintenance()
+	
+	if version != 0.0 && version == _RO_Version.GetValue()
+		return
+	endIf
+	version = _RO_Version.GetValue()
+
+	_RO_Quest.Notification("Arrow Weight Maintenance")
+	
+	RemoveAllInventoryEventFilters()
+	AddInventoryEventFilter(_RO_ArrowList)
+	
+	RegisterForSingleUpdate(1)
+
+endFunction
+
 
 Event OnUpdate()
+
+	; Stop any other pending updates
+	UnregisterForUpdate()
+	
 	; Remove all current arrow weights
 	GetActorRef().RemoveItem(_RO_ArrowWeight, GetActorRef().GetItemCount(_RO_ArrowWeight), true)
 	
 	; Add weights based on the number of arrows
 	GetActorRef().AddItem(_RO_ArrowWeight, GetActorRef().GetItemCount(_RO_ArrowList), true)
+	
+	_RO_Quest.Notification("Arrow Weight " + GetActorRef().GetItemCount(_RO_ArrowWeight))
+
 endEvent
+
 
 Event OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer)
-	GetActorRef().AddItem(_RO_ArrowWeight, aiItemCount, true)
-	RegisterForSingleUpdate(0)
+
+	RegisterForSingleUpdate(1)
+
 endEvent
+
 
 Event OnItemRemoved(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akDestContainer)
-	GetActorRef().RemoveItem(_RO_ArrowWeight, aiItemCount, true)
-	RegisterForSingleUpdate(0)
+
+	RegisterForSingleUpdate(1)
+
 endEvent
-
-
-Function UpdateScript()
-	if scriptVersion != 0 && scriptVersion == _RO_Version.GetValue()
-		return
-	endIf
-
-	scriptVersion = _RO_Version.GetValue()
-	_RO_DebugNotification("Arrow Weight v" + scriptVersion)
-	
-	RemoveAllInventoryEventFilters()
-	AddInventoryEventFilter(_RO_ArrowList)
-	RegisterForSingleUpdate(0)
-endFunction
-
-Function _RO_DebugNotification(String text)
-	if _RO_Debug.GetValue() == 1
-		Debug.Notification(text)
-	endIf
-endFunction

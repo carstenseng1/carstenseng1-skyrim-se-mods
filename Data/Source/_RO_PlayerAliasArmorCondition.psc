@@ -1,12 +1,8 @@
 Scriptname _RO_PlayerAliasArmorCondition extends ReferenceAlias  
 
-GlobalVariable Property _RO_Debug Auto
-
+_RO_QuestScript Property _RO_Quest  Auto
 FormList Property _RO_EquippedArmor  Auto  
-Float Property pChance  Auto
-
-Int[] armorListIndexArray
-ObjectReference[] armorRefArray
+Float Property pDamageBonus = 0.0 Auto
 
 Event OnObjectEquipped(Form akBaseObject, ObjectReference akReference)
 	
@@ -43,20 +39,20 @@ Event OnHit(ObjectReference akAggressor, Form akSource, Projectile akProjectile,
 		return
 	endIf
 	
+	Float damageBonus = pDamageBonus
+	if abPowerAttack
+			damageBonus += 0.1
+	endIf
+	
 	if abHitBlocked
-		Armor shield = target.GetEquippedShield()
+		_RO_DestructibleArmor shield = target.GetEquippedShield() as _RO_DestructibleArmor
 		if shield
-			; TODO: Damage shield
+			HitDestructibleArmor(shield, damageBonus)
 		endIf
 	else
 		_RO_DestructibleArmor randArmor = GetRandomDestructibleArmor()
 		if randArmor
-			Float damageMult = 1.0
-			if abPowerAttack
-				damageMult += 0.5
-			endIf
-			
-			HitDestructibleArmor(randArmor, damageMult)
+			HitDestructibleArmor(randArmor, damageBonus)
 		endIf
 	endIf
  
@@ -77,28 +73,22 @@ _RO_DestructibleArmor Function GetRandomDestructibleArmor()
 endFunction
 
 
-Function HitDestructibleArmor(_RO_DestructibleArmor akArmor, Float damageMult = 1.0)
+Function HitDestructibleArmor(_RO_DestructibleArmor akArmor, Float damageBonus = 0.0)
 	
 	if !akArmor
-		_RO_DebugNotification("No armor given to damage")
+		_RO_Quest.Notification("No armor given to damage")
 		return
 	endIf
 	
 	Actor actorRef = self.GetActorRef() as Actor
 	
-	Float fRand = Utility.RandomFloat() * damageMult
-	if fRand >= akArmor.Durability.GetValue()
+	Float damage = Utility.RandomFloat() + damageBonus
+	
+	_RO_Quest.Notification("Hit armor: " + damage)
+	if damage > akArmor.Durability.GetValue()
 		actorRef.UnequipItem(akArmor)
-		actorRef.RemoveItem(akArmor)
-		actorRef.EquipItem(akArmor.DamagedArmor)
-	endIf
-
-endFunction
-
-Function _RO_DebugNotification(string text)
-
-	if _RO_Debug.GetValue() == 1
-		Debug.Notification(text)
+		actorRef.RemoveItem(akArmor, 1, true)
+		actorRef.EquipItem(akArmor.DamagedArmor, false, true)
 	endIf
 
 endFunction

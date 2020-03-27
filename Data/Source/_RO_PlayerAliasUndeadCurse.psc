@@ -1,35 +1,34 @@
 Scriptname _RO_PlayerAliasUndeadCurse extends ReferenceAlias  
 
-GlobalVariable Property _RO_Debug Auto
-GlobalVariable Property _RO_Version Auto
+GlobalVariable Property _RO_Version  Auto
+Float version = 0.0
+
+_RO_QuestScript Property _RO_Quest  Auto
 
 FormList  Property _RO_UndeadCurseItems  Auto
 FormList  Property _RO_UndeadCurseItemLists  Auto
 FormList Property _RO_UndeadCurseContainers  Auto
 SPELL Property _RO_UndeadCurse Auto
 
-Float version = 0.0
 
 Event OnInit()
-	UpdateScript()
+	Maintenance()
 endEvent
+
 
 Event OnPlayerLoadGame()
-	UpdateScript()
+	Maintenance()
 endEvent
 
-Event OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer)
-	if _RO_UndeadCurseContainers.Find(akSourceContainer.GetBaseObject()) != -1
-		_RO_DebugNotification("Player collected cursed item")
-		Actor player = GetActorReference()
-		player.AddSpell(_RO_UndeadCurse, false)
-	endIf
-endEvent
 
-Function UpdateScript()
-	if version == _RO_Version.GetValue()
+Function Maintenance()
+	
+	if version != 0.0 && version == _RO_Version.GetValue()
 		return
 	endIf
+	version = _RO_Version.GetValue()
+	
+	_RO_Quest.Notification("Undead Curse Maintenance")
 	
 	RemoveAllInventoryEventFilters()
 	AddInventoryEventFilter(_RO_UndeadCurseItems)
@@ -40,11 +39,16 @@ Function UpdateScript()
 		FormList kList = _RO_UndeadCurseItemLists.GetAt(iIndex) As FormList ; Note that you must typecast the entry from the formlist using 'As'.
 		AddInventoryEventFilter(kList)
 	EndWhile
-	
+
 endFunction
 
-Function _RO_DebugNotification(string text)
-	if _RO_Debug.GetValue() == 1
-		Debug.Notification(text)
+
+Event OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer)
+
+	if _RO_UndeadCurseContainers.Find(akSourceContainer.GetBaseObject()) != -1
+		_RO_Quest.Notification("Player collected cursed item")
+		Actor player = GetActorReference()
+		player.AddSpell(_RO_UndeadCurse, false)
 	endIf
-endFunction
+
+endEvent
