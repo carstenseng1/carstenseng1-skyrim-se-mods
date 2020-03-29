@@ -1,13 +1,21 @@
 Scriptname _RO_DamageWeaponEffectScript extends ActiveMagicEffect  
 
-_RO_QuestScript Property _RO_Quest  Auto
+GlobalVariable Property _RO_Debug  Auto
 
-Float Property pStaminaFactor = 0.0 Auto
+Bool Property pIsBash = false  Auto
+Float Property pStaminaFactor = 0.0  Auto
 
 
 Event OnEffectStart(Actor akTarget, Actor akCaster)
 	
+	; Both caster and target are the hit actor when used with a Perk: Apply Combat Hit Spell
+	; Therefore, we must just get a reference to the player and ensure this spell is only cast when the player's weapon should be damaged
 	Actor player = Game.GetPlayer()
+	
+	; Don't damage weapon when bashing with a shield
+	if pIsBash && player.GetEquippedShield()
+		return
+	endIf
 	
 	; Find weapon to hit
 	; Choose between left or right hand weapon when dual wielding
@@ -45,7 +53,7 @@ Function DamageWeapon(Actor akTarget, _RO_DestructibleWeapon akWeapon)
 	; Get weapon durability
 	Float durability = akWeapon.Durability.GetValue()
 	
-	_RO_Quest.Notification("Hit Weapon " + damage + staminaDamageBonus + "  Durability " + durability)
+	_RO_Note("Hit Weapon " + damage + staminaDamageBonus + "  Durability " + durability)
 	if damage + staminaDamageBonus > durability
 		; Remove the weapon
 		akTarget.RemoveItem(akWeapon, 1, true)
@@ -67,5 +75,13 @@ Function DamageWeapon(Actor akTarget, _RO_DestructibleWeapon akWeapon)
 	;if Utility.RandomFloat() < 0.25 + 0.5 * staminaPercentage
 	;	akTarget.DropObject(akTarget.GetEquippedWeapon())
 	;endIf
+
+endFunction
+
+Function _RO_Note(String text)
+
+	if _RO_Debug.GetValue() == 1
+		Debug.Notification(text)
+	endIf
 
 endFunction

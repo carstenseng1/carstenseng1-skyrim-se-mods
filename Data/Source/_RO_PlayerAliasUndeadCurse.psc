@@ -3,7 +3,7 @@ Scriptname _RO_PlayerAliasUndeadCurse extends ReferenceAlias
 GlobalVariable Property _RO_Version  Auto
 Float version = 0.0
 
-_RO_QuestScript Property _RO_Quest  Auto
+GlobalVariable Property _RO_Debug  Auto
 
 FormList  Property _RO_UndeadCurseItems  Auto
 FormList  Property _RO_UndeadCurseItemLists  Auto
@@ -28,7 +28,7 @@ Function Maintenance()
 	endIf
 	version = _RO_Version.GetValue()
 	
-	_RO_Quest.Notification("Undead Curse Maintenance")
+	_RO_Note("Undead Curse Maintenance")
 	
 	RemoveAllInventoryEventFilters()
 	AddInventoryEventFilter(_RO_UndeadCurseItems)
@@ -46,9 +46,18 @@ endFunction
 Event OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer)
 
 	if _RO_UndeadCurseContainers.Find(akSourceContainer.GetBaseObject()) != -1
-		_RO_Quest.Notification("Player collected cursed item")
+		_RO_Note("Player collected cursed item")
 		Actor player = GetActorReference()
 		player.AddSpell(_RO_UndeadCurse, false)
 	endIf
 
 endEvent
+
+
+Function _RO_Note(String text)
+
+	if _RO_Debug.GetValue() == 1
+		Debug.Notification(text)
+	endIf
+
+endFunction

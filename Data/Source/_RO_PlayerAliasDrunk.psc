@@ -3,7 +3,8 @@ Scriptname _RO_PlayerAliasDrunk extends ReferenceAlias
 GlobalVariable Property _RO_Version  Auto
 Float version = 0.0
 
-_RO_QuestScript Property _RO_Quest  Auto
+GlobalVariable Property _RO_Debug  Auto
+
 SPELL Property _RO_DrunkAbility  Auto  
 FormList Property AlcoholicDrinksList  Auto  
 
@@ -25,7 +26,7 @@ Function Maintenance()
 	endIf
 	version = _RO_Version.GetValue()
 	
-	_RO_Quest.Notification("Drunk Maintenance")
+	_RO_Note("Drunk Maintenance")
 
 endFunction
 
@@ -33,8 +34,17 @@ endFunction
 Event OnObjectEquipped(Form akBaseObject, ObjectReference akReference)
 
 	if AlcoholicDrinksList.Find(akBaseObject) != -1
-		_RO_Quest.Notification("Alcohol consumed")
+		_RO_Note("Alcohol consumed")
 		GetActorRef().AddSpell(_RO_DrunkAbility, false)
 	endIf
 
 endEvent
+
+
+Function _RO_Note(String text)
+
+	if _RO_Debug.GetValue() == 1
+		Debug.Notification(text)
+	endIf
+
+endFunction

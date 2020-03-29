@@ -4,7 +4,7 @@ Fjør Tal is a roleplaying overhaul which adds a number of roleplaying and simula
 *** Features ***
 
 Damaged Weapons and Armor:
-Weapons and armor can become damaged and be repaired at a forge.  Only basic and crafted weapons and armor can be damaged.  A weapon may be damaged when striking or parrying an attack. Taking a hit can damage armor.  The player's Immersion and Stamina affect the likelyhood that equipment will be damaged.
+Weapons and armor can become damaged and can be repaired at a forge if you have the required smithing perk.  Only basic and crafted weapons and armor can be damaged.  A weapon may be damaged when striking or parrying an attack while taking a hit can damage armor.
 
 Immersion (Roleplaying Bonus):
 New player stat. When full, the player is granted a bonus to XP earning rate. Immersion resets when the player sleeps.
@@ -17,36 +17,49 @@ Rest while carrying less weight to wake with a higher Immersion value.
 
 Daily Immersion Action:
 Doing any one of the following actions grants a bonus to Immersion until the player sleeps.
+- Eating a food item
 - Sitting for an hour or more (Game Time)
 - Working at a crafting station for an hour or more
 
-Curse of the Undead:
-Taking gold and other treasure from crypts may cuse the player to incur the "Curse of the Undead".  When cursed the player does half damage to undead.
+Curse of the Dead:
+Taking gold and other treasure from crypts may cuse the player to incur the "Curse of the Dead".  When cursed the player does half damage to undead.
 
 Drunkenness:
 New visual effects from drinking alcohol.
 
 Craft Ingots from Arrows:
-Melt down 20 arrows to an ingot of their respective type
+Melt down 20 arrows to an ingot of their respective type.
+
+
+*** Animal Loot Overhaul ***
+
+Animals, such as dear, no longer have treasure in their loot, but now have more meat and their full set of useful body parts. Meat items and cooking recipes have been added for wolves, saber cats, bears, and more. 
+
+
+*** Enemy Poisons Overhaul ***
+
+Enemy poison durations are greatly increased, but damaged is decreased.
+Additional paralysis effect is added to some poison attacks.
+Additional visual effects are added to some poison effects.
+
 
 *** Gameplay Adjustments ***
 
 Reduced TimeScale: 20 >> 10 (Game time progress at half speed)
-Arrow Weight 0.1
-Carry Weight Reduction
+Arrow Weight 0.2
 Bandit equipment remains low level (Fur, Iron, Steel)
 Player Starting Spells: Healing Only
+
 
 *** Enemy Resistance, Weakness, and Ability Increases ***
 
 Atronach (Flame/Frost): Weakness to (Frost/Fire) 33 >> 66
 Atronac (Flame/Frost/Shock): Cloak Spell Damage 10 > 15
 Draugr: Resist Damage 50 (Added)
-Draugr: Resist Frost 50 >> 100
+Draugr: Resist Frost 50 >> 75
 Draugr: Weakness to Magic 33 >> 66 (Added to AbDragr)
 Draugr: Weakness to Fire 50 (Added)
 Dwarven Automatron: Resist Magic 25 >> 50
-Falmer: Blindness 80 >> 90
 Frost Troll: Fortify Combat Heal Rate 1.0 (Added, Less than basic troll ability)
 Frost Troll: Resist Frost 33 >> 66
 Giant: Resist Magic 33 >> 66
@@ -68,18 +81,14 @@ Werewolf: Fortify Health 50 >> 100
 Werewolf: Resist Damage 50 (Added)
 Wisp: Fortify Comat Healing 0.25 >> 0.5
 
-*** Enemy Poisons Overhaul ***
-Enemy poison durations greatly increased, but damaged decreased
-Additional paralysis effect added to some poison attacks
-Additional visual effects added to some poison effects
-
 - DLC Enemies -
 Fire Wym: Weakness to Frost 25 >> 50
 
 
 *** Weapon & Armor Balance ***
+
 Stormcloak Cuirass: Rating 21 >> 23 (To match guard armor rating)
 Stormcloak Helmet: Rating 10 >> 11 (To match guard armor rating)
-Fur Armor(s): Rating 23 >> 18-21 (Reduced rating and weight based on style) 
+Fur Armor(s): Rating 23 >> 18-21 (Reduced armor rating and weight based on style) 
 Fur Boots: Rating 5 >> 6 (to match fur shoes)
 Fur Guantlets: Rating 5 >> 6 (to match fur bracers)

@@ -1,8 +1,10 @@
 Scriptname _RO_PlayerAliasArmorCondition extends ReferenceAlias  
 
-_RO_QuestScript Property _RO_Quest  Auto
+GlobalVariable Property _RO_Debug  Auto
 FormList Property _RO_EquippedArmor  Auto  
 Float Property pDamageBonus = 0.0 Auto
+
+SPELL Property _RO_DestructibleWeaponSpell  Auto  
 
 Event OnObjectEquipped(Form akBaseObject, ObjectReference akReference)
 	
@@ -29,6 +31,7 @@ Event OnHit(ObjectReference akAggressor, Form akSource, Projectile akProjectile,
 	
 	; Ensure a aggressor and a source weapon is given
 	if (!agActor || !sourceWeapon)
+		_RO_Note("Hit without aggressor and weapon")
 		return
 	endIf
 	
@@ -48,6 +51,8 @@ Event OnHit(ObjectReference akAggressor, Form akSource, Projectile akProjectile,
 		_RO_DestructibleArmor shield = target.GetEquippedShield() as _RO_DestructibleArmor
 		if shield
 			HitDestructibleArmor(shield, damageBonus)
+		elseIf target.GetEquippedWeapon() as _RO_DestructibleWeapon
+			_RO_DestructibleWeaponSpell.Cast(target, target)
 		endIf
 	else
 		_RO_DestructibleArmor randArmor = GetRandomDestructibleArmor()
@@ -76,7 +81,7 @@ endFunction
 Function HitDestructibleArmor(_RO_DestructibleArmor akArmor, Float damageBonus = 0.0)
 	
 	if !akArmor
-		_RO_Quest.Notification("No armor given to damage")
+		_RO_Note("No armor given to damage")
 		return
 	endIf
 	
@@ -84,11 +89,20 @@ Function HitDestructibleArmor(_RO_DestructibleArmor akArmor, Float damageBonus =
 	
 	Float damage = Utility.RandomFloat() + damageBonus
 	
-	_RO_Quest.Notification("Hit armor: " + damage)
+	_RO_Note("Hit armor: " + damage)
 	if damage > akArmor.Durability.GetValue()
 		actorRef.UnequipItem(akArmor)
 		actorRef.RemoveItem(akArmor, 1, true)
 		actorRef.EquipItem(akArmor.DamagedArmor, false, true)
+	endIf
+
+endFunction
+
+
+Function _RO_Note(String text)
+
+	if _RO_Debug.GetValue() == 1
+		Debug.Notification(text)
 	endIf
 
 endFunction

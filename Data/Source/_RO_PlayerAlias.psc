@@ -37,7 +37,7 @@ Function Maintenance()
 	endIf
 	version = _RO_Version.GetValue()
 	
-	_RO_Quest.Notification("Player Alias Update")
+	_RO_Note("Player Alias Update")
 	
 	; Clean up invetory event filters
 	RemoveAllInventoryEventFilters()
@@ -80,7 +80,7 @@ Event OnSleepStop(bool abInterrupted)
 			_RO_Roleplaying.SetValue(0)
 		endIf
 		
-		_RO_Quest.Notification("Immersion: " + _RO_Roleplaying.GetValue())
+		_RO_Note("Immersion: " + _RO_Roleplaying.GetValue())
 	endIf
 
 endEvent
@@ -114,7 +114,7 @@ Event OnObjectEquipped(Form akBaseObject, ObjectReference akReference)
 
 	if roleplayingFoodBonusEarned == false
 		roleplayingFoodBonusEarned = true
-		_RO_Quest.Notification("Immersion object equipped")
+		_RO_Note("Immersion object equipped")
 		AddRoleplayingValue(0.25)
 	endIf
 
@@ -125,7 +125,7 @@ Function AddRoleplayingValue(Float aValue)
 
 	if _RO_Roleplaying.GetValue() < 1.0
 		_RO_Roleplaying.Mod(aValue)
-		_RO_Quest.Notification("Immersion added: " + aValue + " >> " + _RO_Roleplaying.GetValue())
+		_RO_Note("Immersion added: " + aValue + " >> " + _RO_Roleplaying.GetValue())
 
 		if _RO_Roleplaying.GetValue() >= 1.0
 			; Apply roleplaying bonus for the day
@@ -136,3 +136,11 @@ Function AddRoleplayingValue(Float aValue)
 
 endFunction
 
+
+Function _RO_Note(String text)
+
+	if _RO_Debug.GetValue() == 1
+		Debug.Notification(text)
+	endIf
+
+endFunction

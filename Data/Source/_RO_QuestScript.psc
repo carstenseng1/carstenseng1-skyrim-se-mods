@@ -5,7 +5,7 @@ Float version = 0.0
 
 GlobalVariable Property _RO_Debug  Auto
 
-SPELL[] Property DefaultSpells  Auto
+SPELL Property _RO_SettingsSpell  Auto
 Perk Property _RO_DestructibleWeaponPerk  Auto
 
 
@@ -19,18 +19,14 @@ Function Maintenance()
 	if version != 0.0 && version == _RO_Version.GetValue()
 		return
 	endIf
-	
 	version = _RO_Version.GetValue()
+	
 	Debug.Notification("Fjør Tall v" + version)
 	
 	Actor player = Game.GetPlayer()
-	
+
 	; Add default spells
-	Int i = 0
-	While i < DefaultSpells.Length
-		player.AddSpell(DefaultSpells[i], false)
-		i = i + 1	
-	endWhile
+	player.AddSpell(_RO_SettingsSpell, false)
 	
 	; Enable destructible weapons
 	player.AddPerk(_RO_DestructibleWeaponPerk)
@@ -38,7 +34,7 @@ Function Maintenance()
 endFunction
 
 
-Function Notification(String text)
+Function _RO_Note(String text)
 
 	if _RO_Debug.GetValue() == 1
 		Debug.Notification(text)

@@ -3,7 +3,8 @@ Scriptname _RO_PlayerAliasArrowWeight extends ReferenceAlias
 GlobalVariable Property _RO_Version  Auto
 Float version = 0.0
 
-_RO_QuestScript Property _RO_Quest  Auto
+GlobalVariable Property _RO_Debug  Auto
+
 FormList Property _RO_ArrowList Auto
 MiscObject Property _RO_ArrowWeight Auto
 
@@ -25,7 +26,7 @@ Function Maintenance()
 	endIf
 	version = _RO_Version.GetValue()
 
-	_RO_Quest.Notification("Arrow Weight Maintenance")
+	_RO_Note("Arrow Weight Maintenance")
 	
 	RemoveAllInventoryEventFilters()
 	AddInventoryEventFilter(_RO_ArrowList)
@@ -46,13 +47,22 @@ Event OnUpdate()
 	; Add weights based on the number of arrows
 	GetActorRef().AddItem(_RO_ArrowWeight, GetActorRef().GetItemCount(_RO_ArrowList), true)
 	
-	_RO_Quest.Notification("Arrow Weight " + GetActorRef().GetItemCount(_RO_ArrowWeight))
+	_RO_Note("Arrow Weight " + GetActorRef().GetItemCount(_RO_ArrowWeight))
 
 endEvent
 
 
 Event OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer)
 
+	; Inventory event filter should prevent anything but arrows sending this event, but just in case
+	if _RO_ArrowList.Find(akBaseItem) == -1
+		return
+	endIf
+	
+	; Add weights based on the number of arrows for immediate update
+	GetActorRef().AddItem(_RO_ArrowWeight, aiItemCount, true)
+
+	; Register for a full update to correct any mismatch between arrow count and weight
 	RegisterForSingleUpdate(1)
 
 endEvent
@@ -60,6 +70,24 @@ endEvent
 
 Event OnItemRemoved(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akDestContainer)
 
+	; Inventory event filter should prevent anything but arrows sending this event, but just in case
+	if _RO_ArrowList.Find(akBaseItem) == -1
+		return
+	endIf
+	
+	; Remove weights based on the number of arrows for immediate update
+	GetActorRef().RemoveItem(_RO_ArrowWeight, aiItemCount, true)
+
+	; Register for a full update to correct any mismatch between arrow count and weight
 	RegisterForSingleUpdate(1)
 
 endEvent
+
+
+Function _RO_Note(String text)
+
+	if _RO_Debug.GetValue() == 1
+		Debug.Notification(text)
+	endIf
+
+endFunction
