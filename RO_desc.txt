@@ -30,6 +30,8 @@ New visual effects from drinking alcohol.
 Craft Ingots from Arrows:
 Melt down 20 arrows to an ingot of their respective type.
 
+Carry Weight Settings Menu:
+Adjust your maximum Carry Weight
 
 *** Animal Loot Overhaul ***
 
