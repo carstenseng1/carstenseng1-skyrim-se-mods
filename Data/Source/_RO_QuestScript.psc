@@ -6,6 +6,7 @@ Float version = 0.0
 GlobalVariable Property _RO_Debug  Auto
 
 SPELL Property _RO_SettingsSpell  Auto
+SPELL Property _RO_LastStandAbility  Auto
 Perk Property _RO_DestructibleWeaponPerk  Auto
 
 
@@ -15,6 +16,8 @@ endEvent
 
 
 Function Maintenance()
+	
+	bool isDebugMode = _RO_Debug.GetValue()
 	
 	if version != 0.0 && version == _RO_Version.GetValue()
 		return
@@ -26,7 +29,8 @@ Function Maintenance()
 	Actor player = Game.GetPlayer()
 
 	; Add default spells
-	player.AddSpell(_RO_SettingsSpell, false)
+	player.AddSpell(_RO_SettingsSpell, isDebugMode)
+	player.AddSpell(_RO_LastStandAbility, isDebugMode)
 	
 	; Enable destructible weapons
 	player.AddPerk(_RO_DestructibleWeaponPerk)
