@@ -56,7 +56,7 @@ Function Maintenance()
 	AddInventoryEventFilter(_RO_FoodList)
 	
 	if hasInitialized == true
-		UpdateHunger()
+		SetNutrition(nutrition)
 	else
 		hasInitialized = true
 		SetNutrition(nutritionInitValue)
@@ -65,44 +65,71 @@ Function Maintenance()
 endFunction
 
 
+Event OnUpdateGameTime()
+
+    ModNutrition(-GetNutritionUsage())
+
+endEvent
+
+
 Event OnObjectEquipped(Form akBaseObject, ObjectReference akReference)
 
+	int nutritionValueIndex = -1
+	
 	; Debug.Notification("Equipped " + akBaseObject)
 	if  _RO_FoodListExtraLarge.Find(akBaseObject) >= 0
 		_RO_Note("Food Consumed: Extra Large")
-		AddNutrition(NutritionValue[4])
+		nutritionValueIndex = 4
 	elseIf  _RO_FoodListLarge.Find(akBaseObject) >= 0
 		_RO_Note("Food Consumed: Large")
-		AddNutrition(NutritionValue[3])
+		nutritionValueIndex = 3
 	elseIf  _RO_FoodList.Find(akBaseObject) >= 0
 		_RO_Note("Food Consumed: Small")
-		AddNutrition(NutritionValue[2])
+		nutritionValueIndex = 2
 	elseIf _RO_FoodListSmall.Find(akBaseObject) >= 0
 		_RO_Note("Food Consumed: Standard")
-		AddNutrition(NutritionValue[1])
+		nutritionValueIndex = 1
 	elseIf  _RO_FoodListDrink.Find(akBaseObject) >= 0
 		_RO_Note("Food Consumed: Drink")
-		AddNutrition(NutritionValue[0])
+		nutritionValueIndex = 0
+	endIf
+	
+	if nutritionValueIndex >= 0
+		; Get the nutrition value change based on the food size
+		float nutritionChange = NutritionValue[nutritionValueIndex]
+		
+		; Reduce value change by nutrition used
+		nutritionChange = nutritionChange - GetNutritionUsage()
+		
+		; Make the adjustment
+		ModNutrition(nutritionChange, true)
+		
+		; Notify player when full
+		if nutrition >= nutritionMax
+			Debug.Notification("You are completely full.")
+		endIf
 	endIf
 
 endEvent
 
 
-Function AddNutrition(float aValue)
+float Function GetNutritionUsage()
+
+	float nutritionUsage = nutritionLossPerDay * (Utility.GetCurrentGameTime() -  lastUpdateTime)
+	return nutritionUsage
+
+endFunction
+
+
+Function ModNutrition(float aValue, bool isEating = false)
 	
 	_RO_Note("Added " + aValue + " Nutrition")
 	
-	float nutritionUsage = nutritionLossPerDay * (Utility.GetCurrentGameTime() -  lastUpdateTime)
-	float newNutrition = nutrition - nutritionUsage + aValue
-	
-	if (newNutrition < minNutritionAfterEating)
+	float newNutrition = nutrition + aValue
+
+	; Apply lower limit if this modification to nutrition is from eating
+	if (isEating && newNutrition < minNutritionAfterEating)
 		newNutrition = minNutritionAfterEating
-	endIf
-	
-	; Limit nutrition to the maximum nutrition value
-	if (newNutrition >= nutritionMax)
-		Debug.Notification("You are completely full.")
-		newNutrition = nutritionMax
 	endIf
 	
 	SetNutrition(newNutrition)
@@ -122,6 +149,10 @@ Function SetNutrition(float aValue)
 	; Set nutrition and keep track of the time that this update occurred
 	nutrition = aValue
 	lastUpdateTime = Utility.GetCurrentGameTime()
+	
+	; Register to be notified every in-game hour
+	UnregisterForUpdateGameTime()
+	RegisterForUpdateGameTime(1.0)
 	
 	_RO_Note("Updated nutrition is " + nutrition )
 

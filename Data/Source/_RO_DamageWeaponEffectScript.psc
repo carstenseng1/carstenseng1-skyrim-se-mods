@@ -70,11 +70,6 @@ Function DamageWeapon(Actor akTarget, _RO_DestructibleWeapon akWeapon)
 			i += 1
 		endWhile
 	endIf
-	
-	; Chance to drop weapon 
-	;if Utility.RandomFloat() < 0.25 + 0.5 * staminaPercentage
-	;	akTarget.DropObject(akTarget.GetEquippedWeapon())
-	;endIf
 
 endFunction
 
