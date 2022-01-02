@@ -2,6 +2,8 @@ Fjør Tal is a roleplaying overhaul which adds a number of roleplaying and simula
 
 Compatible with Skyrim Anniversary Edition Content, including Survival Mode.
 
+Requires Skyrim Special Edition v
+
 
 *** Features ***
 
@@ -17,14 +19,11 @@ Taking gold and other treasure from crypts may cause the player to incur the "Cu
 Drunkenness:
 New visual effects from drinking alcohol.
 
-Craft Ingots from Arrows:
-Melt down 20 arrows to an ingot of their respective type.
-
 Carry Weight Settings Menu:
 Adjust your maximum Carry Weight
 
 Immersion (Roleplaying Bonus):
-New player stat. When full, the player is granted a bonus to XP earning rate. Immersion resets when the player sleeps.
+New player stat that is gained through performing roleplaying actions. When full, the player is granted a bonus to XP earning rate. Immersion resets when the player sleeps.
 
 Sit and Talk:
 Sit when talking to characters to have better chances to succeed with persuasion attempts, better prices with vendors, and earn extra Speechcraft XP from conversations.
@@ -36,13 +35,20 @@ Daily Immersion Action:
 Doing any one of the following actions grants a bonus to Immersion until the player sleeps.
 - Eating a food item
 - Sitting for an hour or more (Game Time)
-- Working at a crafting station for an hour or more
+- Working at a crafting station for an hour or more (Game Time)
 
 
 *** Gameplay Adjustments ***
 
 Reduced TimeScale: 20 >> 10 (Game time progress at half speed)
 No Starting Spells (Find Healing in Introduction Quest)
+
+
+*** New Items ***
+
+Silver Arrows
+Damaged versions of basic weapons and armor
+Broken pieces of some weapon types
 
 
 *** Animal Loot Overhaul ***
@@ -59,9 +65,12 @@ Additional visual effects are added to some poison effects.
 
 
 *** Enemy spells and inventory ***
+
 Bandit equipment remains low level (Fur, Iron, Steel)
 High level bandits use tempered versions of basic equipment rather than more valuable equipment.
 Draugr bosses have new summoning abilities.
+Silver Hand Weapons include damaged and tempered silver weapons
+
 
 *** Enemy Resistance, Weakness, and Ability Increases ***
 
@@ -97,10 +106,30 @@ Wisp: Fortify Comat Healing 0.25 >> 0.5
 Fire Wym: Weakness to Frost 25 >> 50
 
 
-*** Weapon & Armor Balance ***
+*** Armor Adjustments ***
 
 Stormcloak Cuirass: Rating 21 >> 23 (To match guard armor rating)
 Stormcloak Helmet: Rating 10 >> 11 (To match guard armor rating)
 Fur Armor(s): Rating 23 >> 18-21 (Reduced armor rating and weight based on style)
 Fur Boots: Rating 5 >> 6 (to match fur shoes)
 Fur Guantlets: Rating 5 >> 6 (to match fur bracers)
+Wolf Armor Warmth (Survival Mode): Default >> Warm
+
+
+*** Crafting Recipes & Adjustments ***
+
+Crafting Jewelry now requires Arcane Blacksmith perk
+Skyforge Steel Dagger can be tempered
+Craft Ingots from Arrows: Melt down 24 arrows to an ingot of their respective type (Matches Dawnguard DLC arrow crafting count)
+Craft Silver Arrows (New Item with this mod): 1 Silver Ingot, 1 Firewood >> 24 Silver Arrows
+Temper Silver Weapons
+Craft 2 Steel Ingots: 1 Iron Ingot and 1 Corundum Ingot
+
+
+*****************************
+*** WORK IN PROGRESS ***
+*****************************
+NOTE:
+This mod is a work in progress and upcoming changes may affect compatibility with other mods. Keep an eye on these upcoming changes to ensure other mods you may be using will remain compatible with Fjør Tal (Tale of Life).
+
+Heat exhaustion debilitation for Survival Mode

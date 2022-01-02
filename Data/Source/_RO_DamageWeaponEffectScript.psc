@@ -4,6 +4,7 @@ GlobalVariable Property _RO_Debug  Auto
 
 Bool Property pIsBash = false  Auto
 Float Property pStaminaFactor = 0.0  Auto
+SPELL Property _RO_TimeSlowdownShort  Auto 
 
 
 Event OnEffectStart(Actor akTarget, Actor akCaster)
@@ -17,61 +18,77 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
 		return
 	endIf
 	
-	; Find weapon to hit
-	; Choose between left or right hand weapon when dual wielding
-	_RO_DestructibleWeapon rhWeapon =  player.GetEquippedWeapon() as _RO_DestructibleWeapon
-	_RO_DestructibleWeapon lhWeapon =  player.GetEquippedWeapon(true) as _RO_DestructibleWeapon
-	_RO_DestructibleWeapon hitWeapon
-	if rhWeapon && lhWeapon
-		; 3 : 2 odds to hit right vs. left
-		if Utility.RandomInt(1, 5) <= 3
-			hitWeapon = rhWeapon
+	Weapon weaponRH = player.GetEquippedWeapon()
+	Weapon weaponLH = player.GetEquippedWeapon(true)
+	Weapon hitWeapon = NONE
+	Bool isLeftHand = false
+	
+	; Select a weapon to attempt to possibly damage
+	if weaponRH && weaponLH
+		if Utility.RandomInt(0,1) == 0
+			hitWeapon = weaponRH
 		else
-			hitWeapon = lhWeapon
+			hitWeapon = weaponLH
+			isLeftHand = true
 		endIf
-	elseIf rhWeapon
-		hitWeapon = rhWeapon
-	elseIf lhWeapon
-		hitWeapon = lhWeapon
+	elseIf weaponRH
+		hitWeapon = weaponRH
+	elseIf weaponLH
+		hitWeapon = weaponLH
+		isLeftHand = true
+	else
+		_RO_Note("No weapon found to damage")
+		return;
 	endIf
 	
-	if hitWeapon
-		DamageWeapon(player, hitWeapon)
+	_RO_DestructibleWeapon destructibleWeapon = hitWeapon as _RO_DestructibleWeapon
+	if !destructibleWeapon
+		_RO_Note("Weapon is not destructible: " + hitWeapon)
+		return
 	endIf
 	
-endEvent
-
-
-Function DamageWeapon(Actor akTarget, _RO_DestructibleWeapon akWeapon)
-
 	; Get random base factor to damage weapon
 	Float damage = Utility.RandomFloat()
 	
 	; Stamina effect on chance to damage weapon
-	Float staminaDamageBonus = pStaminaFactor * (1.0 - akTarget.GetActorValuePercentage("Stamina"))
+	Float staminaDamageBonus = pStaminaFactor * (1.0 - player.GetActorValuePercentage("Stamina"))
 	
 	; Get weapon durability
-	Float durability = akWeapon.Durability.GetValue()
+	Float durability = destructibleWeapon.Durability.GetValue()
 	
 	_RO_Note("Hit Weapon " + damage + staminaDamageBonus + "  Durability " + durability)
 	if damage + staminaDamageBonus > durability
+		; Unequip all weaons to eliminate buggy ObjectReference weirdness
+		if weaponRH
+			player.UnequipItem(weaponRH, false, true)
+		endIf
+		if weaponLH
+			player.UnequipItem(weaponLH, false, true)
+		endIf
+		
 		; Remove the weapon
-		akTarget.RemoveItem(akWeapon, 1, true)
-
-		; Equip the damaged version if available
-		if akWeapon.damagedWeapon
-			akTarget.EquipItem(akWeapon.damagedWeapon, false, true)
+		player.RemoveItem(destructibleWeapon, 1, true)
+		
+		; Add the damaged version if available
+		Weapon damagedWeapon = destructibleWeapon.damagedWeapon
+		if damagedWeapon
+			player.AddItem(damagedWeapon, 1, true)
 		endIf
 		
 		; Add broken parts to inventory
 		Int i = 0
-		While i < akWeapon.BrokenItems.Length
-			akTarget.AddItem(akWeapon.BrokenItems[i], 1, true)
+		While i < destructibleWeapon.BrokenItems.Length
+			player.AddItem(destructibleWeapon.BrokenItems[i], 1, true)
 			i += 1
 		endWhile
+		
+		; Notify player the weapon was damaged
+		Debug.Notification("Your weapon is damaged")
+		_RO_TimeSlowdownShort.Cast(Player)
 	endIf
 
-endFunction
+endEvent
+
 
 Function _RO_Note(String text)
 

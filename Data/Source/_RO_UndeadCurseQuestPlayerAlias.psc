@@ -1,4 +1,6 @@
-Scriptname _RO_PlayerAliasUndeadCurse extends ReferenceAlias  
+Scriptname _RO_UndeadCurseQuestPlayerAlias extends ReferenceAlias  
+{Player Alias script to manage Undead Curse}
+
 
 GlobalVariable Property _RO_Version  Auto
 Float version = 0.0

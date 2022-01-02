@@ -1,4 +1,6 @@
-Scriptname _RO_PlayerAliasDrunk extends ReferenceAlias  
+Scriptname _RO_DrunkQuestPlayerAlias extends ReferenceAlias  
+{Player Alias script to manage drunk effect}
+
 
 GlobalVariable Property _RO_Version  Auto
 Float version = 0.0

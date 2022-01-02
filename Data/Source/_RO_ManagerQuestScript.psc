@@ -1,4 +1,6 @@
-Scriptname _RO_QuestScript extends Quest  
+Scriptname _RO_ManagerQuestScript extends Quest  
+{Quest script for managing main essential features of Roleplaying Overhaul}
+
 
 GlobalVariable Property _RO_Version  Auto
 Float version = 0.0
@@ -17,17 +19,16 @@ endEvent
 
 Function Maintenance()
 	
-	bool isDebugMode = _RO_Debug.GetValue()
-	
 	if version != 0.0 && version == _RO_Version.GetValue()
 		return
 	endIf
 	version = _RO_Version.GetValue()
 	
-	Debug.Notification("Fjør Tall v" + version)
+	_RO_Note("Fjør Tall v" + version)
 	
 	Actor player = Game.GetPlayer()
-
+	bool isDebugMode = _RO_Debug.GetValue()
+	
 	; Add default spells
 	player.AddSpell(_RO_SettingsSpell, isDebugMode)
 	player.AddSpell(_RO_LastStandAbility, isDebugMode)

@@ -1,16 +1,18 @@
-Scriptname _RO_PlayerAlias extends ReferenceAlias  
+Scriptname _RO_ManagerQuestPlayerAlias extends ReferenceAlias  
+{Player Alias script for capturing player events and managing essential features of Roleplaying Overhaul}
+
 
 GlobalVariable Property _RO_Version  Auto
 Float version = 0.0
 
-_RO_QuestScript Property _RO_Quest  Auto  
+_RO_ManagerQuestScript Property _RO_ManagerQuest  Auto  
 GlobalVariable Property _RO_Debug Auto
 
 GlobalVariable Property _RO_Roleplaying  Auto
 GlobalVariable Property GameHour  Auto
 SPELL Property _RO_RoleplayingSpell Auto
 
-SPELL Property sitSpell Auto
+SPELL Property _RO_SittingSpell Auto
 Bool roleplayingSitBonusEarned = false
 
 Bool roleplayingFoodBonusEarned = true
@@ -25,7 +27,7 @@ endEvent
 
 
 Event OnPlayerLoadGame()
-	_RO_Quest.Maintenance()
+	_RO_ManagerQuest.Maintenance()
 	Maintenance()
 endEvent
 
@@ -66,18 +68,13 @@ Event OnSleepStop(bool abInterrupted)
 		roleplayingSitBonusEarned = false
 		roleplayingFoodBonusEarned = false
 		
-		Actor player = Game.GetPlayer()
+		Actor player = GetActorRef()
 		player.removeSpell(_RO_RoleplayingSpell)
 		Float carryWeightPercent =  player.GetActorValue("InventoryWeight") / player.GetActorValue("CarryWeight")
 		
-		if carryWeightPercent < 0.25
-			_RO_Roleplaying.SetValue(0.5)
+		_RO_Roleplaying.SetValue(1.0 - carryWeightPercent)
+		if carryWeightPercent < 0.5
 			Debug.Notification("Unencumbered rest")
-		elseIf carryWeightPercent < 0.5
-			_RO_Roleplaying.SetValue(0.25)
-			Debug.Notification("Unencumbered rest")
-		else
-			_RO_Roleplaying.SetValue(0)
 		endIf
 		
 		_RO_Note("Immersion: " + _RO_Roleplaying.GetValue())
@@ -90,7 +87,7 @@ Float sitGameHour = 0.0
 
 Event OnSit(ObjectReference akFurniture)
 
-	Game.GetPlayer().AddSpell(sitSpell, false)
+	Game.GetPlayer().AddSpell(_RO_SittingSpell, false)
 	sitGameHour = GameHour.GetValue() ; Get game time
 
 endEvent
@@ -105,7 +102,7 @@ Event OnGetUp(ObjectReference akFurniture)
 	endIf
 	
 	sitGameHour = 0
-	Game.GetPlayer().RemoveSpell(sitSpell)
+	Game.GetPlayer().RemoveSpell(_RO_SittingSpell)
 
 endEvent
 
@@ -122,16 +119,20 @@ endEvent
 
 
 Function AddRoleplayingValue(Float aValue)
+	
+	; Don't add 0 or negative values
+	; Limit roleplaying value to 1.0
+	if aValue <=0 || _RO_Roleplaying.GetValue() >= 1.0
+		return
+	endIf
+	
+	_RO_Roleplaying.Mod(aValue)
+	_RO_Note("Immersion added: " + aValue + " >> " + _RO_Roleplaying.GetValue())
 
-	if _RO_Roleplaying.GetValue() < 1.0
-		_RO_Roleplaying.Mod(aValue)
-		_RO_Note("Immersion added: " + aValue + " >> " + _RO_Roleplaying.GetValue())
-
-		if _RO_Roleplaying.GetValue() >= 1.0
-			; Apply roleplaying bonus for the day
-			Game.GetPlayer().AddSpell(_RO_RoleplayingSpell, false)
-			Debug.Notification("You are better prepared for the day.")
-		endIf
+	if _RO_Roleplaying.GetValue() >= 1.0
+		; Apply roleplaying bonus for the day
+		GetActorRef().AddSpell(_RO_RoleplayingSpell, false)
+		Debug.Notification("You are better prepared for the day.")
 	endIf
 
 endFunction
