@@ -3,15 +3,16 @@ Scriptname _RO_DestructibleArmorQuestPlayerAlias extends ReferenceAlias
 
 
 GlobalVariable Property _RO_Version  Auto
-Float version = 0.0
+Int version = 0
 
 GlobalVariable Property _RO_Debug  Auto
 
 FormList Property _RO_EquippedArmor  Auto  
-Float Property pDamageBonus = 0.0 Auto
+Float Property pNormalDamageBase = 0.0  Auto
+Float Property pPowerAttackDamageBase = 0.0  Auto
 SPELL Property _RO_DestructibleWeaponSpell  Auto  
 
-ObjectReference equippedShield
+Armor equippedShield
 
 
 Event OnInit()
@@ -19,20 +20,16 @@ Event OnInit()
 endEvent
 
 Event OnPlayerLoadGame()
-	Maintenance()
+	if version == 0 || version != _RO_Version.GetValueInt()
+		Maintenance()
+	endIf
 endEvent
 
 Function Maintenance()
 	
-	bool isDebugMode = _RO_Debug.GetValue()
-	
-	if version != 0.0 && version == _RO_Version.GetValue()
-		return
-	endIf
-	version = _RO_Version.GetValue()
-	
 	_RO_Note("Fjør Tall: Destructible Armor Maintenance")
-
+	version = _RO_Version.GetValueInt()
+	
 	; Remove all tracked destructible armor
 	_RO_EquippedArmor.Revert()
 	equippedShield = NONE
@@ -43,36 +40,44 @@ endFunction
 Event OnObjectEquipped(Form akBaseObject, ObjectReference akReference)
 	
 	; Ensure the equipped item is Armor
-	if !akBaseObject as Armor
+	Armor equippedArmor = akBaseObject as Armor
+	if !equippedArmor
 		return
 	endIf
 	
-	; Store the ObjectReference for the equipped Armor
+	; Wait to ensure the armor/shield registers as equipped for further checks
+	Utility.Wait(0.1)
+	
+	; Store the Base Object for the equipped Armor since the reference is not persistent
 	Actor actorRef = self.GetActorRef() as Actor
-	if akBaseObject == actorRef.GetEquippedShield()
-		equippedShield = akReference
+	if equippedArmor == actorRef.GetEquippedShield()
+		equippedShield = equippedArmor
+		_RO_Note("Shield equipped")
 	else
-		_RO_EquippedArmor.AddForm(akReference)
+		_RO_EquippedArmor.AddForm(equippedArmor)
+		_RO_Note("Armor equipped")
 	endIf
 
 endEvent
 
 
 Event OnObjectUnequipped(Form akBaseObject, ObjectReference akReference)
-
-	; Remove both Base Object and Reference from tracking lists
-	; Old versions of this script used Base Object while newer versions use Reference
-	; Removing both ensures cleanup
+	
+	; Ensure the equipped item is Armor
+	if !(akBaseObject as Armor)
+		return
+	endIf
+	
+	; Remove Armor from tracking lists
 	if _RO_EquippedArmor.HasForm(akBaseObject)
 		_RO_EquippedArmor.RemoveAddedForm(akBaseObject)
-	endIf
-	if _RO_EquippedArmor.HasForm(akReference)
-		_RO_EquippedArmor.RemoveAddedForm(akReference)
+		_RO_Note("Removed armor")
 	endIf
 
-	; Clear reference to equipped shield if the unequipped object reference is the currently tracked shield
-	if akReference == equippedShield
+	; Clear reference to equipped shield if the unequipped object is the currently tracked shield
+	if akBaseObject == equippedShield
 		equippedShield = NONE
+		_RO_Note("Removed shield")
 	endIf
 
 endEvent
@@ -96,71 +101,91 @@ Event OnHit(ObjectReference akAggressor, Form akSource, Projectile akProjectile,
 		return
 	endIf
 	
-	Float damageBonus = pDamageBonus
+	Float damageBase = 0.0
 	if abPowerAttack
-			damageBonus += 0.1
+		damageBase = pPowerAttackDamageBase
+	else
+		damageBase = pNormalDamageBase
 	endIf
 	
 	if abHitBlocked
 		; Hit the equipped shield or weapon used to parry
-		if equippedShield.GetBaseObject() as _RO_DestructibleArmor
-			HitArmor(equippedShield, damageBonus)
+		Armor targetShield = target.GetEquippedShield()
+		if targetShield
+			; Update reference to equippedShield in case it was missed
+			equippedShield = targetShield
+			
+			; Attempt to damage the shield
+			HitArmor(equippedShield as _RO_DestructibleArmor, damageBase)
 		elseIf target.GetEquippedWeapon() as _RO_DestructibleWeapon
+			_RO_Note("Hit weapon from parry")
 			_RO_DestructibleWeaponSpell.Cast(target, target)
 		endIf
 	else
 		; Hit a random piece of armor
-		ObjectReference armorRef = GetRandomDestructibleArmorRef()
-		if armorRef
-			HitArmor(armorRef, damageBonus)
+		_RO_DestructibleArmor randArmor = GetRandomDestructibleArmor()
+		if randArmor
+			HitArmor(randArmor, damageBase)
 		endIf
 	endIf
  
 EndEvent
 
 
-ObjectReference Function GetRandomDestructibleArmorRef()
-
+_RO_DestructibleArmor Function GetRandomDestructibleArmor()
+	
+	; Get a range of indices to check for equipped armor to damage
+	; Use at least 4 to accomodate 4 armor slots
 	Int maxIndex = _RO_EquippedArmor.GetSize() - 1
 	if maxIndex < 4
 		maxIndex = 4
 	endIf
 	
-	; Choose a random ObjectReference from the equipped armor list
-	; If the chosen ObjectReference has a base object that is destructible armor, return the reference
+	; Choose a random Armor from the equipped armor list
 	Int randIndex = Utility.RandomInt(0, maxIndex)
-	ObjectReference ref = _RO_EquippedArmor.GetAt(randIndex) as ObjectReference
-	if ref.GetBaseObject() as _RO_DestructibleArmor
-		return ref
+	Form randForm = _RO_EquippedArmor.GetAt(randIndex)
+		
+	; Abort now if no form was selected
+	if !randForm
+		return NONE
 	endIf
 	
-	; Return NONE if an ObjectReference for a destructible armor was not selected
-	return NONE
+	; Check that the chosen armor is equipped and remove from the list if not
+	if !GetActorRef().isEquipped(randForm)
+		_RO_Note("Hit armor that is not equipped: " + randForm)
+		_RO_EquippedArmor.RemoveAddedForm(randForm)
+		
+		; Abort since we selected an invalid armor
+		return NONE
+	endIf
+	
+	;  Return random armor cast as destructible
+	; Non-destructible armor will return NONE. This is intended.
+	return randForm as _RO_DestructibleArmor
 
 endFunction
 
 
-Function HitArmor(ObjectReference akArmorRef, Float damageBonus = 0.0)
+Function HitArmor(_RO_DestructibleArmor akArmor, Float damageBase = 0.0)
 	
-	; Ensure given ObjectReference is for a destructible armor
-	_RO_DestructibleArmor destructibleArmor = akArmorRef.GetBaseObject() as _RO_DestructibleArmor
-	if !destructibleArmor
-		_RO_Note("No destructible armor ref given to damage")
+	; Validate destructible given armor
+	if !akArmor || !akArmor.DamagedArmor
+		_RO_Note("Hit non-destructible armor")
 		return
 	endIf
 	
-	Actor actorRef = self.GetActorRef() as Actor
-	
-	Float damage = Utility.RandomFloat() + damageBonus
+	Float damage = Utility.RandomFloat() + damageBase
 	
 	_RO_Note("Hit armor: " + damage)
-	if damage > destructibleArmor.Durability.GetValue()
+	if damage > akArmor.Durability.GetValue()
+		Actor actorRef = self.GetActorRef()
+				
 		; Unequip and remove the current armor reference being damaged
-		actorRef.UnequipItem(akArmorRef)
-		actorRef.RemoveItem(akArmorRef, 1, true)
+		actorRef.UnequipItem(akArmor)
+		actorRef.RemoveItem(akArmor, 1, true)
 		
 		; Add and equip the damaged version of the armor
-		actorRef.EquipItem(destructibleArmor.DamagedArmor, false, true)
+		actorRef.EquipItem(akArmor.DamagedArmor, false, true)
 	endIf
 
 endFunction

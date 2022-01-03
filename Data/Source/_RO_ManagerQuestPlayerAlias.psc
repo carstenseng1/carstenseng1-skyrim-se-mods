@@ -3,7 +3,7 @@ Scriptname _RO_ManagerQuestPlayerAlias extends ReferenceAlias
 
 
 GlobalVariable Property _RO_Version  Auto
-Float version = 0.0
+Int version = 0
 
 _RO_ManagerQuestScript Property _RO_ManagerQuest  Auto  
 GlobalVariable Property _RO_Debug Auto
@@ -27,17 +27,16 @@ endEvent
 
 
 Event OnPlayerLoadGame()
-	_RO_ManagerQuest.Maintenance()
-	Maintenance()
+	if version == 0 || version != _RO_Version.GetValueInt()
+		_RO_ManagerQuest.Maintenance()
+		Maintenance()
+	endIf
 endEvent
 
 
 Function Maintenance()
 	
-	if version != 0.0 && version == _RO_Version.GetValue()
-		return
-	endIf
-	version = _RO_Version.GetValue()
+	version = _RO_Version.GetValueInt()
 	
 	_RO_Note("Player Alias Update")
 	

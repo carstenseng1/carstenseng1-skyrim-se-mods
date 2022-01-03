@@ -3,7 +3,7 @@ Scriptname _RO_ManagerQuestScript extends Quest
 
 
 GlobalVariable Property _RO_Version  Auto
-Float version = 0.0
+Int version = 0
 
 GlobalVariable Property _RO_Debug  Auto
 
@@ -11,7 +11,8 @@ SPELL Property _RO_SettingsSpell  Auto
 SPELL Property _RO_LastStandAbility  Auto
 Perk Property _RO_DestructibleWeaponPerk  Auto
 
-
+; Maintenance is only handled in OnInit for initial setup.
+; Update maintenance is handled by the Player Alias with OnPlayerLoadGame event
 Event OnInit()
 	Maintenance()
 endEvent
@@ -19,10 +20,7 @@ endEvent
 
 Function Maintenance()
 	
-	if version != 0.0 && version == _RO_Version.GetValue()
-		return
-	endIf
-	version = _RO_Version.GetValue()
+	version = _RO_Version.GetValueInt()
 	
 	_RO_Note("Fjør Tall v" + version)
 	
