@@ -3,7 +3,7 @@ Scriptname _RO_UndeadCurseQuestPlayerAlias extends ReferenceAlias
 
 
 GlobalVariable Property _RO_Version  Auto
-Float version = 0.0
+Int version = 0
 
 GlobalVariable Property _RO_Debug  Auto
 
@@ -19,16 +19,15 @@ endEvent
 
 
 Event OnPlayerLoadGame()
-	Maintenance()
+	if version == 0 || version != _RO_Version.GetValueInt()
+		Maintenance()
+	endIf
 endEvent
 
 
 Function Maintenance()
 	
-	if version != 0.0 && version == _RO_Version.GetValue()
-		return
-	endIf
-	version = _RO_Version.GetValue()
+	version = _RO_Version.GetValueInt()
 	
 	_RO_Note("Undead Curse Maintenance")
 	

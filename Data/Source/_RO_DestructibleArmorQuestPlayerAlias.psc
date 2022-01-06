@@ -45,17 +45,14 @@ Event OnObjectEquipped(Form akBaseObject, ObjectReference akReference)
 		return
 	endIf
 	
-	; Wait to ensure the armor/shield registers as equipped for further checks
-	Utility.Wait(0.1)
-	
 	; Store the Base Object for the equipped Armor since the reference is not persistent
 	Actor actorRef = self.GetActorRef() as Actor
 	if equippedArmor == actorRef.GetEquippedShield()
 		equippedShield = equippedArmor
-		_RO_Note("Shield equipped")
+		_RO_Note("Shield registered: " + equippedShield.GetFormID())
 	else
 		_RO_EquippedArmor.AddForm(equippedArmor)
-		_RO_Note("Armor equipped")
+		_RO_Note("Armor registered: " + equippedArmor.GetFormID())
 	endIf
 
 endEvent
@@ -71,13 +68,13 @@ Event OnObjectUnequipped(Form akBaseObject, ObjectReference akReference)
 	; Remove Armor from tracking lists
 	if _RO_EquippedArmor.HasForm(akBaseObject)
 		_RO_EquippedArmor.RemoveAddedForm(akBaseObject)
-		_RO_Note("Removed armor")
+		_RO_Note("Armor unregistered: " + akBaseObject.GetFormID())
 	endIf
 
 	; Clear reference to equipped shield if the unequipped object is the currently tracked shield
 	if akBaseObject == equippedShield
 		equippedShield = NONE
-		_RO_Note("Removed shield")
+		_RO_Note("Shield unregistered: " + akBaseObject.GetFormID())
 	endIf
 
 endEvent
@@ -152,7 +149,7 @@ _RO_DestructibleArmor Function GetRandomDestructibleArmor()
 	
 	; Check that the chosen armor is equipped and remove from the list if not
 	if !GetActorRef().isEquipped(randForm)
-		_RO_Note("Hit armor that is not equipped: " + randForm)
+		_RO_Note("Hit armor that is not equipped: " + randForm.GetFormID())
 		_RO_EquippedArmor.RemoveAddedForm(randForm)
 		
 		; Abort since we selected an invalid armor
@@ -170,22 +167,26 @@ Function HitArmor(_RO_DestructibleArmor akArmor, Float damageBase = 0.0)
 	
 	; Validate destructible given armor
 	if !akArmor || !akArmor.DamagedArmor
-		_RO_Note("Hit non-destructible armor")
+		_RO_Note("Hit non-destructible armor: " + akArmor.GetFormID())
 		return
 	endIf
 	
 	Float damage = Utility.RandomFloat() + damageBase
+	Float durability = akArmor.Durability.GetValue()
 	
-	_RO_Note("Hit armor: " + damage)
-	if damage > akArmor.Durability.GetValue()
+	_RO_Note("Hit armor: " + akArmor.GetFormID() + " damage: " + damage + " durability: " + durability)
+	if damage > durability
 		Actor actorRef = self.GetActorRef()
 				
 		; Unequip and remove the current armor reference being damaged
-		actorRef.UnequipItem(akArmor)
+		actorRef.UnequipItem(akArmor, false, true)
 		actorRef.RemoveItem(akArmor, 1, true)
 		
 		; Add and equip the damaged version of the armor
 		actorRef.EquipItem(akArmor.DamagedArmor, false, true)
+		
+		; Message player
+		Debug.Notification("Your armor is damaged")
 	endIf
 
 endFunction

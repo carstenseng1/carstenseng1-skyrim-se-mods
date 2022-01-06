@@ -43,7 +43,11 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
 	
 	_RO_DestructibleWeapon destructibleWeapon = hitWeapon as _RO_DestructibleWeapon
 	if !destructibleWeapon
-		_RO_Note("Weapon is not destructible: " + hitWeapon)
+		if isLeftHand
+			_RO_Note("LH Weapon is not destructible: " + hitWeapon.GetFormID())
+		else
+			_RO_Note("RH Weapon is not destructible: " + hitWeapon.GetFormID())
+		endIf
 		return
 	endIf
 	
@@ -56,23 +60,36 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
 	; Get weapon durability
 	Float durability = destructibleWeapon.Durability.GetValue()
 	
-	_RO_Note("Hit Weapon " + damage + staminaDamageBonus + "  Durability " + durability)
-	if damage + staminaDamageBonus > durability
-		; Unequip all weaons to eliminate buggy ObjectReference weirdness
-		if weaponRH
-			player.UnequipItem(weaponRH, false, true)
-		endIf
-		if weaponLH
-			player.UnequipItem(weaponLH, false, true)
-		endIf
-		
-		; Remove the weapon
+	if isLeftHand
+		_RO_Note("Hit LH Weapon " + damage + staminaDamageBonus + "  Durability " + durability)
+	else
+		_RO_Note("Hit RH Weapon " + damage + staminaDamageBonus + "  Durability " + durability)
+	endIf
+	
+	if damage + staminaDamageBonus > durability	
+		; Unequip and remove the weapon
+		player.UnequipItem(destructibleWeapon, false, true)
 		player.RemoveItem(destructibleWeapon, 1, true)
 		
 		; Add the damaged version if available
 		Weapon damagedWeapon = destructibleWeapon.damagedWeapon
 		if damagedWeapon
+			; Add the damaged version of the weapon
 			player.AddItem(damagedWeapon, 1, true)
+			
+			; Equip the newly added damaged weapon if applicable
+			if isLeftHand
+				if weaponRH
+					; Don't equip the damaged version since it will equip on the right hand
+				else
+					; Equip the damaged version, even though it will switch to the right hand
+					player.EquipItem(damagedWeapon, false, true)
+				endIf
+			else
+				; Equip the damaged weapon to replace the old one in the right hand
+				; This can happen somewhat seemlessly
+				player.EquipItem(damagedWeapon, false, true)
+			endIf
 		endIf
 		
 		; Add broken parts to inventory

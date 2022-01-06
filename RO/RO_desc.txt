@@ -2,7 +2,8 @@ Fjør Tal is a roleplaying overhaul which adds a number of roleplaying and simula
 
 Compatible with Skyrim Anniversary Edition Content, including Survival Mode.
 
-Requires Skyrim Special Edition v
+Requires Skyrim Special Edition with Free Anniversary Edition Update.
+Future versions may require upgrade to Anniversary Edition.
 
 
 *** Features ***
@@ -132,4 +133,11 @@ Craft 2 Steel Ingots: 1 Iron Ingot and 1 Corundum Ingot
 NOTE:
 This mod is a work in progress and upcoming changes may affect compatibility with other mods. Keep an eye on these upcoming changes to ensure other mods you may be using will remain compatible with Fjør Tal (Tale of Life).
 
-Heat exhaustion debilitation for Survival Mode
+Craft simple items in the field
+- Torches
+- Wooden items
+Equip Lanterns
+Light/Extingquish lanterns, torches, and candles
+Ancient Nord weapons damageable and repairable with Smithing perk
+Enhancements to Anniversary Edition content
+- THIS WILL REQUIRE USERS TO HAVE ANNIVERSARY EDITION
