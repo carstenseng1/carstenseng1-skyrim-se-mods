@@ -1,196 +1,130 @@
 Scriptname _PlayerProtection_PlayerAliasScript extends ReferenceAlias  
 
 GlobalVariable Property _player_protection_enabled Auto
-GlobalVariable Property _player_protection_stunEnabled  Auto  
+GlobalVariable Property _player_protection_stunEnabled  Auto
 GlobalVariable Property _player_protection_debugNotifications Auto
+GlobalVariable Property _player_protection_activationHealth  Auto
 
-Actor Property PlayerRef  Auto  
-SPELL Property _PlayerProtectionEnableSpell  Auto  
-SPELL Property _PlayerProtectionDisableSpell  Auto 
+Actor Property PlayerRef  Auto
 Spell Property _PlayerProtectionMassParalysis Auto
+
 Quest Property DGIntimidateQuest Auto
 
-VisualEffect Property DragonAbsorbEffect Auto
-VisualEffect Property DragonAbsorbManEffect Auto
 EffectShader Property DragonPowerAbsorbFXS Auto
 sound property NPCDragonDeathSequenceWind auto
 sound property NPCDragonDeathSequenceExplosion auto
 
-bool reviving
-bool noBleedoutRecovery
 
 Event OnInit()
 	EnableImmortalDragonborn(_player_protection_enabled.GetValue())
 EndEvent
 
-Event OnEnterBleedout()
-	Notification("start bleedout")
-	
-	if (_player_protection_enabled.GetValue() && IsDying())
-		if (GetShouldRevive())
-			Revive(GetShouldCastParalysis())
-		else
-			Notification("death")
-			PlayerRef.KillEssential(NONE)
-		endIf
-	else
-		Notification("normal bleedout")
-		Debug.Notification("You can't continue fighting.")
-	endIf
-endEvent
-
 Event OnUpdate()
+	; Stop updating if mod is disabled
 	if (!_player_protection_enabled.GetValue())
 		Notification("no update: mod is disabled")
-		return
-	endIf
-
-	if (reviving)
-		Notification("no update: reviving")
+		UnregisterForUpdate()
 		return
 	endIf
 	
+	; Don't show immortality if in a menu
 	if (Utility.IsInMenuMode())
 		Notification("no update: menu mode")
 		return
 	endIf
 	
-	UpdateImmortality()
+	; Show immortality if dragon souls > 0
+	if (PlayerRef.GetAV("DragonSouls") > 0)
+		ShowImmortality()
+
+		; Stop updating to show immortality
+		UnregisterForUpdate()
+	endIf
+endEvent
+
+Event OnHit(ObjectReference akAggressor, Form akSource, Projectile akProjectile, bool abPowerAttack, bool abSneakAttack, bool abBashAttack, bool abHitBlocked)
+	
+	Float health = PlayerRef.GetActorValuePercentage("Health")
+	if (health > _player_protection_activationHealth.GetValue())
+		return
+	endIf
+	
+	; Check if mod is enabled
+	if (!_player_protection_enabled.GetValue())
+		return
+	endIf
+
+	; Don't revive if no dragon souls
+	if (PlayerRef.GetAV("DragonSouls") <= 0)
+		Notification("insufficient dragon souls")
+		return
+	endIf
+	
+	; Don't revive if in a killmove
+	if (PlayerRef.IsInKillmove())
+		Notification("player in killmove")
+		return
+	endIf
+
+	; Don't revive when brawling
+	if (DGIntimidateQuest.IsRunning())
+		return
+	endIf
+
+	; All checks passed
+	Notification("Revive")
+	
+	; Display dragon absorb effects
+	DragonPowerAbsorbFXS.Play(PlayerRef, 3.0)
+	
+	; Sounds for dragon absorb
+	NPCDragonDeathSequenceWind.Play(PlayerRef) 
+	NPCDragonDeathSequenceExplosion.Play(PlayerRef)
+	
+	PlayerRef.ModAV("DragonSouls", -1)
+	Debug.Notification("You lost a dragon soul.")
+	
+	PlayerRef.RestoreActorValue("Health", Game.GetPlayer().GetBaseActorValue("Health"))
+	PlayerRef.RestoreActorValue("Magicka", Game.GetPlayer().GetBaseActorValue("Magicka"))
+	PlayerRef.RestoreActorValue("Stamina", Game.GetPlayer().GetBaseActorValue("Stamina"))
+	
+	; Cast the paralysis spell if enabled and in combat
+	if (_player_protection_stunEnabled.GetValue() == 1 && PlayerRef.isInCombat())
+		_PlayerProtectionMassParalysis.Cast(PlayerRef, NONE)
+	endIf
+	
+	; Notify the player of mortality at 0 souls
+	if (PlayerRef.GetAV("DragonSouls") == 0)
+		Debug.Notification("You sense your mortality.")
+	endIf
 endEvent
 
 Function EnableImmortalDragonborn(bool enable)
-
-	if (DGIntimidateQuest.IsRunning())
-		Notification("Cannot enable/disable Immortal Dragonborn while brawling")
-		return
-	endIf
 	
 	if (enable)
 		_player_protection_enabled.SetValue(1)
 		
 		Debug.Notification("Immortal Dragonborn")
-		UpdateImmortality()
-		RegisterForUpdate(60)
-		
-		PlayerRef.RemoveSpell(_PlayerProtectionEnableSpell)
-		PlayerRef.AddSpell(_PlayerProtectionDisableSpell)
+		if (PlayerRef.GetAV("DragonSouls") > 0)
+			ShowImmortality()
+		else
+			; Register for Update to check dragon soul count
+			RegisterForUpdate(60)
+		endIf
 	else
 		_player_protection_enabled.SetValue(0)
 		
 		Debug.Notification("You are mortal.")
-		PlayerRef.GetActorBase().SetEssential(false)
-		PlayerRef.SetNoBleedoutRecovery(false)
 		UnregisterForUpdate()
-		
-		PlayerRef.RemoveSpell(_PlayerProtectionDisableSpell)
-		PlayerRef.AddSpell(_PlayerProtectionEnableSpell)
 	endIf
 	
-	Notification("Immortal Dragonborn enabled:"+enable+" essential:"+PlayerRef.IsEssential())
+	Notification("Immortal Dragonborn enabled:" + enable)
 endFunction
 
-Function UpdateImmortality()
-	if (_player_protection_enabled.GetValue() && PlayerRef.GetAV("DragonSouls") > 0)
-		if (!PlayerRef.IsEssential())
-			PlayerRef.GetActorBase().SetEssential(true)
-			DragonPowerAbsorbFXS.Play(PlayerRef, 8)
-			NPCDragonDeathSequenceWind.play(PlayerRef) 
-			Debug.Notification("A great power stirs within you.")
-		endIf
-	else
-		if (PlayerRef.IsEssential())
-			PlayerRef.GetActorBase().SetEssential(false)
-			Debug.Notification("You sense your mortality.")
-		endIf
-	endIf
-	Notification("UpdateImmortality: essential:"+PlayerRef.IsEssential()+" dragonsouls:"+PlayerRef.GetAV("DragonSouls"))
-endFunction
-
-bool Function IsDying()
-	;Test for brawl first in order to perform manual recovery
-	if (DGIntimidateQuest.IsRunning())
-		Notification("no revive:brawling")
-		Utility.Wait(4)
-		PlayerRef.RestoreActorValue("Health", Game.GetPlayer().GetBaseActorValue("Health")/2)
-		return false
-	endIf
-	
-	if (PlayerRef.GetAV("Health")> 0)
-		Notification("not revive: health > 0")
-		return false
-	endIf
-	
-	Notification("dying")
-	return true
-endFunction
-
-bool Function GetShouldRevive()
-	if (PlayerRef.IsInKillmove())
-		Notification("player in killmove")
-		return false
-	endIf
-	
-	if (PlayerRef.GetAV("DragonSouls") <= 0)
-		Notification("insufficient dragon souls")
-		return false
-	endIf
-	
-	Notification("should revive")
-	return true
-endFunction
-
-bool Function GetShouldCastParalysis()
-	if (_player_protection_stunEnabled.GetValue() == 0)
-		Notification("stun disabled")
-		return false
-	endIf
-	
-	bool ret = true
-	if (!PlayerRef.isInCombat())
-		Notification("stun cancelled: player not in combat")
-		return false
-	endIf
-	
-	Notification("should cast stun")
-	return ret
-endFunction
-
-Function Revive(bool shouldCastParalysis)
-	Notification("start revive")
-	
-	reviving = true
-	noBleedoutRecovery = PlayerRef.GetNoBleedoutRecovery()
-	PlayerRef.SetNoBleedoutRecovery(true)
-	UnregisterForUpdate()
-	
-	;display dragon absorb effects
-	DragonAbsorbEffect.Play(PlayerRef, 8)
-	DragonAbsorbManEffect.Play(PlayerRef, 8)
-	DragonPowerAbsorbFXS.Play(PlayerRef, 8)
-	
-	; Sounds for dragon absorb
+Function ShowImmortality()
+	DragonPowerAbsorbFXS.Play(PlayerRef, 3.0)
 	NPCDragonDeathSequenceWind.play(PlayerRef) 
-	NPCDragonDeathSequenceExplosion.play(PlayerRef)
-	
-	Utility.Wait(4)
-	Notification("finish revive")
-	
-	PlayerRef.SetNoBleedoutRecovery(noBleedoutRecovery)
-	
-	PlayerRef.ModAV("DragonSouls", -1)
-	Debug.Notification("You lost a dragon soul.")
-	
-	PlayerRef.ResetHealthAndLimbs()
-	PlayerRef.RestoreActorValue("Magicka", Game.GetPlayer().GetBaseActorValue("Magicka"))
-	PlayerRef.RestoreActorValue("Stamina", Game.GetPlayer().GetBaseActorValue("Stamina"))
-	
-	if (shouldCastParalysis)
-		_PlayerProtectionMassParalysis.Cast(PlayerRef, NONE)
-	endIf
-	
-	reviving = false
-	UpdateImmortality()
-	RegisterForUpdate(60)
+	Debug.Notification("A great power stirs within you.")
 endFunction
 
 
