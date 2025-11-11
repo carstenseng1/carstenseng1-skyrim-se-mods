@@ -7,17 +7,19 @@ Int version = 0
 
 GlobalVariable Property _RO_Debug  Auto
 
-SPELL Property _RO_LastStandAbility  Auto
+Spell Property _RO_LastStandAbility  Auto
 Perk Property _RO_DestructibleWeaponPerk  Auto
 
 MiscObject Property Gold001  Auto
-Potion Property _RO_DropGoldALC  Auto
+Spell Property _RO_DropGoldSpell  Auto
 
-; Maintenance is only handled in OnInit for initial setup.
-; Update maintenance is handled by the Player Alias with OnPlayerLoadGame event
-Event OnInit()
-	Maintenance()
-endEvent
+Function Notification(String text)
+
+	If _RO_Debug.GetValue() == 1
+		Debug.Notification(text)
+	EndIf
+
+EndFunction
 
 
 Function Maintenance()
@@ -31,39 +33,23 @@ Function Maintenance()
 	
 	; Add default spells
 	player.AddSpell(_RO_LastStandAbility, isDebugMode)
+	player.AddSpell(_RO_DropGoldSpell, isDebugMode)
 	
 	; Enable destructible weapons
 	player.AddPerk(_RO_DestructibleWeaponPerk)
 
-	; Start listening for the Inventory Menu to enable dropping gold
-	RegisterForMenu("InventoryMenu")
-
 EndFunction
 
 
-Function Notification(String text)
-
-	If _RO_Debug.GetValue() == 1
-		Debug.Notification(text)
-	EndIf
-
+Function UpdateDropGoldOption(ObjectReference akRef = NONE)
+	
 EndFunction
 
 
-Event OnMenuOpen(String MenuName)
+; Maintenance is only handled in OnInit for initial setup.
+; Update maintenance is handled by the Player Alias with OnPlayerLoadGame event
+Event OnInit()
+	Maintenance()
+endEvent
 
-	; Add Drop Gold options
-	Actor player = Game.GetPlayer()
-	If (player.GetItemCount(Gold001) >= 100)
-		player.AddItem(_RO_DropGoldALC, 1, true)
-	EndIf
-
-EndEvent
-
-
-Event OnMenuClose(String MenuName)
-
-	Game.GetPlayer().RemoveItem(_RO_DropGoldALC, 1, true)
-
-EndEvent
 
