@@ -10,6 +10,9 @@ GlobalVariable Property _RO_Debug  Auto
 SPELL Property _RO_LastStandAbility  Auto
 Perk Property _RO_DestructibleWeaponPerk  Auto
 
+MiscObject Property Gold001  Auto
+Potion Property _RO_DropGoldALC  Auto
+
 ; Maintenance is only handled in OnInit for initial setup.
 ; Update maintenance is handled by the Player Alias with OnPlayerLoadGame event
 Event OnInit()
@@ -21,7 +24,7 @@ Function Maintenance()
 	
 	version = _RO_Version.GetValueInt()
 	
-	_RO_Note("Fjør Tall v" + version)
+	Notification("Fjør Tall v" + version)
 	
 	Actor player = Game.GetPlayer()
 	bool isDebugMode = _RO_Debug.GetValue()
@@ -32,13 +35,35 @@ Function Maintenance()
 	; Enable destructible weapons
 	player.AddPerk(_RO_DestructibleWeaponPerk)
 
-endFunction
+	; Start listening for the Inventory Menu to enable dropping gold
+	RegisterForMenu("InventoryMenu")
+
+EndFunction
 
 
-Function _RO_Note(String text)
+Function Notification(String text)
 
-	if _RO_Debug.GetValue() == 1
+	If _RO_Debug.GetValue() == 1
 		Debug.Notification(text)
-	endIf
+	EndIf
 
-endFunction
+EndFunction
+
+
+Event OnMenuOpen(String MenuName)
+
+	; Add Drop Gold options
+	Actor player = Game.GetPlayer()
+	If (player.GetItemCount(Gold001) >= 100)
+		player.AddItem(_RO_DropGoldALC, 1, true)
+	EndIf
+
+EndEvent
+
+
+Event OnMenuClose(String MenuName)
+
+	Game.GetPlayer().RemoveItem(_RO_DropGoldALC, 1, true)
+
+EndEvent
+
