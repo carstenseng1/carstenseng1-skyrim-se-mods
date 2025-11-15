@@ -1,0 +1,125 @@
+Fjør Tal is a roleplaying overhaul which adds a number of roleplaying and simulation features as well as other changes for more varied, challenging, and realistic gameplay.
+
+Compatible with Skyrim Anniversary Edition Content, including Survival Mode.
+
+Requires Skyrim Special Edition with Free Anniversary Edition Update.
+Future versions may require upgrade to Anniversary Edition.
+
+
+*** Features ***
+
+Damaged Weapons and Armor:
+Weapons and armor can become damaged. A weapon may be damaged when striking or parrying an attack while taking a hit can damage armor. Equipment degrades 1 tempering level when damaged.
+
+Last Stand:
+When health drops below 25% time slows and damage to the player is reduced in order to enable a Last Stand, extending the most intense action-packed moments of gameplay.
+
+Curse of the Dead:
+Taking gold and other treasure from crypts may cause the player to incur the "Curse of the Dead". When cursed the player does half damage to undead.
+
+Drunkenness:
+New visual effects from drinking alcohol and skooma.
+
+Immersion (Roleplaying Bonus):
+New player stat that is gained through performing roleplaying actions. When full, the player is granted a bonus to XP earning rate. Immersion resets when the player sleeps.
+
+Sit and Talk:
+Sit when talking to characters to have better chances to succeed with persuasion attempts, better prices with vendors, and earn extra Speechcraft XP from conversations.
+
+Unencumbered Rest:
+Rest while carrying less weight to wake with a higher Immersion value.
+
+Daily Immersion Action:
+Doing any one of the following actions grants a bonus to Immersion until the player sleeps.
+- Eating a food item
+- Sitting for an hour or more (Game Time)
+- Working at a crafting station for an hour or more (Game Time)
+
+Gold has weight:
+Each gold piece weighs 0.01 weight. Gold can be dropped with a new power.
+
+
+*** New Items ***
+
+Silver Arrows
+Damaged versions of basic weapons and armor
+Broken pieces of some weapon types
+Cleaned Pelts
+
+
+*** Animal Loot Overhaul ***
+
+Animals, such as dear, no longer have treasure in their loot, but now have more meat and their full set of useful body parts.
+Meat items and cooking recipes have been added for wolves, saber cats, bears, and more.
+
+
+*** Enemy Poisons Overhaul ***
+
+Enemy poison durations are greatly increased, but damaged is decreased.
+Additional paralysis effect is added to some poison attacks.
+Additional visual effects are added to some poison effects.
+
+
+*** Enemy spells and inventory ***
+
+Bandit equipment remains low level (Fur, Iron, Steel)
+High level bandits use tempered versions of basic equipment rather than more valuable equipment.
+Draugr bosses have new summoning abilities.
+Silver Hand Weapons include damaged and tempered silver weapons
+Thalmor use primarily Elven weapons
+
+
+*** Enemy Resistance, Weakness, and Ability Increases ***
+
+Atronach (Flame/Frost): Weakness to (Frost/Fire) 33 >> 66
+Atronac (Flame/Frost/Shock): Cloak Spell Damage 10 > 15
+Draugr: Resist Damage 66 (Added)
+Draugr: Resist Frost 50 >> 75
+Draugr: Weakness to Magic 33 >> 66 (Added to AbDragr)
+Draugr: Weakness to Fire 50 (Added)
+Dwarven Automatron: Resist Magic 25 >> 50
+Frost Troll: Fortify Combat Heal Rate 1.0 (Added, Less than basic troll ability)
+Frost Troll: Resist Frost 33 >> 66
+Giant: Resist Magic 33 >> 66
+Horker: Resist Frost 50 >> 75
+Ice Wolf: Resist Frost 50 >> 75
+Ice Wraith : Weakness to Fire 25 >> 50
+Lurker: Resist Magic 25 >> 50
+Mammoth: Resist Frost 33 >> 66
+Skeleton: Resist Frost 25 >> 50
+Snow Bear: Resist Frost 50 >> 75
+Snow Sabercat: Resist Frost 50 >> 75
+Spider (Fostbite/Giant/Large): Resist Frost 50 >> 75
+Spriggan: Weakness to Fire 33 >> 66
+Spriggan: Fortify Combat Heal Rate 0.5 (Added)
+Troll: Fortify Combat Heal Rate 0.5 >> 2.0
+Troll (Normal/Frost): Weakness to Fire 50 >> 75
+Vampire (Creature): Resist Frost, Weakness to Fire 50 >> 75
+Werewolf: Fortify Health 50 >> 100
+Werewolf: Resist Damage 50 (Added)
+Wisp: Fortify Comat Healing 0.25 >> 0.5
+
+- DLC Enemies -
+Fire Wym: Weakness to Frost 25 >> 50
+
+
+*** Armor Adjustments ***
+
+Stormcloak Cuirass: Rating 21 >> 23 (To match guard armor rating)
+Stormcloak Helmet: Rating 10 >> 11 (To match guard armor rating)
+Fur Armor(s): Rating 23 >> 18-21 (Reduced armor rating and weight based on style)
+Fur Boots: Rating 5 >> 6 (to match fur shoes)
+Fur Guantlets: Rating 5 >> 6 (to match fur bracers)
+Wolf Armor Warmth (Survival Mode): Default >> Warm
+
+
+*** Crafting Recipes & Adjustments ***
+
+Material weights and crafting recipes adjusted so results never weigh more than source materials
+Skyforge Steel Dagger can be tempered
+Craft Ingots from Arrows: Melt down 24 arrows to an ingot of their respective type (Matches Dawnguard DLC arrow crafting count)
+Craft Silver Arrows (New Item with this mod): 1 Silver Ingot, 1 Firewood >> 24 Silver Arrows
+Temper Silver Weapons
+Steel Ingots from Iron and Corundum Ingots
+Fur Armor can be crafted from Cleaned Pelts at a blacksmithing station
+Cleaned Pelts can be crafted from animal pelts at a tanning rack
