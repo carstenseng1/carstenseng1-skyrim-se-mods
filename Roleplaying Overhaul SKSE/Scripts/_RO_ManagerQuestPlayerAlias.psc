@@ -20,7 +20,6 @@ FormList Property _RO_FoodList  Auto
 
 Perk Property _RO_DestructibleWeaponPerk  Auto  
 
-
 Event OnInit()
 	Maintenance()
 endEvent

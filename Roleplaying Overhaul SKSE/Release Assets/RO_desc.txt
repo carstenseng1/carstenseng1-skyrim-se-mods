@@ -38,6 +38,12 @@ Doing any one of the following actions grants a bonus to Immersion until the pla
 Gold has weight:
 Each gold piece weighs 0.01 weight. Gold can be dropped with a new power.
 
+Backpacks slow movement:
+Wearing a backpack reduces the player movement speed 20%
+
+Gradual Encumbrance:
+Movement speed is reduced at various intervals of encumbrance. Inventory weight at 50% of carry weight causes a 10% movement speed reduction. This increases to 20% speed reduction at 75% of carry weight and 30% speed reduction at 90% of carry weight. The inventory weight ignores the weight of worn armor since armor weight already has an inherent movement speed penalty.
+
 
 *** New Items ***
 
