@@ -2,17 +2,11 @@ Scriptname _RO_DestructibleArmorQuestPlayerAlias extends ReferenceAlias
 {PlayerAlias script to manage destructible armor}
 
 
-GlobalVariable Property _RO_Version  Auto
-Int version = 0
-
-GlobalVariable Property _RO_Debug  Auto
-
-GlobalVariable Property _RO_Durability00  Auto
-GlobalVariable Property _RO_Durability01  Auto
-GlobalVariable Property _RO_Durability02  Auto
-GlobalVariable Property _RO_Durability03  Auto
-GlobalVariable Property _RO_Durability04  Auto
-GlobalVariable Property _RO_Durability05  Auto
+Float Property pDurability01  Auto
+Float Property pDurability02  Auto
+Float Property pDurability03  Auto
+Float Property pDurability04  Auto
+Float Property pDurability05  Auto
 
 FormList Property _RO_ArmorMaterialsDurability01  Auto
 FormList Property _RO_ArmorMaterialsDurability02  Auto
@@ -45,26 +39,6 @@ Float bootsDurability = 1.0
 Float shieldDurability = 1.0
 
 
-Event OnInit()
-	Maintenance()
-endEvent
-
-
-Event OnPlayerLoadGame()
-	if version == 0 || version != _RO_Version.GetValueInt()
-		Maintenance()
-	endIf
-endEvent
-
-
-Function Maintenance()
-	
-	_RO_Note("Fjør Tall: Destructible Armor Maintenance")
-	version = _RO_Version.GetValueInt()
-
-endFunction
-
-
 Event OnObjectEquipped(Form akBaseObject, ObjectReference akReference)
 	
 	; Ensure the equipped item is Armor
@@ -75,23 +49,18 @@ Event OnObjectEquipped(Form akBaseObject, ObjectReference akReference)
 		if equippedArmor.isHelmet()
 			helmetSlotMask = slotMask
 			helmetDurability = GetArmorDurability(equippedArmor)
-			_RO_Note("Helmet slot mask set: " + slotMask)
 		elseIf equippedArmor.isCuirass()
 			cuirassSlotMask = slotMask
 			cuirassDurability = GetArmorDurability(equippedArmor)
-			_RO_Note("Cuirass slot mask set: " + slotMask)
 		elseIf equippedArmor.isGauntlets()
 			gauntletsSlotMask = slotMask
 			gauntletsDurability = GetArmorDurability(equippedArmor)
-			_RO_Note("Gauntlets slot mask set: " + slotMask)
 		elseIf equippedArmor.isBoots()
 			bootsSlotMask = slotMask
 			bootsDurability = GetArmorDurability(equippedArmor)
-			_RO_Note("Boots slot mask set: " + slotMask)
 		elseIf equippedArmor.isShield()
 			shieldSlotMask = slotMask
 			shieldDurability = GetArmorDurability(equippedArmor)
-			_RO_Note("Shield slot mask set: " + slotMask)
 		endIf
 		
 		; Done setting armor values
@@ -142,11 +111,9 @@ Event OnHit(ObjectReference akAggressor, Form akSource, Projectile akProjectile,
 	if abHitBlocked
 		; Hit the equipped shield or weapon used to parry
 		if  GetActorRef().GetEquippedShield()
-			_RO_Note("Hit shield on block")
 			hitSlotMask = shieldSlotMask
 			durability = shieldDurability
 		elseIf GetActorRef().GetEquippedWeapon()
-			_RO_Note("Hit weapon on block")
 			hitSlotMask = rightHandSlotMask
 			durability = rightHandDurability
 		endIf
@@ -180,9 +147,7 @@ Event OnHit(ObjectReference akAggressor, Form akSource, Projectile akProjectile,
 		damageMult = pPowerAttackDamageMult
 	endIf
 	Float damage = Utility.RandomFloat() * damageMult
-	
-	_RO_Note("Hit item: slot: " + hitSlotMask + " damage: " + damage + " durability: " + durability)
-	
+		
 	; Don't damage item if it passed the durability test
 	if damage <= durability
 		return
@@ -216,17 +181,17 @@ EndEvent
 Bool Function HasKeywordInList(Form akBaseObject, FormList akList)
 	
 	Int iIndex = akList.GetSize() ; Indices are offset by 1 relative to size
-	While iIndex
+	while iIndex
 		iIndex -= 1
 		Keyword material = akList.GetAt(iIndex) As Keyword
-		If material
-			If akBaseObject.HasKeyword(material)
-				return True
-			EndIf
-		EndIf
-	EndWhile
+		if material
+			if akBaseObject.HasKeyword(material)
+				return true
+			endIf
+		endIf
+	endWhile
 
-	return False
+	return false
 	
 EndFunction
 
@@ -234,57 +199,48 @@ EndFunction
 Float Function GetArmorDurability(Armor akArmor)
 	
 	; Default to max durability for invalid input
-	If !akArmor
-		return _RO_Durability05.GetValue()
-	EndIf
+	if !akArmor
+		return 1.0
+	endIf
 	
-	If HasKeywordInList(akArmor, _RO_ArmorMaterialsDurability05)
-		return _RO_Durability05.GetValue()
-	ElseIf HasKeywordInList(akArmor, _RO_ArmorMaterialsDurability04)
-		return _RO_Durability04.GetValue()
-	ElseIf HasKeywordInList(akArmor, _RO_ArmorMaterialsDurability03)
-		return _RO_Durability03.GetValue()
-	ElseIf HasKeywordInList(akArmor, _RO_ArmorMaterialsDurability02)
-		return _RO_Durability02.GetValue()
-	ElseIf HasKeywordInList(akArmor, _RO_ArmorMaterialsDurability01)
-		return _RO_Durability01.GetValue()
-	EndIf
+	if HasKeywordInList(akArmor, _RO_ArmorMaterialsDurability05)
+		return pDurability05
+	elseIf HasKeywordInList(akArmor, _RO_ArmorMaterialsDurability04)
+		return pDurability04
+	elseIf HasKeywordInList(akArmor, _RO_ArmorMaterialsDurability03)
+		return pDurability03
+	elseIf HasKeywordInList(akArmor, _RO_ArmorMaterialsDurability02)
+		return pDurability02
+	elseIf HasKeywordInList(akArmor, _RO_ArmorMaterialsDurability01)
+		return pDurability01
+	endIf
 
 	; Default to max durability for unknown materials
-	return _RO_Durability05.GetValue()
+	return 1.0
 
 EndFunction
 
 
-Float Function GetWeaponDurability(Weapon akWeapon)
+Float Function GetWeaponDurability(Form akWeapon)
 	
 	; Default to max durability for invalid input
 	If !akWeapon
-		return _RO_Durability05.GetValue()
+		return 1.0
 	EndIf
 	
 	If HasKeywordInList(akWeapon, _RO_WeaponMaterialsDurability05)
-		return _RO_Durability05.GetValue()
+		return pDurability05
 	ElseIf HasKeywordInList(akWeapon, _RO_WeaponMaterialsDurability04)
-		return _RO_Durability04.GetValue()
+		return pDurability04
 	ElseIf HasKeywordInList(akWeapon, _RO_WeaponMaterialsDurability03)
-		return _RO_Durability03.GetValue()
+		return pDurability03
 	ElseIf HasKeywordInList(akWeapon, _RO_WeaponMaterialsDurability02)
-		return _RO_Durability02.GetValue()
+		return pDurability02
 	ElseIf HasKeywordInList(akWeapon, _RO_WeaponMaterialsDurability01)
-		return _RO_Durability01.GetValue()
+		return pDurability01
 	EndIf
 
 	; Default to max durability for unknown materials
-	return _RO_Durability05.GetValue()
-
-EndFunction
-
-
-Function _RO_Note(String text)
-
-	if _RO_Debug.GetValue() == 1
-		Debug.Notification(text)
-	endIf
+	return 1.0
 
 EndFunction

@@ -1,7 +1,5 @@
-Scriptname _RO_ManagerQuestEncumbrance extends ReferenceAlias  
+Scriptname _RO_EncumbranceQuestPlayerAlias extends ReferenceAlias  
 
-GlobalVariable Property _RO_Version  Auto
-Int version = 0
 
 SPELL Property _RO_EncumbranceStage1 Auto
 SPELL Property _RO_EncumbranceStage2 Auto
@@ -19,20 +17,13 @@ endEvent
 
 
 Event OnPlayerLoadGame()
-	if version == 0 || version != _RO_Version.GetValueInt()
-		Maintenance()
-	endIf
+	Maintenance()
 endEvent
 
 
 Function Maintenance()
-	
-	version = _RO_Version.GetValueInt()
-	
-	; Perform updates
 	armorWeight = -1.0
 	RegisterForSingleUpdate(0.5)
-
 endFunction
 
 
@@ -43,12 +34,14 @@ Event OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemRefere
 	
 endEvent
 
+
 Event OnItemRemoved(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akDestContainer)
 	
 	RegisterForSingleUpdate(0.5)
 	;UpdateEncumbrance()
 	
 endEvent
+
 
 Event OnObjectEquipped(Form akBaseObject, ObjectReference akReference)
 
@@ -59,6 +52,7 @@ Event OnObjectEquipped(Form akBaseObject, ObjectReference akReference)
 
 endEvent
 
+
 Event OnObjectUnequipped(Form akBaseObject, ObjectReference akReference)
 	
 	armorWeight = -1.0
@@ -68,11 +62,13 @@ Event OnObjectUnequipped(Form akBaseObject, ObjectReference akReference)
 
 endEvent
 
+
 Event OnUpdate()
 
 	UpdateEncumbrance()
 
 endEvent
+
 
 Function UpdateEncumbrance()
 	

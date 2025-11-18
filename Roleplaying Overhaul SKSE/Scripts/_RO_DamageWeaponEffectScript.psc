@@ -1,16 +1,12 @@
 Scriptname _RO_DamageWeaponEffectScript extends ActiveMagicEffect  
 
-GlobalVariable Property _RO_Debug  Auto
-
 Bool Property pIsBash = false  Auto
-SPELL Property _RO_TimeSlowdownShort  Auto 
 
-GlobalVariable Property _RO_Durability00  Auto
-GlobalVariable Property _RO_Durability01  Auto
-GlobalVariable Property _RO_Durability02  Auto
-GlobalVariable Property _RO_Durability03  Auto
-GlobalVariable Property _RO_Durability04  Auto
-GlobalVariable Property _RO_Durability05  Auto
+Float Property pDurability01  Auto
+Float Property pDurability02  Auto
+Float Property pDurability03  Auto
+Float Property pDurability04  Auto
+Float Property pDurability05  Auto
 
 FormList Property _RO_WeaponMaterialsDurability01  Auto
 FormList Property _RO_WeaponMaterialsDurability02  Auto
@@ -56,7 +52,6 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
 		hitWeapon = weaponLH
 		isLeftHand = true
 	else
-		_RO_Note("No weapon found to damage")
 		return;
 	endIf
 	
@@ -65,12 +60,6 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
 	
 	; Get weapon durability
 	Float durability = GetWeaponDurability(hitWeapon)
-	
-	if isLeftHand
-		_RO_Note("Hit LH Weapon " + damage + "  Durability " + durability)
-	else
-		_RO_Note("Hit RH Weapon " + damage + "  Durability " + durability)
-	endIf
 	
 	; Check damage vs durability
 	if damage <= durability	
@@ -95,7 +84,6 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
 	WornObject.SetItemHealthPercent(player, hitSlotMask, -1, hitItemHealth)
 	
 	Debug.Notification("Your weapon was damaged")
-	_RO_TimeSlowdownShort.Cast(Player)
 
 endEvent
 
@@ -104,23 +92,23 @@ Float Function GetWeaponDurability(Weapon akWeapon)
 	
 	; Default to max durability for invalid input
 	If !akWeapon
-		return _RO_Durability05.GetValue()
+		return 1.0
 	EndIf
 	
 	If HasKeywordInList(akWeapon, _RO_WeaponMaterialsDurability05)
-		return _RO_Durability05.GetValue()
+		return pDurability05
 	ElseIf HasKeywordInList(akWeapon, _RO_WeaponMaterialsDurability04)
-		return _RO_Durability04.GetValue()
+		return pDurability04
 	ElseIf HasKeywordInList(akWeapon, _RO_WeaponMaterialsDurability03)
-		return _RO_Durability03.GetValue()
+		return pDurability03
 	ElseIf HasKeywordInList(akWeapon, _RO_WeaponMaterialsDurability02)
-		return _RO_Durability02.GetValue()
+		return pDurability02
 	ElseIf HasKeywordInList(akWeapon, _RO_WeaponMaterialsDurability01)
-		return _RO_Durability01.GetValue()
+		return pDurability01
 	EndIf
 
 	; Default to max durability for unknown materials
-	return _RO_Durability05.GetValue()
+	return 1.0
 
 EndFunction
 
@@ -141,12 +129,3 @@ Bool Function HasKeywordInList(Form akBaseObject, FormList akList)
 	return False
 	
 EndFunction
-
-
-Function _RO_Note(String text)
-
-	if _RO_Debug.GetValue() == 1
-		Debug.Notification(text)
-	endIf
-
-endFunction
