@@ -2,10 +2,10 @@ Scriptname _RO_ManagerQuestPlayerAlias extends ReferenceAlias
 {Player Alias script for capturing player events and managing essential features of Roleplaying Overhaul}
 
 
-Int Property pVersion  Auto
-Int version = 0
-
-_RO_ManagerQuestScript Property _RO_ManagerQuest  Auto  
+Perk Property _RO_DestructibleWeaponPerk  Auto
+Perk Property _RO_SlowSkillAdvancementPerk  Auto
+Spell Property _RO_AbLastStand  Auto
+Spell Property _RO_DropGoldSpell  Auto
 
 
 Event OnInit()
@@ -14,13 +14,20 @@ endEvent
 
 
 Event OnPlayerLoadGame()
-	if version == 0 || version != pVersion
-		Maintenance()
-	endIf
+	Maintenance()
 endEvent
 
 
 Function Maintenance()
-	version = pVersion
-	_RO_ManagerQuest.Maintenance()
+	
+	Actor player = Game.GetPlayer()
+	
+	; Add default perks
+	player.AddPerk(_RO_DestructibleWeaponPerk)
+	player.AddPerk(_RO_SlowSkillAdvancementPerk)
+	
+	; Add default spells
+	player.AddSpell(_RO_AbLastStand, false)
+	player.AddSpell(_RO_DropGoldSpell, false)
+
 endFunction

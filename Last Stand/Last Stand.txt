@@ -1,0 +1,2 @@
+Last Stand:
+When health drops below 25% time slows and damage to the player is reduced in order to enable a Last Stand, extending the most intense action-packed moments of gameplay.

@@ -11,9 +11,6 @@ Future versions may require upgrade to Anniversary Edition.
 Damaged Weapons and Armor:
 Weapons and armor can become damaged. A weapon may be damaged when striking or parrying an attack while taking a hit can damage armor. Equipment degrades 1 tempering level when damaged.
 
-Last Stand:
-When health drops below 25% time slows and damage to the player is reduced in order to enable a Last Stand, extending the most intense action-packed moments of gameplay.
-
 Curse of the Dead:
 Taking gold and other treasure from crypts may cause the player to incur the "Curse of the Dead". When cursed the player does half damage to undead.
 
@@ -21,7 +18,7 @@ Drunkenness:
 New visual effects from drinking alcohol and skooma.
 
 Immersion (Roleplaying Bonus):
-New player stat that is gained through performing roleplaying actions. When full, the player is granted a bonus to XP earning rate. Immersion resets when the player sleeps.
+New player stat that is gained through performing roleplaying actions. When full, the player is granted a bonus to Speechcraft skill advancement for 8 hours.
 
 Sit and Talk:
 Sit when talking to characters to have better chances to succeed with persuasion attempts, better prices with vendors, and earn extra Speechcraft XP from conversations.

@@ -1,66 +1,61 @@
 Scriptname _ENEMY_COUNT_spawn extends Actor  
 {Spawn an actor on load}
 
-ActorBase Property spawnedActorBase  Auto  
-ActorBase Property requiredActorBase  Auto 
-_ENEMY_COUNT_QuestScript Property _ENEMY_COUNT_Quest  Auto  
-Int Property spawnCountMod = 0 Auto  
+ActorBase Property spawnedActorBase  Auto
+ActorBase Property requiredActorBase  Auto
+
+Int Property pSpawnCountInterior = 1  Auto
+Int Property pSpawnCountExterior = 1  Auto
+Float Property pSpawnChanceInterior = 0.75  Auto
+Float Property pSpawnChanceExterior = 0.5 Auto
 
 Event OnLoad()
-	if (_ENEMY_COUNT_Quest.difficulty != 0)
-		Spawn()
-	endIf
+	Spawn()
 endevent
 
 Function Spawn()
 	;Require that the actor is alive
 	if (self.isDead())
 		return
-	endif
+	endIf
 	
 	;Require that the actor equal the required actor base if set
 	;This prevents subclasses of spawning actor bases to incorrecly spawn
 	if (requiredActorBase == NONE || self.GetActorBase() == requiredActorBase)
 		;Check passed
 	else
-		Notification("Did not spawn. Required ActorBase does not match.")
+		;Debug.Notification("Did not spawn. Required ActorBase does not match.")
 		return
-	endif
+	endIf
 	
 	;All checks passed. Will attempt spawn
 	Int count = 0
-	Float chance = 0
-	Int difficulty = _ENEMY_COUNT_Quest.difficulty
+	Float chance = 0.0
 	if (self.isInInterior())
-		count = _ENEMY_COUNT_Quest.spawnCountInterior[difficulty] + spawnCountMod
-		chance = _ENEMY_COUNT_Quest.spawnChanceInterior[difficulty]
+		count = pSpawnCountInterior
+		chance = pSpawnChanceInterior
 	else
-		count = _ENEMY_COUNT_Quest.spawnCountExterior[difficulty] + spawnCountMod
-		chance = _ENEMY_COUNT_Quest.spawnChanceExterior[difficulty]
-	endif
+		count = pSpawnCountExterior
+		chance = pSpawnChanceExterior
+	endIf
 	
-	if (chance < 0)
-		chance = 0
-	elseIf (chance > 1)
-		chance = 1
+	if (chance < 0.0)
+		chance = 0.0
+	elseIf (chance > 1.0)
+		chance = 1.0
 	endIf
 	
 	if (count == 0)
-		Notification("Did not spawn. Attempt count is 0")
+		;Debug.Notification("Did not spawn. Attempt count is 0")
 	endIf
 	
 	while count
 		count -= 1
-		float random = Utility.RandomFloat()
+		Float random = Utility.RandomFloat()
 		if (chance >= random)
 			self.PlaceActorAtMe(spawnedActorBase)
-			Notification("Spawned enemy. chance:"+chance+" random:"+random)
+			Debug.Notification("Spawned enemy. chance:"+chance+" random:"+random)
 		endif
-	endwhile
-endFunction
+	endWhile
 
-Function Notification(string aNotification)
-	if (_ENEMY_COUNT_Quest.debugNotifications)
-		Debug.Notification(aNotification)
-	endIf
 endFunction
