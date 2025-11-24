@@ -11,11 +11,11 @@ Float Property pPowerAttackDamageBonus = 0.0  Auto
 
 Quest Property EQD_DestructibleWeaponQuest  Auto 
 
-Float kDurability1 = 0.1  
-Float kDurability2 = 0.2
-Float kDurability3 = 0.3
-Float kDurability4 = 0.4
-Float kDurability5 = 0.5
+Float kDurability1 = 0.97  
+Float kDurability2 = 0.975
+Float kDurability3 = 0.98
+Float kDurability4 = 0.985
+Float kDurability5 = 0.99
 
 FormList Property EQD_BootsDurability1  Auto
 FormList Property EQD_BootsDurability2  Auto
@@ -101,7 +101,7 @@ Event OnInit()
 endEvent
 
 Event OnPlayerLoadGame()
-	if version == 0 || version != 0 ; Hard coded script version. Set 0 to force maintenance
+	if version == 0 || version != 1 ; Hard coded script version. Set 0 to force maintenance
 		Maintenance()
 	endIf
 endEvent
@@ -111,7 +111,7 @@ Function Maintenance()
 	ScriptDebug("Destructible Armor Maintenance")
 	
 	; Hard coded script version. Set 0 to force maintenance
-	version = 0
+	version = 1
 	
 	; Remove all tracked destructible armor
 	ClearRegisteredShield()
@@ -152,29 +152,19 @@ Event OnObjectUnequipped(Form akBaseObject, ObjectReference akReference)
 	
 	; Remove Armor from tracking lists
 	if equippedShield == unequippedArmor
-		equippedShield = NONE
-		equippedShieldDurability = 0.0
-		damagedShield = NONE
+		ClearRegisteredShield()
 		ScriptDebug("Shield unregistered")
 	elseIf equippedCuirass == unequippedArmor
-		equippedCuirass = NONE
-		equippedCuirassDurability = 0.0
-		damagedCuirass = NONE
+		ClearRegisteredCuirass()
 		ScriptDebug("Cuirass unregistered")
 	elseIf equippedHelmet == unequippedArmor
-		equippedHelmet = NONE
-		equippedHelmetDurability = 0.0
-		damagedHelmet = NONE
+		ClearRegisteredHelmet()
 		ScriptDebug("Helmet unregistered")
 	elseIf equippedGauntlets == unequippedArmor
-		equippedGauntlets = NONE
-		equippedGauntletsDurability = 0.0
-		damagedGauntlets = NONE
+		ClearRegisteredGauntlets()
 		ScriptDebug("Gauntlets unregistered")
 	elseIf equippedBoots == unequippedArmor
-		equippedBoots = NONE
-		equippedBootsDurability = 0.0
-		damagedBoots = NONE
+		ClearRegisteredBoots()
 		ScriptDebug("Boots unregistered")
 	endIf
 
@@ -310,12 +300,6 @@ endFunction
 
 
 Function RegisterShield(Armor akShield)
-	
-	if !akShield
-		ScriptDebug("RegisterShield with NONE")
-		ClearRegisteredShield()
-		return
-	endIf
 
 	Bool isRegistered = false
 	
@@ -348,25 +332,42 @@ Function RegisterShield(Armor akShield)
 	if isRegistered
 		return
 	endIf
-	
-	; Function should have returned if shield was registered properly
-	; Clear the registered shield if we reach this point
-	ClearRegisteredShield()
 
 endFunction
 
 Bool Function RegisterShieldWithDurabilityAndList(Armor akShield, Float akDurability, FormList akList)
 	
-	Int index = EQD_ShieldDurability1.Find(akShield)
+	Int index = akList.Find(akShield)
 	if index == -1
 		return false
 	endIf
 	
-	Armor foundDamagedShield = EQD_ShieldDurability1Damaged.GetAt(index) as Armor
+	FormList damagedShieldList = NONE
+
+	if akDurability == kDurability1
+		damagedShieldList = EQD_ShieldDurability1Damaged
+	elseIf akDurability == kDurability2
+		damagedShieldList = EQD_ShieldDurability2Damaged
+	elseIf akDurability == kDurability3
+		damagedShieldList = EQD_ShieldDurability3Damaged
+	elseIf akDurability == kDurability4
+		damagedShieldList = EQD_ShieldDurability4Damaged
+	elseIf akDurability == kDurability5
+		damagedShieldList = EQD_ShieldDurability5Damaged
+	endIf
+
+	if !damagedShieldList
+		ScriptDebug("No damaged shield list with durability: " + akDurability)
+		return false
+	endIf
+
+	Armor foundDamagedShield = damagedShieldList.GetAt(index) as Armor
 	if !foundDamagedShield
+		ScriptDebug("No damaged shield found in list")
 		return false
 	endIf
 	
+	; Passed all checks. Assign local variables to register shield.
 	equippedShield = akShield
 	equippedShieldDurability = kDurability1
 	damagedShield = foundDamagedShield
@@ -374,15 +375,6 @@ Bool Function RegisterShieldWithDurabilityAndList(Armor akShield, Float akDurabi
 	ScriptDebug("Shield registered: Durability: " + equippedShieldDurability)
 	return true
 
-endFunction
-
-
-Function ClearRegisteredShield()
-	
-	equippedShield = NONE
-	equippedShieldDurability = 0.0
-	damagedShield = NONE
-	
 endFunction
 
 
@@ -445,71 +437,67 @@ Bool Function RegisterArmorWithDurabilityAndLists(Armor akArmor, Float akDurabil
 	index = akCuirassList.Find(akArmor)
 	if index != -1
 		Armor foundDamaged = GetDamagedCuirassWithDurabilityAndIndex(akDurability, index)
-		if foundDamaged
-			equippedCuirass = akArmor
-			equippedCuirassDurability = akDurability
-			damagedCuirass = foundDamaged
-			ScriptDebug("Cuirass registered: Durability: " + equippedCuirassDurability)
-			return true
-		else
+		if !foundDamaged
 			ScriptDebug("Register Cuirass with no damaged version")
-			ClearRegisteredCuirass()
-			return true
+			return false
 		endIf
+
+		equippedCuirass = akArmor
+		equippedCuirassDurability = akDurability
+		damagedCuirass = foundDamaged
+		ScriptDebug("Cuirass registered: Durability: " + equippedCuirassDurability)
+		return true
 	endIf
 	
 	index = akHelmetList.Find(akArmor)
 	if index != -1
 		Armor foundDamaged = GetDamagedHelmetWithDurabilityAndIndex(akDurability, index)
-		if foundDamaged
-			equippedHelmet = akArmor
-			equippedHelmetDurability = akDurability
-			damagedHelmet = foundDamaged
-			ScriptDebug("Helmet registered: Durability: " + equippedHelmetDurability)
-			return true
-		else
+		if !foundDamaged
 			ScriptDebug("Register Helmet with no damaged version")
-			ClearRegisteredHelmet()
-			return true
+			return false
 		endIf
+
+		equippedHelmet = akArmor
+		equippedHelmetDurability = akDurability
+		damagedHelmet = foundDamaged
+		ScriptDebug("Helmet registered: Durability: " + equippedHelmetDurability)
+		return true
 	endIf
 	
 	index = akGauntletsList.Find(akArmor)
 	if index != -1
 		Armor foundDamaged = GetDamagedGauntletsWithDurabilityAndIndex(akDurability, index)
-		if foundDamaged
-			equippedGauntlets = akArmor
-			equippedGauntletsDurability = akDurability
-			damagedGauntlets = foundDamaged
-			ScriptDebug("Gauntlets registered: Durability: " + equippedGauntletsDurability)
-			return true
-		else
+		if !foundDamaged
 			ScriptDebug("Register Gauntlets with no damaged version")
-			ClearRegisteredGauntlets()
-			return true
+			return false
 		endIf
+
+		equippedGauntlets = akArmor
+		equippedGauntletsDurability = akDurability
+		damagedGauntlets = foundDamaged
+		ScriptDebug("Gauntlets registered: Durability: " + equippedGauntletsDurability)
+		return true
 	endIf
 
 	index = akBootsList.Find(akArmor)
 	if index != -1
 		Armor foundDamaged = GetDamagedBootsWithDurabilityAndIndex(akDurability, index)
-		if foundDamaged
-			equippedBoots = akArmor
-			equippedBootsDurability = akDurability
-			damagedBoots = foundDamaged
-			ScriptDebug("Boots registered: Durability: " + equippedBootsDurability)
-			return true
-		else
+		if !foundDamaged
 			ScriptDebug("Register Boots with no damaged version")
-			ClearRegisteredBoots()
 			return true
 		endIf
+
+		equippedBoots = akArmor
+		equippedBootsDurability = akDurability
+		damagedBoots = foundDamaged
+		ScriptDebug("Boots registered: Durability: " + equippedBootsDurability)
+		return true
 	endIf
 	
 	; Armor not found in given lists
 	return false
 	
-EndFunction
+endFunction
 
 
 Armor Function GetDamagedCuirassWithDurabilityAndIndex(Float akDurability, Int index)
@@ -528,7 +516,7 @@ Armor Function GetDamagedCuirassWithDurabilityAndIndex(Float akDurability, Int i
 	
 	return NONE
 
-EndFunction
+endFunction
 
 
 Armor Function GetDamagedHelmetWithDurabilityAndIndex(Float akDurability, Int index)
@@ -547,7 +535,7 @@ Armor Function GetDamagedHelmetWithDurabilityAndIndex(Float akDurability, Int in
 	
 	return NONE
 
-EndFunction
+endFunction
 
 
 Armor Function GetDamagedGauntletsWithDurabilityAndIndex(Float akDurability, Int index)
@@ -566,7 +554,7 @@ Armor Function GetDamagedGauntletsWithDurabilityAndIndex(Float akDurability, Int
 	
 	return NONE
 
-EndFunction
+endFunction
 
 
 Armor Function GetDamagedBootsWithDurabilityAndIndex(Float akDurability, Int index)
@@ -585,7 +573,17 @@ Armor Function GetDamagedBootsWithDurabilityAndIndex(Float akDurability, Int ind
 	
 	return NONE
 
-EndFunction
+endFunction
+
+
+Function ClearRegisteredShield()
+	
+	equippedShield = NONE
+	equippedShieldDurability = 0.0
+	damagedShield = NONE
+	ScriptDebug("Cleared registered Shield")
+	
+endFunction
 
 
 Function ClearRegisteredCuirass()
@@ -593,6 +591,7 @@ Function ClearRegisteredCuirass()
 	equippedCuirass = NONE
 	equippedCuirassDurability = 0.0
 	damagedCuirass = NONE
+	ScriptDebug("Cleared registered Cuirass")
 
 endFunction
 
@@ -602,6 +601,7 @@ Function ClearRegisteredHelmet()
 	equippedHelmet = NONE
 	equippedHelmetDurability = 0.0
 	damagedHelmet = NONE
+	ScriptDebug("Cleared registered Helmet")
 
 endFunction
 
@@ -611,6 +611,7 @@ Function ClearRegisteredGauntlets()
 	equippedGauntlets = NONE
 	equippedGauntletsDurability = 0.0
 	damagedGauntlets = NONE
+	ScriptDebug("Cleared registered Gauntlets")
 
 endFunction
 
@@ -620,6 +621,7 @@ Function ClearRegisteredBoots()
 	equippedBoots = NONE
 	equippedBootsDurability = 0.0
 	damagedBoots = NONE
+	ScriptDebug("Cleared registered Boots")
 
 endFunction
 

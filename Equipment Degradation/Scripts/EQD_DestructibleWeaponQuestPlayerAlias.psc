@@ -9,13 +9,12 @@ Bool Property pDebugNotification = false  Auto
 
 Perk Property EQD_DestructibleWeaponPerk  Auto
 
-Float Property pStaminaFactor = 0.0  Auto
-
-Float kDurability1 = 0.1
-Float kDurability2 = 0.2
-Float kDurability3 = 0.3
-Float kDurability4 = 0.4
-Float kDurability5 = 0.5
+Float kDurability1 = 0.975
+Float kDurability2 = 0.98
+Float kDurability3 = 0.985
+Float kDurability4 = 0.99
+Float kDurability5 = 0.995
+Float kStaminaFactor = 0.05
 
 FormList Property EQD_WeaponsDurability1  Auto
 FormList Property EQD_WeaponsDurability2  Auto
@@ -278,7 +277,7 @@ Function HitWeapon()
 	Float baseDamage = Utility.RandomFloat()
 	
 	; Stamina effect on chance to damage weapon
-	Float staminaDamageBonus = pStaminaFactor * (1.0 - player.GetActorValuePercentage("Stamina"))
+	Float staminaDamageBonus = kStaminaFactor * (1.0 - player.GetActorValuePercentage("Stamina"))
 	
 	; Combine base damage and stamina bonus for total damage to weapon
 	Float damage = baseDamage + staminaDamageBonus

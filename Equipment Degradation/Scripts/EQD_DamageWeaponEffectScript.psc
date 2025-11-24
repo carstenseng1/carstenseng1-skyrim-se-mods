@@ -13,15 +13,32 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
 	Actor player = Game.GetPlayer()
 	
 	
-	if pIsBash && player.GetEquippedShield()
-		; Call to damage armor quest when bashing with a shield
-		EQD_DestructibleArmorQuestPlayerAlias playerAlias = EQD_DestructibleArmorQuest.GetAlias(5) as EQD_DestructibleArmorQuestPlayerAlias
-		playerAlias.HitShield()
-		return
+	if pIsBash
+		if player.GetEquippedShield()
+			HitShield()
+		else
+			HitWeapon()
+		endIf
 	else
-		; Call to damage weapon quest
-		EQD_DestructibleWeaponQuestPlayerAlias playerAlias = EQD_DestructibleWeaponQuest.GetAlias(5) as EQD_DestructibleWeaponQuestPlayerAlias
-		playerAlias.HitWeapon()
+		HitWeapon()
 	endIf
 
 endEvent
+
+
+Function HitWeapon()
+
+	; Call to damage weapon quest
+	EQD_DestructibleWeaponQuestPlayerAlias playerAlias = EQD_DestructibleWeaponQuest.GetAlias(5) as EQD_DestructibleWeaponQuestPlayerAlias
+	playerAlias.HitWeapon()
+
+endFunction
+
+
+Function HitShield()
+
+	; Call to damage armor quest when bashing with a shield
+	EQD_DestructibleArmorQuestPlayerAlias playerAlias = EQD_DestructibleArmorQuest.GetAlias(5) as EQD_DestructibleArmorQuestPlayerAlias
+	playerAlias.HitShield()
+
+endFunction
