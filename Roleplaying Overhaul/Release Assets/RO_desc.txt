@@ -8,23 +8,14 @@ Future versions may require upgrade to Anniversary Edition.
 
 *** Features ***
 
-Damaged Weapons and Armor:
-Weapons and armor can become damaged and can be repaired at a forge if you have the required smithing perk. Only basic and crafted weapons and armor can be damaged. A weapon may be damaged when striking or parrying an attack while taking a hit can damage armor.
-
-Last Stand:
-When health drops below 25% time slows and damage to the player is reduced in order to enable a Last Stand, extending the most intense action-packed moments of gameplay.
-
 Curse of the Dead:
 Taking gold and other treasure from crypts may cause the player to incur the "Curse of the Dead". When cursed the player does half damage to undead.
 
 Drunkenness:
-New visual effects from drinking alcohol.
-
-Carry Weight Settings Menu:
-Adjust your maximum Carry Weight
+New visual effects from drinking alcohol and skooma.
 
 Immersion (Roleplaying Bonus):
-New player stat that is gained through performing roleplaying actions. When full, the player is granted a bonus to XP earning rate. Immersion resets when the player sleeps.
+New player stat that is gained through performing roleplaying actions. When full, the player is granted a bonus to Speechcraft skill advancement for 8 hours.
 
 Sit and Talk:
 Sit when talking to characters to have better chances to succeed with persuasion attempts, better prices with vendors, and earn extra Speechcraft XP from conversations.
@@ -38,11 +29,14 @@ Doing any one of the following actions grants a bonus to Immersion until the pla
 - Sitting for an hour or more (Game Time)
 - Working at a crafting station for an hour or more (Game Time)
 
+Gold has weight:
+Each gold piece weighs 0.01 weight. Gold can be dropped with a new power.
 
-*** Gameplay Adjustments ***
+Backpacks slow movement:
+Wearing a backpack reduces the player movement speed 20%
 
-Reduced TimeScale: 20 >> 10 (Game time progress at half speed)
-No Starting Spells (Find Healing in Introduction Quest)
+Gradual Encumbrance:
+Movement speed is reduced at various intervals of encumbrance. Inventory weight at 50% of carry weight causes a 10% movement speed reduction. This increases to 20% speed reduction at 75% of carry weight and 30% speed reduction at 90% of carry weight. The inventory weight ignores the weight of worn armor since armor weight already has an inherent movement speed penalty.
 
 
 *** New Items ***
@@ -50,6 +44,7 @@ No Starting Spells (Find Healing in Introduction Quest)
 Silver Arrows
 Damaged versions of basic weapons and armor
 Broken pieces of some weapon types
+Cleaned Pelts
 
 
 *** Animal Loot Overhaul ***
@@ -71,6 +66,7 @@ Bandit equipment remains low level (Fur, Iron, Steel)
 High level bandits use tempered versions of basic equipment rather than more valuable equipment.
 Draugr bosses have new summoning abilities.
 Silver Hand Weapons include damaged and tempered silver weapons
+Thalmor use primarily Elven weapons
 
 
 *** Enemy Resistance, Weakness, and Ability Increases ***
@@ -119,25 +115,11 @@ Wolf Armor Warmth (Survival Mode): Default >> Warm
 
 *** Crafting Recipes & Adjustments ***
 
-Crafting Jewelry now requires Arcane Blacksmith perk
+Material weights and crafting recipes adjusted so results never weigh more than source materials
 Skyforge Steel Dagger can be tempered
 Craft Ingots from Arrows: Melt down 24 arrows to an ingot of their respective type (Matches Dawnguard DLC arrow crafting count)
 Craft Silver Arrows (New Item with this mod): 1 Silver Ingot, 1 Firewood >> 24 Silver Arrows
 Temper Silver Weapons
-Craft 2 Steel Ingots: 1 Iron Ingot and 1 Corundum Ingot
-
-
-*****************************
-*** WORK IN PROGRESS ***
-*****************************
-NOTE:
-This mod is a work in progress and upcoming changes may affect compatibility with other mods. Keep an eye on these upcoming changes to ensure other mods you may be using will remain compatible with Fjør Tal (Tale of Life).
-
-Craft simple items in the field
-- Torches
-- Wooden items
-Equip Lanterns
-Light/Extingquish lanterns, torches, and candles
-Ancient Nord weapons damageable and repairable with Smithing perk
-Enhancements to Anniversary Edition content
-- THIS WILL REQUIRE USERS TO HAVE ANNIVERSARY EDITION
+Steel Ingots from Iron and Corundum Ingots
+Fur Armor can be crafted from Cleaned Pelts at a blacksmithing station
+Cleaned Pelts can be crafted from animal pelts at a tanning rack

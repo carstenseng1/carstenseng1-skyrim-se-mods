@@ -1,18 +1,18 @@
-Scriptname _RO_DamageWeaponEffectScript extends ActiveMagicEffect  
+Scriptname EQD_DamageWeaponEffectScript extends ActiveMagicEffect  
 
 Bool Property pIsBash = false  Auto
 
-Float Property pDurability01  Auto
-Float Property pDurability02  Auto
-Float Property pDurability03  Auto
-Float Property pDurability04  Auto
-Float Property pDurability05  Auto
+Float Property pDurability01 = 0.95  Auto
+Float Property pDurability02 = 0.96  Auto
+Float Property pDurability03 = 0.97  Auto
+Float Property pDurability04 = 0.98  Auto
+Float Property pDurability05 = 0.99  Auto
 
-FormList Property _RO_WeaponMaterialsDurability01  Auto
-FormList Property _RO_WeaponMaterialsDurability02  Auto
-FormList Property _RO_WeaponMaterialsDurability03  Auto
-FormList Property _RO_WeaponMaterialsDurability04  Auto
-FormList Property _RO_WeaponMaterialsDurability05  Auto
+FormList Property EQD_WeaponMaterialsDurability01  Auto
+FormList Property EQD_WeaponMaterialsDurability02  Auto
+FormList Property EQD_WeaponMaterialsDurability03  Auto
+FormList Property EQD_WeaponMaterialsDurability04  Auto
+FormList Property EQD_WeaponMaterialsDurability05  Auto
 
 
 Event OnEffectStart(Actor akTarget, Actor akCaster)
@@ -95,15 +95,15 @@ Float Function GetWeaponDurability(Weapon akWeapon)
 		return 1.0
 	EndIf
 	
-	If HasKeywordInList(akWeapon, _RO_WeaponMaterialsDurability05)
+	If HasKeywordInList(akWeapon, EQD_WeaponMaterialsDurability05)
 		return pDurability05
-	ElseIf HasKeywordInList(akWeapon, _RO_WeaponMaterialsDurability04)
+	ElseIf HasKeywordInList(akWeapon, EQD_WeaponMaterialsDurability04)
 		return pDurability04
-	ElseIf HasKeywordInList(akWeapon, _RO_WeaponMaterialsDurability03)
+	ElseIf HasKeywordInList(akWeapon, EQD_WeaponMaterialsDurability03)
 		return pDurability03
-	ElseIf HasKeywordInList(akWeapon, _RO_WeaponMaterialsDurability02)
+	ElseIf HasKeywordInList(akWeapon, EQD_WeaponMaterialsDurability02)
 		return pDurability02
-	ElseIf HasKeywordInList(akWeapon, _RO_WeaponMaterialsDurability01)
+	ElseIf HasKeywordInList(akWeapon, EQD_WeaponMaterialsDurability01)
 		return pDurability01
 	EndIf
 

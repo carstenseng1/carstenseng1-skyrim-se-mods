@@ -1,0 +1,1 @@
+Equipment Degradation SKSE adds a feature where weapons and armor may degrade in quality with use. A weapon may be damaged when striking or parrying an attack while taking a hit can damage armor. Equipment degrades 1 tempering level when damaged.

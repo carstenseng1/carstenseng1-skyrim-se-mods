@@ -1,26 +1,28 @@
-Scriptname _RO_DestructibleArmorQuestPlayerAlias extends ReferenceAlias  
+Scriptname EQD_ManagerQuestPlayerAlias extends ReferenceAlias  
 {PlayerAlias script to manage destructible armor}
 
 
-Float Property pDurability01  Auto
-Float Property pDurability02  Auto
-Float Property pDurability03  Auto
-Float Property pDurability04  Auto
-Float Property pDurability05  Auto
+Perk Property EQD_DamageWeaponPerk  Auto
 
-FormList Property _RO_ArmorMaterialsDurability01  Auto
-FormList Property _RO_ArmorMaterialsDurability02  Auto
-FormList Property _RO_ArmorMaterialsDurability03  Auto
-FormList Property _RO_ArmorMaterialsDurability04  Auto
-FormList Property _RO_ArmorMaterialsDurability05  Auto
+Float Property pDurability01 = 0.95  Auto
+Float Property pDurability02 = 0.96  Auto
+Float Property pDurability03 = 0.97  Auto
+Float Property pDurability04 = 0.98  Auto
+Float Property pDurability05 = 0.99  Auto
 
-FormList Property _RO_WeaponMaterialsDurability01  Auto
-FormList Property _RO_WeaponMaterialsDurability02  Auto
-FormList Property _RO_WeaponMaterialsDurability03  Auto
-FormList Property _RO_WeaponMaterialsDurability04  Auto
-FormList Property _RO_WeaponMaterialsDurability05  Auto
+FormList Property EQD_ArmorMaterialsDurability01  Auto
+FormList Property EQD_ArmorMaterialsDurability02  Auto
+FormList Property EQD_ArmorMaterialsDurability03  Auto
+FormList Property EQD_ArmorMaterialsDurability04  Auto
+FormList Property EQD_ArmorMaterialsDurability05  Auto
+
+FormList Property EQD_WeaponMaterialsDurability01  Auto
+FormList Property EQD_WeaponMaterialsDurability02  Auto
+FormList Property EQD_WeaponMaterialsDurability03  Auto
+FormList Property EQD_WeaponMaterialsDurability04  Auto
+FormList Property EQD_WeaponMaterialsDurability05  Auto
   
-Float Property pPowerAttackDamageMult = 1.0  Auto  
+Float Property pPowerAttackDamageMult = 1.1  Auto  
 
 ; Local variables to track slot masks for equipped armor
 ; Set on equip and cleared on unequip because masks may vary based on the item
@@ -38,6 +40,29 @@ Float gauntletsDurability = 1.0
 Float bootsDurability = 1.0
 Float shieldDurability = 1.0
 
+Event OnInit()
+	Maintenance()
+endEvent
+
+
+Event OnPlayerLoadGame()
+	Maintenance()
+endEvent
+
+
+Function Maintenance()
+	
+	Actor player = GetActorRef()
+	
+	; Clean
+	player.RemovePerk(EQD_DamageWeaponPerk)
+	
+	Utility.Wait(0.25)
+	
+	; Add
+	player.AddPerk(EQD_DamageWeaponPerk)
+
+endFunction
 
 Event OnObjectEquipped(Form akBaseObject, ObjectReference akReference)
 	
@@ -203,20 +228,20 @@ Float Function GetArmorDurability(Armor akArmor)
 		return 1.0
 	endIf
 	
-	if HasKeywordInList(akArmor, _RO_ArmorMaterialsDurability05)
+	if HasKeywordInList(akArmor, EQD_ArmorMaterialsDurability05)
 		return pDurability05
-	elseIf HasKeywordInList(akArmor, _RO_ArmorMaterialsDurability04)
+	elseIf HasKeywordInList(akArmor, EQD_ArmorMaterialsDurability04)
 		return pDurability04
-	elseIf HasKeywordInList(akArmor, _RO_ArmorMaterialsDurability03)
+	elseIf HasKeywordInList(akArmor, EQD_ArmorMaterialsDurability03)
 		return pDurability03
-	elseIf HasKeywordInList(akArmor, _RO_ArmorMaterialsDurability02)
+	elseIf HasKeywordInList(akArmor, EQD_ArmorMaterialsDurability02)
 		return pDurability02
-	elseIf HasKeywordInList(akArmor, _RO_ArmorMaterialsDurability01)
+	elseIf HasKeywordInList(akArmor, EQD_ArmorMaterialsDurability01)
 		return pDurability01
 	endIf
 
-	; Default to max durability for unknown materials
-	return 1.0
+	; Default to durability 5 for unknown materials
+	return pDurability05
 
 EndFunction
 
@@ -228,19 +253,19 @@ Float Function GetWeaponDurability(Form akWeapon)
 		return 1.0
 	EndIf
 	
-	If HasKeywordInList(akWeapon, _RO_WeaponMaterialsDurability05)
+	If HasKeywordInList(akWeapon, EQD_WeaponMaterialsDurability05)
 		return pDurability05
-	ElseIf HasKeywordInList(akWeapon, _RO_WeaponMaterialsDurability04)
+	ElseIf HasKeywordInList(akWeapon, EQD_WeaponMaterialsDurability04)
 		return pDurability04
-	ElseIf HasKeywordInList(akWeapon, _RO_WeaponMaterialsDurability03)
+	ElseIf HasKeywordInList(akWeapon, EQD_WeaponMaterialsDurability03)
 		return pDurability03
-	ElseIf HasKeywordInList(akWeapon, _RO_WeaponMaterialsDurability02)
+	ElseIf HasKeywordInList(akWeapon, EQD_WeaponMaterialsDurability02)
 		return pDurability02
-	ElseIf HasKeywordInList(akWeapon, _RO_WeaponMaterialsDurability01)
+	ElseIf HasKeywordInList(akWeapon, EQD_WeaponMaterialsDurability01)
 		return pDurability01
 	EndIf
 
-	; Default to max durability for unknown materials
-	return 1.0
+	; Default to durability 5 for unknown materials
+	return pDurability05
 
 EndFunction
