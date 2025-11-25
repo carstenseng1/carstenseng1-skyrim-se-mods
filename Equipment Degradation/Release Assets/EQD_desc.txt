@@ -1,0 +1,89 @@
+Equipment Degradation adds a feature where weapons and armor may become damaged with use. A weapon may be damaged when striking or parrying an attack while taking a hit can damage armor. Shields may be damaged when an incoming attack is blocked. Parrying an incoming attack with a weapon may damage the weapon.
+
+
+Requirements
+
+This mod includes damaged versions of armor that is added with Skyrim Anniversary Edition and requires AE content to be installed.
+
+
+Compatibility
+
+This mod does not make any edits to existing objects in the base game and should not conflict with any mod. Items added by other mods will not affected by this mod and cannot become damaged.
+
+
+Durability & Damage Chance
+
+Damage occurs based on a random chance with any given hit. The durability does not degrade over repeated usage. Rather, items with higher durability have less of a chance to become damaged with a hit. Weapons and armor made from higher value materials have higher durability.
+
+Being hit by a power attack increases the chance that armor and shields will be damaged by the hit.
+
+Striking with power attacks does not directly increase the chance for a weapon to be damaged. Unfortunately I could not detect whether a strike was a with a regular or power attack. Instead, having low stamina increases the chance that your weapon will become damaged when striking. Therefore, if you are using power attacks, it becomes more likely your weapon will be damaged.
+
+
+Repairing Equipment
+
+Damaged equipment can be repaired at a forge with the necessary material and smithing perk for crafting the item.
+
+
+Enchanted Items
+
+Only basic weapons and armor can become damaged. When an item is damaged, all tempering and enchantments placed on it are lost. Weapons and armor that are found with an enchantment cannot be damaged. Only enchanted weapons and armor that are crafted by the player may become damaged.
+
+
+Weapon Durability Settings
+
+Weapon Durability 1:
+0.975 (2.5% Chance to become damaged with a hit)
+Iron weapons
+Long bow
+Hunting bow
+
+Weapon Durability 2:
+0.98 (2% Chance to become damaged with a hit)
+Steel weapons
+
+Weapon Durability 3:
+0.985 (1.5% Chance to become damaged with a hit)
+Orcish weapons
+Elven weapons
+
+Weapon Durability 4:
+0.99 (1% Chance to become damaged with a hit)
+Dwarven weapons
+Glass weapons
+
+Weapon Durability 5:
+0.995 (0.5% Chance to become damaged with a hit)
+Ebony weapons
+Dragonbone weapons
+
+
+Armor Durability Settings
+
+Armor Durability 1:
+0.97 (3% Chance to become damaged when hit)
+Hide armor
+Fur armor
+Iron armor
+
+Armor Durability 2:
+0.975 (2.5% Chance to become damaged when hit)
+Leather armor
+Steel armor
+Stormcloak & Imperial armor
+
+Armor Durability 3:
+0.98 (2% Chance to become damaged when hit)
+Orcish armor
+Elven armor
+
+Armor Durability 4:
+0.985 (1.5% Chance to become damaged when hit)
+Dwarven armor
+Glass armor
+
+Armor Durability 5:
+0.99 (1% Chance to become damaged when hit)
+Ebony armor
+Dragonbone armor
+Dragonscale armor
