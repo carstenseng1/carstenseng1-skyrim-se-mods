@@ -1,2 +1,6 @@
-Last Stand:
-When health drops below 25% time slows and damage to the player is reduced in order to enable a Last Stand, extending the most intense action-packed moments of gameplay.
+Keep the most intense moments of action going with a valiant last stand!
+
+When health becomes low, time slows and damage to the player is reduced in order to enable a Last Stand, extending the most intense action-packed moments of gameplay.
+
+Requirements & Compatibility:
+This mod requires only the base game and should be compatible with any other mods
