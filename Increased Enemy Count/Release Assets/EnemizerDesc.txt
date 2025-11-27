@@ -1,0 +1,25 @@
+Ramp up the action and intensity by battling hordes of extra foes.
+
+Enemizer increases the number of many of the basic enemies in Skyrim for increased challenge.  Now several types of enemies will spawn another similar enemy when loaded, multiplying the number of enemies by about 1.5x to 2x the usual number.
+
+This mod works by adding a script to the ActorBase of several enemy types.  When an instance of an enemy loads, it attempts to spawn another enemy of a similar type.  The number of times each enemy will attempt to spawn another can be adjusted, as well as the chance that the attempt will succeed.
+
+Current settings for these values are...
+
+Interior Spawn Count - Number of attempts each enemy makes to spawn another enemy in interior environments.
+Current setting: 1
+
+Interior Spawn Chance - Chance of success for each attempts to spawn and enemy when in an interior environment.
+Current setting: 75%
+
+Exterior Spawn Count - Number of attempts each enemy makes to spawn another enemy in exterior environments.  This is kept lower than the interior spawn count to prevent too many enemies being spawned when outdoors.
+Current setting: 1
+
+Exterior Spawn Chance - Chance of success for each attempts to spawn and enemy when in an exterior environment. This is kept lower than the interior spawn chanceto prevent too many enemies being spawned when outdoors.
+Current setting: 50%
+
+Some "vermin" enemies, like spiders and Falmer, make extra attempts to spawn another
+
+
+Compatibility:
+This mod makes edits to many vanilla Actor base objects for enemies, and it may conflict with other mods that make edits to enemies.

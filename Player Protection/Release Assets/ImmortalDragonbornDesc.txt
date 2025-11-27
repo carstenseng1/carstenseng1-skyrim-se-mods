@@ -1,0 +1,5 @@
+Use dragon souls as extra lives.  Just when you think you lost, turn the tide of battle with a stunning blast as you are revived from the power of a dragon soul.
+
+
+
+This mod adds an extra lives system that uses Dragon Souls to revive the player's character. When the Dragonborn's health is very low, the Dragonborn is revived to full Health, Magicka, and Stamina, and a magical blast paralyzes surrounding foes, allowing the Dragonborn to turn the tide of battle or use this brief moment to escape. This revival however comes at the cost of a Dragon Soul. If the Dragonborn does not have any Dragon Souls, no revival will be triggered. 

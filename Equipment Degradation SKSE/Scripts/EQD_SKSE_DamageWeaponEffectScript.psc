@@ -24,6 +24,7 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
 		endIf
 	else
 		playerAlias.HitWeapon()
+
 	endIf
 	
 endEvent

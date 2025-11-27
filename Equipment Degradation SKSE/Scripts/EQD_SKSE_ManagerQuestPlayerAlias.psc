@@ -2,22 +2,6 @@ Scriptname EQD_SKSE_ManagerQuestPlayerAlias extends ReferenceAlias
 {PlayerAlias script to manage destructible armor}
 
 Int version = 0
-Bool bDebugTrace = true
-Bool bDebugNotification = true
-
-Float kWeaponDurability01 = 0.1 ; 0.97
-Float kWeaponDurability02 = 0.2 ; 0.975
-Float kWeaponDurability03 = 0.3 ; 0.98
-Float kWeaponDurability04 = 0.4 ; 0.985
-Float kWeaponDurability05 = 0.5 ; 0.99
-
-Float kArmorDurability01 = 0.1 ; 0.95
-Float kArmorDurability02 = 0.2 ; 0.96
-Float kArmorDurability03 = 0.3 ; 0.97
-Float kArmorDurability04 = 0.4 ; 0.98
-Float kArmorDurability05 = 0.5 ; 0.99
-
-Float kPowerAttackDamageBonus = 0.05
 
 Perk Property EQD_DamageWeaponPerk  Auto
 
@@ -33,12 +17,9 @@ FormList Property EQD_WeaponMaterialsDurability03  Auto
 FormList Property EQD_WeaponMaterialsDurability04  Auto
 FormList Property EQD_WeaponMaterialsDurability05  Auto
 
-; Weapon slot masks remain constant
-Int rightHandSlotMask = 1
-Int leftHandSlotMask = 0
-
 ; Local variables to track slot masks for equipped armor
 ; Set on equip and cleared on unequip because masks may vary based on the item
+; Weapon slot masks remain constant 0=left 1=right
 Int helmetSlotMask = -1
 Int cuirassSlotMask = -1
 Int gauntletsSlotMask = -1
@@ -60,6 +41,7 @@ endEvent
 
 Event OnPlayerLoadGame()
 	if version == 0 || version != 1 ; Hard coded script version. Set 0 to force maintenance
+		version = 1
 		Maintenance()
 	endIf
 endEvent
@@ -68,9 +50,6 @@ endEvent
 Function Maintenance()
 	
 	ScriptDebug("EQD Maintenance")
-	
-	version = 1
-	
 	Actor player = GetActorRef()
 	player.AddPerk(EQD_DamageWeaponPerk)
 	RegisterForSingleUpdate(0.1)
@@ -85,7 +64,7 @@ Event OnUpdate()
 	Weapon weaponRH = selfRef.GetEquippedWeapon()
 	if weaponRH
 		rightHandDurability = GetWeaponDurability(weaponRH)
-		ScriptDebug("RH Weapon: Durability: " + rightHandDurability + " Health: " + WornObject.GetItemHealthPercent(selfRef, rightHandSlotMask, -1))
+		ScriptDebug("RH Weapon: Durability: " + rightHandDurability + " Health: " + WornObject.GetItemHealthPercent(selfRef, 1, 0))
 	else
 		rightHandDurability = 1.0
 	endIf
@@ -93,7 +72,7 @@ Event OnUpdate()
 	Weapon weaponLH = selfRef.GetEquippedWeapon(true)
 	if weaponLH
 		leftHandDurability = GetWeaponDurability(weaponLH)
-		ScriptDebug("LH Weapon: Durability: " + leftHandDurability + " Health: " + WornObject.GetItemHealthPercent(selfRef, rightHandSlotMask, -1))
+		ScriptDebug("LH Weapon: Durability: " + leftHandDurability + " Health: " + WornObject.GetItemHealthPercent(selfRef, 0, 0))
 	else
 		leftHandDurability = 1.0
 	endIf
@@ -183,10 +162,10 @@ Event OnHit(ObjectReference akAggressor, Form akSource, Projectile akProjectile,
 	
 	Actor selfRef = GetActorRef()
 	
-	; Set the damage for the hit to the item
+	; Add 0.05 bonus to damage value for power attacks
 	Float damageBonus = 0.0
 	if abPowerAttack
-		damageBonus = kPowerAttackDamageBonus
+		damageBonus = 0.05
 	endIf
 	
 	if abHitBlocked
@@ -229,7 +208,7 @@ endFunction
 Function HitWeaponRH(Float damageBonus = 0.0)
 	
 	ScriptDebug("Hit Weapon RH")
-	HitSlotMask(rightHandSlotMask, rightHandDurability, damageBonus)
+	HitSlotMask(1, rightHandDurability, damageBonus)
 
 endFunction
 
@@ -237,7 +216,7 @@ endFunction
 Function HitWeaponLH(Float damageBonus = 0.0)
 	
 	ScriptDebug("Hit Weapon LH")
-	HitSlotMask(leftHandSlotMask, leftHandDurability, damageBonus)
+	HitSlotMask(0, leftHandDurability, damageBonus)
 
 endFunction
 
@@ -301,9 +280,12 @@ Function HitSlotMask(Int slotMask, Float durability, Float damageBonus = 0.0)
 	; Get the current hit item health based on the selected slot mask, hand vs armor
 	Actor selfRef = GetActorRef()
 	Float itemHealth = 0.0
-	If slotMask == rightHandSlotMask || slotMask == leftHandSlotMask
-		itemHealth = WornObject.GetItemHealthPercent(selfRef, slotMask, -1)
+	If slotMask == 0 || slotMask == 1
+		; Hand slot mask; 0=left 1=right
+		; Must use 0 armor slot mask for hand slot mask to work
+		itemHealth = WornObject.GetItemHealthPercent(selfRef, slotMask, 0) 
 	else
+		; Must use invalid hand slot (-1) for armor slot mask to work
 		itemHealth = WornObject.GetItemHealthPercent(selfRef, -1, slotMask)
 	endIf
 	
@@ -315,11 +297,14 @@ Function HitSlotMask(Int slotMask, Float durability, Float damageBonus = 0.0)
 	
 	; Reduce the health percent of the item by 0.1 to reduce its tempering value
 	itemHealth = itemHealth - 0.1
-	if slotMask == rightHandSlotMask || slotMask == leftHandSlotMask
-		WornObject.SetItemHealthPercent(selfRef, slotMask, -1, itemHealth)
+	if slotMask == 0 || slotMask == 1
+		; Hand slot mask; 0=left 1=right
+		; Must use 0 armor slot mask for hand slot mask to work
+		WornObject.SetItemHealthPercent(selfRef, slotMask, 0, itemHealth)
 		Debug.Notification("Your weapon was damaged")
-		ScriptDebug("New item health: " + WornObject.GetItemHealthPercent(selfRef, slotMask, -1))
+		ScriptDebug("New item health: " + WornObject.GetItemHealthPercent(selfRef, slotMask, 0))
 	else
+		; Must use invalid hand slot (-1) for armor slot mask to work
 		WornObject.SetItemHealthPercent(selfRef, -1, slotMask, itemHealth)
 		Debug.Notification("Your armor was damaged")
 		ScriptDebug("New item health: " + WornObject.GetItemHealthPercent(selfRef, -1, slotMask))
@@ -354,19 +339,19 @@ Float Function GetWeaponDurability(Form akWeapon)
 	EndIf
 	
 	If HasKeywordInList(akWeapon, EQD_WeaponMaterialsDurability05)
-		return kWeaponDurability05
+		return 0.99
 	ElseIf HasKeywordInList(akWeapon, EQD_WeaponMaterialsDurability04)
-		return kWeaponDurability04
+		return 0.985
 	ElseIf HasKeywordInList(akWeapon, EQD_WeaponMaterialsDurability03)
-		return kWeaponDurability03
+		return 0.98
 	ElseIf HasKeywordInList(akWeapon, EQD_WeaponMaterialsDurability02)
-		return kWeaponDurability02
+		return 0.975
 	ElseIf HasKeywordInList(akWeapon, EQD_WeaponMaterialsDurability01)
-		return kWeaponDurability01
+		return 0.97
 	EndIf
 
 	; Default to durability 5 for unknown materials
-	return kWeaponDurability05
+	return 0.99
 
 EndFunction
 
@@ -377,33 +362,28 @@ Float Function GetArmorDurability(Armor akArmor)
 	if !akArmor
 		return 1.0
 	endIf
-	
+
 	if HasKeywordInList(akArmor, EQD_ArmorMaterialsDurability05)
-		return kArmorDurability05
+		return 0.99
 	elseIf HasKeywordInList(akArmor, EQD_ArmorMaterialsDurability04)
-		return kArmorDurability04
+		return 0.98
 	elseIf HasKeywordInList(akArmor, EQD_ArmorMaterialsDurability03)
-		return kArmorDurability03
+		return 0.97
 	elseIf HasKeywordInList(akArmor, EQD_ArmorMaterialsDurability02)
-		return kArmorDurability02
+		return 0.96
 	elseIf HasKeywordInList(akArmor, EQD_ArmorMaterialsDurability01)
-		return kArmorDurability01
+		return 0.95
 	endIf
 
 	; Default to durability 5 for unknown materials
-	return kArmorDurability05
+	return 0.99
 
 EndFunction
 
 
 Function ScriptDebug(String akMessage)
 
-	if bDebugTrace
-		Debug.Trace(akMessage)
-	endIf
-	
-	if bDebugNotification
-		Debug.Notification(akMessage)
-	endIf
+	;Debug.Trace(akMessage)
+	;Debug.Notification(akMessage)
 
 endFunction
