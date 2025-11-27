@@ -1,1 +1,83 @@
+Weapons and armor can degrade in quality with use.
+
 Equipment Degradation SKSE adds a feature where weapons and armor may degrade in quality with use. A weapon may be damaged when striking or parrying an attack while taking a hit can damage armor. Equipment degrades 1 tempering level when damaged.
+
+
+Requirements
+
+This mod has no requirements other than the base game
+
+
+Compatibility
+
+This mod does not make any edits to existing objects in the base game and should not conflict with any mod. Items added by Anniversary Edition and other mods can also work with this system.
+
+
+Durability & Damage Chance
+
+Damage occurs based on a random chance with any given hit. The durability does not degrade over repeated usage. Rather, items with higher durability have less of a chance to become damaged with a hit. Weapons and armor made from higher value materials have higher durability.
+
+Being hit by a power attack increases the chance that armor and shields will be damaged by the hit.
+
+Striking with power attacks does not directly increase the chance for a weapon to be damaged. Unfortunately I could not detect whether a strike was a with a regular or power attack. Instead, having low stamina increases the chance that your weapon will become damaged when striking. Therefore, if you are using power attacks, it becomes more likely your weapon will be damaged.
+
+
+Weapon Durability Settings
+
+Weapon Durability 1:
+0.975 (2.5% Chance to become damaged with a hit)
+Iron weapons
+Long bow
+Hunting bow
+
+Weapon Durability 2:
+0.98 (2% Chance to become damaged with a hit)
+Steel weapons
+
+Weapon Durability 3:
+0.985 (1.5% Chance to become damaged with a hit)
+Orcish weapons
+Elven weapons
+
+Weapon Durability 4:
+0.99 (1% Chance to become damaged with a hit)
+Dwarven weapons
+Glass weapons
+
+Weapon Durability 5:
+0.995 (0.5% Chance to become damaged with a hit)
+Ebony weapons
+Dragonbone weapons
+Any weapon using a new weapon material not in the base game
+
+
+Armor Durability Settings
+
+Armor Durability 1:
+0.95 (5% Chance to become damaged when hit)
+Hide armor
+Fur armor
+Iron armor
+
+Armor Durability 2:
+0.96 (4% Chance to become damaged when hit)
+Leather armor
+Steel armor
+Stormcloak & Imperial armor
+
+Armor Durability 3:
+0.97 (3% Chance to become damaged when hit)
+Orcish armor
+Elven armor
+
+Armor Durability 4:
+0.98 (2% Chance to become damaged when hit)
+Dwarven armor
+Glass armor
+
+Armor Durability 5:
+0.99 (1% Chance to become damaged when hit)
+Ebony armor
+Dragonbone armor
+Dragonscale armor
+Any armor using a new armor material not in the base game
