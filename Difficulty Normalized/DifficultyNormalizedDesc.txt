@@ -1,0 +1,34 @@
+Keep the action fast pace at all difficulties!  Adjusting difficulty only affects enemy damage, allowing for high enemy damage without high enemy defense at harder difficulties.
+
+
+
+Difficulty Settings Tables
+
+Normalized Difficulty Settings:
+
+
+D		        E	P
+Novice:		0.5	1.5* (Player to enemy damage is slightly increased)
+Apprentice:	0.75	1.0*
+Adept:		1.0	1.0
+Expert:		1.5	1.0*
+Master:		2.0	1.0*
+Legendary:	3.0	0.75* (Player to enemy damage is slightly decreased)
+
+
+Vanilla(Non-modified) Difficulty Settings:
+
+
+D		        E	P
+Novice:		0.5	2.0
+Apprentice:	0.75	1.5
+Adept:		1.0	1.0
+Expert:		1.5	0.75
+Master:		2.0	0.5
+Legendary:	3.0	0.25
+
+
+KEY:
+D = Difficulty
+E = NPC to Player Damage
+P = Player to NPC Damage
