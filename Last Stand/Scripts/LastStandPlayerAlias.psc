@@ -37,6 +37,6 @@ endEvent
 
 
 Function DebugScript(String akMessage)
-	Debug.Trace(akMessage)
-	Debug.Notification(akMessage)
+	;Debug.Trace(akMessage)
+	;Debug.Notification(akMessage)
 endFunction
