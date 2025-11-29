@@ -65,7 +65,7 @@ Additional visual effects are added to some poison effects.
 Bandit equipment remains low level (Fur, Iron, Steel)
 High level bandits use tempered versions of basic equipment rather than more valuable equipment.
 Draugr bosses have new summoning abilities.
-Silver Hand Weapons include damaged and tempered silver weapons
+Silver Hand Weapons include tempered silver weapons
 Thalmor use primarily Elven weapons
 
 
