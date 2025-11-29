@@ -4,3 +4,8 @@ When health becomes low, time slows and damage to the player is reduced in order
 
 Requirements & Compatibility:
 This mod requires only the base game and should be compatible with any other mods
+
+Mod Settings (All Configurable with MCM)
+25% Damage Reduction when health is at or below 50%
+50% Damage Reduction when health is at or below 25%
+Slow Time when hit when health is at or below 25%

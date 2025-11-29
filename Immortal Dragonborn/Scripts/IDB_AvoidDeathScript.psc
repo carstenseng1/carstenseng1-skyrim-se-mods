@@ -1,5 +1,8 @@
 Scriptname IDB_AvoidDeathScript extends ActiveMagicEffect  
 
+GlobalVariable Property IDB_PercentHealth  Auto
+GlobalVariable Property IDB_ParalysisEnabled  Auto
+
 EffectShader Property DragonPowerAbsorbFXS Auto
 Sound property NPCDragonDeathSequenceWind auto
 
@@ -10,30 +13,41 @@ GlobalVariable Property PerkAvoidDeathTimer  Auto
 GlobalVariable Property GameDaysPassed  Auto
 
 Spell Property IDB_HealSpell  Auto 
+Spell Property IDB_ParalyzeSpell  Auto
 
-Event OnEffectStart(Actor akTarget, Actor akCaster)
-	DragonPowerAbsorbFXS.Play(akTarget, 3.0)
-	NPCDragonDeathSequenceWind.play(akTarget) 
-	Debug.Notification("A great power stirs within you.")
-endEvent
+;Event OnEffectStart(Actor akTarget, Actor akCaster)
+;	DragonPowerAbsorbFXS.Play(akTarget, 3.0)
+;	NPCDragonDeathSequenceWind.play(akTarget) 
+;	Debug.Notification("A great power stirs within you.")
+;endEvent
 
 Event OnHit(ObjectReference akAggressor, Form akSource, Projectile akProjectile, bool abPowerAttack, bool abSneakAttack, bool abBashAttack, bool abHitBlocked )
 	; Don't revive when brawling
 	if (DGIntimidateQuest.IsRunning())
 		return
 	endIf
-
+	
+	Actor player = GetTargetActor()
+	
 	; Don't revive when the Avoid Death Perk should activate
-	if GetTargetActor().HasSpell(PerkAvoidDeathAbility) && PerkAvoidDeathTimer.GetValue() < GameDaysPassed.GetValue()
+	if player.HasSpell(PerkAvoidDeathAbility) && PerkAvoidDeathTimer.GetValue() < GameDaysPassed.GetValue()
 		return
 	endIf
 
 	; Effect condition should already be checking Dragon Soul count
 	; Cast heal spell if health is low
-	if GetTargetActor().GetAVPercentage("Health") < 0.1
-		IDB_HealSpell.Cast(GetTargetActor())
+	if player.GetAVPercentage("Health") < IDB_PercentHealth.GetValue()
+		; Cast spells to revive and paralyze surrounding enemies
+		IDB_HealSpell.Cast(player)
+		if IDB_ParalysisEnabled.GetValue() as Bool
+			IDB_ParalyzeSpell.Cast(player)
+		endIf
 		
 		; Remove 1 Dragon Soul
-		GetTargetActor().ModAV("DragonSouls", -1.0)
+		player.ModAV("DragonSouls", -1.0)
+		
+		; Play FX and sound
+		DragonPowerAbsorbFXS.Play(player, 2.0)
+		NPCDragonDeathSequenceWind.play(player) 
 	endIf
 endEvent
