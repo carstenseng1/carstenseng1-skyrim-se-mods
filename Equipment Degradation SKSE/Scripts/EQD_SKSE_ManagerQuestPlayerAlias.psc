@@ -3,6 +3,21 @@ Scriptname EQD_SKSE_ManagerQuestPlayerAlias extends ReferenceAlias
 
 Int version = 0
 
+GlobalVariable Property EQD_Enabled  Auto
+GlobalVariable Property EQD_Debug  Auto
+
+GlobalVariable Property EQD_WeaponDurability1  Auto
+GlobalVariable Property EQD_WeaponDurability2  Auto
+GlobalVariable Property EQD_WeaponDurability3  Auto
+GlobalVariable Property EQD_WeaponDurability4  Auto
+GlobalVariable Property EQD_WeaponDurability5  Auto
+
+GlobalVariable Property EQD_ArmorDurability1  Auto
+GlobalVariable Property EQD_ArmorDurability2  Auto
+GlobalVariable Property EQD_ArmorDurability3  Auto
+GlobalVariable Property EQD_ArmorDurability4  Auto
+GlobalVariable Property EQD_ArmorDurability5  Auto
+
 Perk Property EQD_DamageWeaponPerk  Auto
 
 FormList Property EQD_ArmorMaterialsDurability01  Auto
@@ -41,7 +56,6 @@ endEvent
 
 Event OnPlayerLoadGame()
 	if version == 0 || version != 1 ; Hard coded script version. Set 0 to force maintenance
-		version = 1
 		Maintenance()
 	endIf
 endEvent
@@ -49,10 +63,51 @@ endEvent
 
 Function Maintenance()
 	
-	ScriptDebug("EQD Maintenance")
-	Actor player = GetActorRef()
-	player.AddPerk(EQD_DamageWeaponPerk)
-	RegisterForSingleUpdate(0.1)
+	version = 1
+
+	Actor player = Game.GetPlayer()
+
+	if EQD_Enabled.GetValue() as Bool
+		ScriptDebug("EQD Enabled")
+
+		; Force ref to reassign when enabling mod
+		ForceRefTo(player)
+
+		; Add perk to manage weapon damage
+		player.AddPerk(EQD_DamageWeaponPerk)
+
+		; Register for update to assign weapon durability
+		RegisterForSingleUpdate(0.1)
+	else
+		ScriptDebug("EQD Disabled")
+
+		; Clear the alias reference to the player
+		Clear()
+
+		; Remove perk for managing weapon damage
+		player.RemovePerk(EQD_DamageWeaponPerk)
+
+		; Reset slot mask variables
+		; Weapon slot masks remain constant 0=left 1=right
+		helmetSlotMask = -1
+		cuirassSlotMask = -1
+		gauntletsSlotMask = -1
+		bootsSlotMask = -1
+		shieldSlotMask = -1
+
+		; Reset durability variables
+		; Durability variables default to max durability of 1.0
+		rightHandDurability = 1.0
+		leftHandDurability = 1.0
+		helmetDurability = 1.0
+		cuirassDurability = 1.0
+		gauntletsDurability = 1.0
+		bootsDurability = 1.0
+		shieldDurability = 1.0
+
+		; Stop any pending update
+		UnregisterForUpdate()
+	endIf
 
 endFunction
 
@@ -339,19 +394,19 @@ Float Function GetWeaponDurability(Form akWeapon)
 	EndIf
 	
 	If HasKeywordInList(akWeapon, EQD_WeaponMaterialsDurability05)
-		return 0.99
+		return EQD_WeaponDurability5.GetValue()
 	ElseIf HasKeywordInList(akWeapon, EQD_WeaponMaterialsDurability04)
-		return 0.985
+		return EQD_WeaponDurability4.GetValue()
 	ElseIf HasKeywordInList(akWeapon, EQD_WeaponMaterialsDurability03)
-		return 0.98
+		return EQD_WeaponDurability3.GetValue()
 	ElseIf HasKeywordInList(akWeapon, EQD_WeaponMaterialsDurability02)
-		return 0.975
+		return EQD_WeaponDurability2.GetValue()
 	ElseIf HasKeywordInList(akWeapon, EQD_WeaponMaterialsDurability01)
-		return 0.97
+		return EQD_WeaponDurability1.GetValue()
 	EndIf
 
 	; Default to durability 5 for unknown materials
-	return 0.99
+	return EQD_WeaponDurability5.GetValue()
 
 EndFunction
 
@@ -364,26 +419,26 @@ Float Function GetArmorDurability(Armor akArmor)
 	endIf
 
 	if HasKeywordInList(akArmor, EQD_ArmorMaterialsDurability05)
-		return 0.99
+		return EQD_ArmorDurability5.GetValue()
 	elseIf HasKeywordInList(akArmor, EQD_ArmorMaterialsDurability04)
-		return 0.98
+		return EQD_ArmorDurability4.GetValue()
 	elseIf HasKeywordInList(akArmor, EQD_ArmorMaterialsDurability03)
-		return 0.97
+		return EQD_ArmorDurability3.GetValue()
 	elseIf HasKeywordInList(akArmor, EQD_ArmorMaterialsDurability02)
-		return 0.96
+		return EQD_ArmorDurability2.GetValue()
 	elseIf HasKeywordInList(akArmor, EQD_ArmorMaterialsDurability01)
-		return 0.95
+		return EQD_ArmorDurability1.GetValue()
 	endIf
 
 	; Default to durability 5 for unknown materials
-	return 0.99
+	return EQD_ArmorDurability5.GetValue()
 
 EndFunction
 
 
 Function ScriptDebug(String akMessage)
-
-	;Debug.Trace(akMessage)
-	;Debug.Notification(akMessage)
-
+	if EQD_Debug.GetValue() as Bool
+		Debug.Trace(akMessage)
+		Debug.Notification(akMessage)
+	endIf
 endFunction
