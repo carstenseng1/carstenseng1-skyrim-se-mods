@@ -5,6 +5,38 @@ Use dragon souls as extra lives.  Just when you think you lost, turn the tide o
 This mod adds an extra lives system that uses Dragon Souls to revive the player's character. When the Dragonborn's health is low, the Dragonborn is revived to full Health, Magicka, and Stamina, and a magical blast paralyzes surrounding foes allowing the Dragonborn to turn the tide of battle. This power comes at the cost of a Dragon Soul. If the Dragonborn does not have any Dragon Souls, no revival will be triggered.
 
 
+Requirements & Compatibility
+
+This mod does require any other mods. No edits are made to existing game objects, and it should be compatible with all other mods.
+Optional Requirement - SKSE and SKYUI for MCM
+
+
+Recommended Mods
+
+I recommend pairing this with my mod, Last Stand (https://www.nexusmods.com/skyrimspecialedition/mods/165424) (https://creations.bethesda.net/en/skyrim/details/0f051e36-a211-4ced-a398-e9ee496c81d9/Last_Stand), which adds damage resistance when health is low. That can help ensure that the revival effect occurs by reducing the likelihood that a hit will take the player's health from above the revival threshold down to 0.
+
+You may also like to pair this with a mod that prevents killmoves on the player.
+
+
+Installation
+
+Nexus:
+Download through Vortex or Manual Download
+Enable the plugin file ImmortalDragonborn.esp and have the corresponding BSA file in your Data folder.
+
+Bethesda Creations:
+Download and enable the Creation
+
+
+Uninstallation
+
+PC:
+If using SKSE and SKYUI, it is recommended to use the MCM to disable the mod before uninstalling. This helps to stop manager quests and remove spells before uninstalling.
+
+Xbox:
+While there is no access to MCM, there is no serious consequence to uninstalling. Data for the manager quest will remain in the save file as with any other mod that uses such quests. All other functionality of the mod will be stopped after the mod is uninstalled.
+
+
 Mod Settings (Configurable with MCM)
 
 Enable Immortal Dragonborn:
