@@ -23,21 +23,39 @@ Event OnUpdate()
 endEvent
 
 
-Function Spawn(Actor akActor, ActorBase akSpawnedActorBase, Int aiAdditionalSpawnCount = 0, ActorBase akRequiredActorBase = NONE)
+Function Spawn(ENMZ_SpawnActor akActor)
 	; Check if mod is enabled
-	if !(ENMZ_Enabled.GetValue() as Bool)
+	if !ENMZ_Enabled.GetValue() as Bool
+		DebugScript("No spawn attempt. Enemizer disabled.")
+		return
+	endIf
+
+	if !akActor
+		DebugScript("No spawn. Actor NONE")
+		return
+	endIf
+	
+	if !akActor.pSpawnedActorBase
+		DebugScript("No spawn. pSpawnedActorBase NONE")
+		return
+	endIf
+	
+	; Prevent spawning multiple times for same actor
+	if akActor.GetHasSpawned()
+		DebugScript("No spawn. Actor already spawned.")
 		return
 	endIf
 	
 	;Require that the actor is alive
 	if (akActor.isDead())
+		DebugScript("No spawn. Actor dead.")
 		return
 	endIf
 	
 	;Require that the actor equal the required actor base if set
 	;This prevents subclasses of spawning actor bases to incorrecly spawn
-	if (akRequiredActorBase != NONE && akActor.GetActorBase() != akRequiredActorBase)
-		DebugScript("Did not spawn. Required ActorBase does not match.")
+	if (akActor.pRequiredActorBase != NONE && akActor.GetActorBase() != akActor.pRequiredActorBase)
+		DebugScript("No spawn. pRequiredActorBase mismatch.")
 		return
 	endIf
 	
@@ -46,21 +64,23 @@ Function Spawn(Actor akActor, ActorBase akSpawnedActorBase, Int aiAdditionalSpaw
 	; Set the number of spawn attempts
 	Int count = 0
 	Float chance = 0.0
-	if (akActor.isInInterior())
+	if akActor.isInInterior()
 		count = ENMZ_SpawnCountInterior.GetValueInt()
 		chance = ENMZ_SpawnChanceInterior.GetValue()
 	else
 		count = ENMZ_SpawnCountExterior.GetValueInt()
 		chance = ENMZ_SpawnChanceExterior.GetValue()
 	endIf
-	count += aiAdditionalSpawnCount
+	count += akActor.pAdditionalSpawnCount
 	
 	while count > 0
 		count -= 1
 		Float random = Utility.RandomFloat()
 		if (chance >= random)
-			akActor.PlaceActorAtMe(akSpawnedActorBase)
-			DebugScript("Spawned enemy. Chance:"+chance+" Random:"+random)
+			akActor.PlaceActorAtMe(akActor.pSpawnedActorBase)
+			DebugScript("Spawn. Chance:"+chance+" Random:"+random)
+		else
+			DebugScript("No spawn. Chance:"+chance+" Random:"+random)
 		endif
 	endWhile
 
