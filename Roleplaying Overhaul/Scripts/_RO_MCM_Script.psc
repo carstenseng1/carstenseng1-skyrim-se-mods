@@ -1,11 +1,17 @@
 Scriptname _RO_MCM_Script extends SKI_ConfigBase  
 
+GlobalVariable Property _RO_Enabled  Auto
 GlobalVariable Property _RO_Debug  Auto
+GlobalVariable Property _RO_DrunkEnabled  Auto
+GlobalVariable Property _RO_EncumbranceEnabled  Auto
+GlobalVariable Property _RO_RoleplayingEnabled  Auto
+GlobalVariable Property _RO_UndeadCurseEnabled  Auto
 
-Bool debugVal = False
-
-Int iDebug
-
+Quest Property _RO_ManagerQuest  Auto
+Quest Property _RO_DrunkQuest  Auto
+Quest Property _RO_EncumbranceQuest  Auto
+Quest Property _RO_RoleplayingQuest  Auto
+Quest Property _RO_UndeadCurseQuest  Auto
 
 ; SCRIPT VERSION ----------------------------------------------------------------------------------
 
@@ -16,40 +22,23 @@ endFunction
 
 ; PRIVATE VARIABLES -------------------------------------------------------------------------------
 
-; OIDs (T:Text B:Toggle S:Slider M:Menu, C:Color, K:Key)
-int			_myTextOID_T
-int			_myToggle_OID_B
-int			_mySliderOID_S
-int			_myMenuOID_M
-int			_myColorOID_C
-int			_myKeyOID_K
-int			_myInputOID_I
+Int iEnabledToggle
+Bool bEnabled
 
-; State
+Int iDebugToggle
+Bool bDebug
 
-; ...
+Int iDrunkToggle
+Bool bDrunkEnabled
 
-; Internal
+Int iEncumbranceToggle
+Bool bEncumbranceEnabled
 
-; ...
+Int iRoleplayingToggle
+Bool bRoleplayingEnabled
 
-
-; INITIALIZATION ----------------------------------------------------------------------------------
-
-; @implements SKI_ConfigBase
-event OnConfigInit()
-	{Called when this config menu is initialized}
-	
-	; ...
-endEvent
-
-; @implements SKI_QuestBase
-event OnVersionUpdate(int a_version)
-	{Called when a version update of this script has been detected}
-
-	; ...
-endEvent
-
+Int iUndeadCurseToggle
+Bool bUndeadCurseEnabled
 
 ; EVENTS ------------------------------------------------------------------------------------------
 
@@ -57,15 +46,55 @@ endEvent
 event OnPageReset(string a_page)
 	{Called when a new page is selected, including the initial empty page}
 	
-	SetCursorFillMode(TOP_TO_BOTTOM)
+	SetCursorFillMode(LEFT_TO_RIGHT)
 	
-	; Create Debug Toggle with default value false
-	iDebug = AddToggleOption("Debugging", debugVal)
+	; Create Enabled Toggle
+	bEnabled = _RO_Enabled.GetValue() as Bool
+	iEnabledToggle = AddToggleOption("Enable Mod Featured", bEnabled)
+
+	; Create Debug Toggle
+	bDebug = _RO_Debug.GetValue() as Bool
+	iDebugToggle = AddToggleOption("Debugging", bDebug)
+
+	; Create Drunk Enabled Toggle
+	bDrunkEnabled = _RO_DrunkEnabled.GetValue() as Bool
+	iDrunkToggle = AddToggleOption("Enable Drunk Effects", bDrunkEnabled)
+
+	; Create Encumbrance Enabled Toggle
+	bEncumbranceEnabled = _RO_EncumbranceEnabled.GetValue() as Bool
+	iEncumbranceToggle = AddToggleOption("Enable Gradual Encumbrance", bEncumbranceEnabled)
+
+	; Create Roleplaying Enabled Toggle
+	bRoleplayingEnabled = _RO_RoleplayingEnabled.GetValue() as Bool
+	iRoleplayingToggle = AddToggleOption("Enable Roleplaying Bonuses", bRoleplayingEnabled)
+
+	; Create Undead Curse Enabled Toggle
+	bUndeadCurseEnabled = _RO_UndeadCurseEnabled.GetValue() as Bool
+	iUndeadCurseToggle = AddToggleOption("Enable Undead Curse", bUndeadCurseEnabled)
 	
-	; Set Debug Toggle value based on current Global Variable value
-	debugVal = _RO_Debug.GetValue() as Bool
-	SetToggleOptionValue(iDebug, debugVal)
+	; ...
+endEvent
+
+Event OnConfigClose()
+	{Called when this config menu is closed}
 	
+	; Update debugging befor all other updates
+	_RO_Debug.SetValue(bDebug as Int)
+
+	; Update the global variables. These will be reference by the manager quests
+	_RO_Enabled.SetValue(bEnabled as Int)
+	_RO_DrunkEnabled.SetValue(bDrunkEnabled as Int)
+	_RO_EncumbranceEnabled.SetValue(bEncumbranceEnabled as Int)
+	_RO_RoleplayingEnabled.SetValue(bRoleplayingEnabled as Int)
+	_RO_UndeadCurseEnabled.SetValue(bUndeadCurseEnabled as Int)
+
+	; Run update functions to start/stop quests and related features
+	UpdateManagerEnabled()
+	UpdateDrunkEnabled()
+	UpdateEncumbranceEnabled()
+	UpdateRoleplayingEnabled()
+	UpdateUndeadCurseEnabled()
+
 	; ...
 endEvent
 
@@ -73,6 +102,21 @@ endEvent
 event OnOptionHighlight(int a_option)
 	{Called when highlighting an option}
 
+	if a_option == iEnabledToggle
+		SetInfoText("Enable/Disable configurable mod features. Recommended to use this to disable the mod before uninstalling")
+	elseIf a_option == iDebugToggle
+		SetInfoText("Enable/Disable script debug notifications")
+	elseIf a_option == iDrunkToggle
+		SetInfoText("Enable/Disable visual effects from drinking alcohol")
+	elseIf a_option == iEncumbranceToggle
+		SetInfoText("Enable/Disable movement speed decrease from carrying items in inventory")
+	elseIf a_option == iRoleplayingToggle
+		SetInfoText("Enable/Disable bonuses from performing immersive actions")
+	elseIf a_option == iUndeadCurseToggle
+		SetInfoText("Enable/Disable curse from looting crypts")
+	else
+		SetInfoText("")
+	endIf
 	; ...
 endEvent
 
@@ -80,10 +124,24 @@ endEvent
 event OnOptionSelect(int a_option)
 	{Called when a non-interactive option has been selected}
 	
-	if a_option == iDebug
-		debugVal = !debugVal
-		SetToggleOptionValue(iDebug, debugVal)
-		_RO_Debug.SetValue(debugVal as Int)
+	if a_option == iEnabledToggle
+		bEnabled = !bEnabled
+		SetToggleOptionValue(a_option, bEnabled)
+	elseIf a_option == iDebugToggle
+		bDebug = !bDebug
+		SetToggleOptionValue(a_option, bDebug)
+	elseIf a_option == iDrunkToggle
+		bDrunkEnabled = !bDrunkEnabled
+		SetToggleOptionValue(a_option, bDrunkEnabled)
+	elseIf a_option == iEncumbranceToggle
+		bEncumbranceEnabled = !bEncumbranceEnabled
+		SetToggleOptionValue(a_option, bEncumbranceEnabled)
+	elseIf a_option == iRoleplayingToggle
+		bRoleplayingEnabled = !bRoleplayingEnabled
+		SetToggleOptionValue(a_option, bRoleplayingEnabled)
+	elseIf a_option == iUndeadCurseToggle
+		bUndeadCurseEnabled = !bUndeadCurseEnabled
+		SetToggleOptionValue(a_option, bUndeadCurseEnabled)
 	endIf
 	
 	; ...
@@ -92,76 +150,189 @@ endEvent
 ; @implements SKI_ConfigBase
 event OnOptionDefault(int a_option)
 	{Called when resetting an option to its default value}
-
-	if a_option == iDebug
-		debugVal = False
-		SetToggleOptionValue(iDebug, debugVal)
-		_RO_Debug.SetValue(debugVal as Int)
+	
+	if a_option == iEnabledToggle
+		bEnabled = true
+		SetToggleOptionValue(a_option, true)
+	elseIf a_option == iDebugToggle
+		bDebug = false
+		SetToggleOptionValue(a_option, false)
+	elseIf a_option == iDrunkToggle
+		bDrunkEnabled = true
+		SetToggleOptionValue(a_option, true)
+	elseIf a_option == iEncumbranceToggle
+		bEncumbranceEnabled = true
+		SetToggleOptionValue(a_option, true)
+	elseIf a_option == iRoleplayingToggle
+		bRoleplayingEnabled = true
+		SetToggleOptionValue(a_option, true)
+	elseIf a_option == iUndeadCurseToggle
+		bUndeadCurseEnabled = true
+		SetToggleOptionValue(a_option, true)
 	endIf
 	
 	; ...
 endEvent
 
-; @implements SKI_ConfigBase
-event OnOptionSliderOpen(int a_option)
-	{Called when a slider option has been selected}
+; FUNCTIONS ------------------------------------------------------------------------------------------
 
-	; ...
-endEvent
+; Player Alias IDs
+; Manager 0
+; Drunk 7
+; Encumbrance 0
+; Roleplaying 0
+; UnceadCurse 8
 
-; @implements SKI_ConfigBase
-event OnOptionSliderAccept(int a_option, float a_value)
-	{Called when a new slider value has been accepted}
-
-	; ...
-endEvent
-
-; @implements SKI_ConfigBase
-event OnOptionMenuOpen(int a_option)
-	{Called when a menu option has been selected}
-
-	; ...
-endEvent
-
-; @implements SKI_ConfigBase
-event OnOptionMenuAccept(int a_option, int a_index)
-	{Called when a menu entry has been accepted}
+Function UpdateManagerEnabled()
+	; Start/Stop the manager quest
+	Bool bHasStateChanged = false
+	if bEnabled
+		if !_RO_ManagerQuest.isRunning()
+			_RO_ManagerQuest.Start()
+			bHasStateChanged = true
+		endIf
+	else
+		if _RO_ManagerQuest.isRunning()
+			_RO_ManagerQuest.Stop()
+			bHasStateChanged = true
+		endIf
+	endIf
 	
+	; Enable/Disable functionality is handled in Maintenance function
+	; Run maintenance if quest state has changed
+	if bHasStateChanged
+		DebugScriptQuestStatus(_RO_ManagerQuest, "Manager", bEnabled)
+
+		; Reference the manager quest alias tab for player alias ID
+		_RO_ManagerQuestPlayerAlias playerAlias = _RO_ManagerQuest.GetAlias(0) as _RO_ManagerQuestPlayerAlias
+		playerAlias.Maintenance()
+	endIf
+endFunction
+
+Function UpdateDrunkEnabled()
+	; Start/Stop the manager quest
+	Bool bHasStateChanged = false
+	if bEnabled && bDrunkEnabled
+		if !_RO_DrunkQuest.isRunning()
+			_RO_DrunkQuest.Start()
+			bHasStateChanged = true
+		endIf
+	else
+		if _RO_DrunkQuest.isRunning()
+			_RO_DrunkQuest.Stop()
+			bHasStateChanged = true
+		endIf
+	endIf
 	
-	; ...
-endEvent
+	; Enable/Disable functionality is handled in Maintenance function
+	; Run maintenance if quest state has changed
+	if bHasStateChanged
+		DebugScriptQuestStatus(_RO_DrunkQuest, "Drunk", bDrunkEnabled)
 
-; @implements SKI_ConfigBase
-event OnOptionColorOpen(int a_option)
-	{Called when a color option has been selected}
+		; Reference the manager quest alias tab for player alias ID
+		_RO_DrunkQuestPlayerAlias playerAlias = _RO_DrunkQuest.GetAlias(7) as _RO_DrunkQuestPlayerAlias
+		playerAlias.Maintenance()
+	endIf
+endFunction
 
-	; ...
-endEvent
+Function UpdateEncumbranceEnabled()
+	; Start/Stop the manager quest
+	Bool bHasStateChanged = false
+	if bEnabled && bEncumbranceEnabled
+		if !_RO_EncumbranceQuest.isRunning()
+			_RO_EncumbranceQuest.Start()
+			bHasStateChanged = true
+		endIf
+	else
+		if _RO_EncumbranceQuest.isRunning()
+			_RO_EncumbranceQuest.Stop()
+			bHasStateChanged = true
+		endIf
+	endIf
+	
+	; Enable/Disable functionality is handled in Maintenance function
+	if bHasStateChanged
+		DebugScriptQuestStatus(_RO_EncumbranceQuest, "Encumbrance", bEncumbranceEnabled)
 
-; @implements SKI_ConfigBase
-event OnOptionColorAccept(int a_option, int a_color)
-	{Called when a new color has been accepted}
+		; Reference the manager quest alias tab for player alias ID
+		_RO_EncumbranceQuestPlayerAlias playerAlias = _RO_EncumbranceQuest.GetAlias(0) as _RO_EncumbranceQuestPlayerAlias
+		playerAlias.Maintenance()
+	endIf
+endFunction
 
-	; ...
-endEvent
+Function UpdateRoleplayingEnabled()
+	; Start/Stop the manager quest
+	Bool bHasStateChanged = false
+	if bEnabled && bRoleplayingEnabled
+		if !_RO_RoleplayingQuest.isRunning()
+			_RO_RoleplayingQuest.Start()
+			bHasStateChanged = true
+		endIf
+	else
+		if _RO_RoleplayingQuest.isRunning()
+			_RO_RoleplayingQuest.Stop()
+			bHasStateChanged = true
+		endIf
+	endIf
+	
+	; Enable/Disable functionality is handled in Maintenance function
+	if bHasStateChanged
+		DebugScriptQuestStatus(_RO_RoleplayingQuest, "Releplaying", bRoleplayingEnabled)
 
-; @implements SKI_ConfigBase
-event OnOptionKeyMapChange(int a_option, int a_keyCode, string a_conflictControl, string a_conflictName)
-	{Called when a key has been remapped}
+		; Reference the manager quest alias tab for player alias ID
+		_RO_RoleplayingQuestPlayerAlias playerAlias = _RO_RoleplayingQuest.GetAlias(0) as _RO_RoleplayingQuestPlayerAlias
+		playerAlias.Maintenance()
+	endIf
+endFunction
 
-	; ...
-endEvent
+Function UpdateUndeadCurseEnabled()
+	; Start/Stop the manager quest
+	Bool bHasStateChanged = false
+	if bEnabled && bUndeadCurseEnabled
+		if !_RO_UndeadCurseQuest.isRunning()
+			_RO_UndeadCurseQuest.Start()
+			bHasStateChanged = true
+		endIf
+	else
+		if _RO_UndeadCurseQuest.isRunning()
+			_RO_UndeadCurseQuest.Stop()
+			bhasStateChanged = true
+		endIf
+	endIf
+	
+	; Enable/Disable functionality is handled in Maintenance function
+	if bHasStateChanged
+		DebugScriptQuestStatus(_RO_UndeadCurseQuest, "Undead Curse", bUndeadCurseEnabled)
 
-; @implements SKI_ConfigBase
-event OnOptionInputOpen(int a_option)
-	{Called when a text input option has been selected}
+		; Reference the manager quest alias tab for player alias ID
+		_RO_UndeadCurseQuestPlayerAlias playerAlias = _RO_UndeadCurseQuest.GetAlias(8) as _RO_UndeadCurseQuestPlayerAlias
+		playerAlias.Maintenance()
+	endIf
+endFunction
 
-	; ...
-endEvent
+; UTILITY ------------------------------------------------------------------------------------------
 
-; @implements SKI_ConfigBase
-event OnOptionInputAccept(int a_option, string a_input)
-	{Called when a new text input has been accepted}
+Function DebugScript(String asMessage)
+	if _RO_Debug.GetValue() as Bool
+		Debug.Trace(asMessage)
+		Debug.Notification(asMessage)
+	endIf
+endFunction
 
-	; ...
-endEvent
+Function DebugScriptQuestStatus(Quest akQuest, String asQuestName, Bool abSetting)
+	if _RO_Debug.GetValue() as Bool
+		String sSetting = ""
+		if abSetting
+			sSetting = "Enabled"
+		else
+			sSetting = "Disabled"
+		endIf
+		String sStatus = ""
+		if akQuest.isRunning()
+			sStatus = "Running"
+		else
+			sStatus = "Stopped"
+		endIf
+		Debug.Notification(asQuestName + " " + sSetting + " " + sStatus)
+	endIf
+endFunction

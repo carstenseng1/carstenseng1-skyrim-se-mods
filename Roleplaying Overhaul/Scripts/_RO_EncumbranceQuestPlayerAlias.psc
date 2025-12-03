@@ -1,5 +1,8 @@
 Scriptname _RO_EncumbranceQuestPlayerAlias extends ReferenceAlias  
 
+GlobalVariable Property _RO_Enabled  Auto
+GlobalVariable Property _RO_Debug  Auto
+GlobalVariable Property _RO_EncumbranceEnabled  Auto
 
 SPELL Property _RO_EncumbranceStage1 Auto
 SPELL Property _RO_EncumbranceStage2 Auto
@@ -9,66 +12,53 @@ Float Property pEncumbrance1  Auto
 Float Property pEncumbrance2  Auto
 Float Property pEncumbrance3  Auto
 
-Float armorWeight = -1.0
+Int version = 0
+
+; INITIALIZATION ------------------------------------------------------------------------------------------
 
 Event OnInit()
 	Maintenance()
 endEvent
 
-
 Event OnPlayerLoadGame()
-	Maintenance()
+	if version == 0 || version != 1
+		Maintenance()
+	endIf
 endEvent
-
 
 Function Maintenance()
-	armorWeight = -1.0
-	RegisterForSingleUpdate(0.5)
+	version = 1
+
+	Actor player = Game.GetPlayer()
+	if (_RO_Enabled.GetValue() as Bool) && (_RO_EncumbranceEnabled.GetValue() as Bool)
+		ForceRefTo(player)
+		RegisterForSingleUpdate(0.5)
+		DebugScript("Gradual Encumbrance Enabled")
+	else
+		Clear()
+		UnregisterForUpdate()
+		player.RemoveSpell(_RO_EncumbranceStage1)
+		player.RemoveSpell(_RO_EncumbranceStage2)
+		player.RemoveSpell(_RO_EncumbranceStage3)
+		DebugScript("Gradual Encumbrance Disabled")
+	endIf
 endFunction
 
+; EVENTS ------------------------------------------------------------------------------------------
 
 Event OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer)
-	
 	RegisterForSingleUpdate(0.5)
-	;UpdateEncumbrance()
-	
 endEvent
-
 
 Event OnItemRemoved(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akDestContainer)
-	
 	RegisterForSingleUpdate(0.5)
-	;UpdateEncumbrance()
-	
 endEvent
-
-
-Event OnObjectEquipped(Form akBaseObject, ObjectReference akReference)
-
-	armorWeight = -1.0
-	
-	RegisterForSingleUpdate(0.5)
-	;UpdateEncumbrance()
-
-endEvent
-
-
-Event OnObjectUnequipped(Form akBaseObject, ObjectReference akReference)
-	
-	armorWeight = -1.0
-	
-	RegisterForSingleUpdate(0.5)
-	;UpdateEncumbrance()
-
-endEvent
-
 
 Event OnUpdate()
-
 	UpdateEncumbrance()
-
 endEvent
 
+; FUNCTIONS ------------------------------------------------------------------------------------------
 
 Function UpdateEncumbrance()
 	
@@ -77,35 +67,10 @@ Function UpdateEncumbrance()
 	; Get % of Carry Weight ignoring worn armor weight. Armor already has a movement penalty.
 	Float inventoryWeight = player.GetActorValue("InventoryWeight")
 	Float carryWeight = player.GetActorValue("CarryWeight")
-
-	if armorWeight == -1.0
-		
-		armorWeight = 0.0
-		
-		Form head = player.GetWornForm(0x00000001)
-		if head
-			armorWeight += head.GetWeight()
-		endIf
-
-		Form body = player.GetWornForm(0x00000004)
-		if body
-			armorWeight += body .GetWeight()
-		endIf
-
-		Form feet = player.GetWornForm(0x00000080)
-		if feet
-			armorWeight += feet .GetWeight()
-		endIf
-
-		Form hands = player.GetWornForm(0x00000008)
-		if hands
-			armorWeight += hands .GetWeight()
-		endIf
-	endIf
 	
-	Float carryWeightPercent =  (inventoryWeight - armorWeight) / carryWeight
+	Float carryWeightPercent =  inventoryWeight / carryWeight
 	
-	;Debug.Notification("Carry: " + carryWeight + " Inventory: " + inventoryWeight + " Armor: " + armorWeight)
+	DebugScript("Carry: " + carryWeight + " Inventory: " + inventoryWeight)
 	
 	player.RemoveSpell(_RO_EncumbranceStage1)
 	player.RemoveSpell(_RO_EncumbranceStage2)
@@ -124,4 +89,11 @@ Function UpdateEncumbrance()
 		player.AddSpell(_RO_EncumbranceStage1, false)
 	endIf
 	
+endFunction
+
+Function DebugScript(String akMessage)
+	if _RO_Debug.GetValue() as Bool
+		Debug.Trace(akMessage)
+		Debug.Notification(akMessage)
+	endIf
 endFunction
