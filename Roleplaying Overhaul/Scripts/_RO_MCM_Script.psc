@@ -2,6 +2,7 @@ Scriptname _RO_MCM_Script extends SKI_ConfigBase
 
 GlobalVariable Property _RO_Enabled  Auto
 GlobalVariable Property _RO_Debug  Auto
+GlobalVariable Property _RO_SlowSkillAdvancementEnabled  Auto
 GlobalVariable Property _RO_DrunkEnabled  Auto
 GlobalVariable Property _RO_EncumbranceEnabled  Auto
 GlobalVariable Property _RO_RoleplayingEnabled  Auto
@@ -27,6 +28,9 @@ Bool bEnabled
 
 Int iDebugToggle
 Bool bDebug
+
+Int iSlowSkillAdvancementToggle
+Bool bSlowSkillAdvancementEnabled
 
 Int iDrunkToggle
 Bool bDrunkEnabled
@@ -56,6 +60,10 @@ event OnPageReset(string a_page)
 	bDebug = _RO_Debug.GetValue() as Bool
 	iDebugToggle = AddToggleOption("Debugging", bDebug)
 
+	; Create Slow Skill Advancement Toggle
+	bSlowSkillAdvancementEnabled = _RO_SlowSkillAdvancementEnabled.GetValue() as Bool
+	iSlowSkillAdvancementToggle = AddToggleOption("Slow Skill Advancement", bSlowSkillAdvancementEnabled)
+
 	; Create Drunk Enabled Toggle
 	bDrunkEnabled = _RO_DrunkEnabled.GetValue() as Bool
 	iDrunkToggle = AddToggleOption("Enable Drunk Effects", bDrunkEnabled)
@@ -83,6 +91,7 @@ Event OnConfigClose()
 
 	; Update the global variables. These will be reference by the manager quests
 	_RO_Enabled.SetValue(bEnabled as Int)
+	_RO_SlowSkillAdvancementEnabled.SetValue(bSlowSkillAdvancementEnabled as Int)
 	_RO_DrunkEnabled.SetValue(bDrunkEnabled as Int)
 	_RO_EncumbranceEnabled.SetValue(bEncumbranceEnabled as Int)
 	_RO_RoleplayingEnabled.SetValue(bRoleplayingEnabled as Int)
@@ -106,6 +115,8 @@ event OnOptionHighlight(int a_option)
 		SetInfoText("Enable/Disable configurable mod features. Recommended to use this to disable the mod before uninstalling")
 	elseIf a_option == iDebugToggle
 		SetInfoText("Enable/Disable script debug notifications")
+	elseIf a_option == iSlowSkillAdvancementToggle
+		SetInfoText("Enable/Disable slow skill advancement. Skills advance at half rate when enabled.")
 	elseIf a_option == iDrunkToggle
 		SetInfoText("Enable/Disable visual effects from drinking alcohol")
 	elseIf a_option == iEncumbranceToggle
@@ -130,6 +141,9 @@ event OnOptionSelect(int a_option)
 	elseIf a_option == iDebugToggle
 		bDebug = !bDebug
 		SetToggleOptionValue(a_option, bDebug)
+	elseIf a_option == iSlowSkillAdvancementToggle
+		bSlowSkillAdvancementEnabled = !bSlowSkillAdvancementEnabled
+		SetToggleOptionValue(a_option, bSlowSkillAdvancementEnabled)
 	elseIf a_option == iDrunkToggle
 		bDrunkEnabled = !bDrunkEnabled
 		SetToggleOptionValue(a_option, bDrunkEnabled)
@@ -157,6 +171,9 @@ event OnOptionDefault(int a_option)
 	elseIf a_option == iDebugToggle
 		bDebug = false
 		SetToggleOptionValue(a_option, false)
+	elseIf a_option == iSlowSkillAdvancementToggle
+		bSlowSkillAdvancementEnabled = true
+		SetToggleOptionValue(a_option, true)
 	elseIf a_option == iDrunkToggle
 		bDrunkEnabled = true
 		SetToggleOptionValue(a_option, true)

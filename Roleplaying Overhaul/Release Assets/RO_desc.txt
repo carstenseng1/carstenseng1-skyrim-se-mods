@@ -2,32 +2,19 @@ Fjør Tal is a roleplaying overhaul which adds a number of roleplaying and simula
 
 Compatible with Skyrim Anniversary Edition Content, including Survival Mode.
 
-Requires Skyrim Special Edition with Free Anniversary Edition Update.
-Future versions may require upgrade to Anniversary Edition.
+Requires Skyrim Special Edition with Anniversary Edition Update.
 
 
 *** Features ***
 
-Curse of the Dead:
-Taking gold and other treasure from crypts may cause the player to incur the "Curse of the Dead". When cursed the player does half damage to undead.
+Slower Skill Advancement: (Configurable with MCM)
+Skills advance at 50% of the normal rate.
 
-Drunkenness:
+Curse of the Dead: (Configurable with MCM)
+Taking gold and other treasure from crypts may cause the player to incur the "Curse of the Dead". When cursed the player deals 50% damage to undead.
+
+Drunkenness: (Configurable with MCM)
 New visual effects from drinking alcohol and skooma.
-
-Immersion (Roleplaying Bonus):
-New player stat that is gained through performing roleplaying actions. When full, the player is granted a bonus to Speechcraft skill advancement for 8 hours.
-
-Sit and Talk:
-Sit when talking to characters to have better chances to succeed with persuasion attempts, better prices with vendors, and earn extra Speechcraft XP from conversations.
-
-Unencumbered Rest:
-Rest while carrying less weight to wake with a higher Immersion value.
-
-Daily Immersion Action:
-Doing any one of the following actions grants a bonus to Immersion until the player sleeps.
-- Eating a food item
-- Sitting for an hour or more (Game Time)
-- Working at a crafting station for an hour or more (Game Time)
 
 Gold has weight:
 Each gold piece weighs 0.01 weight. Gold can be dropped with a new power.
@@ -36,14 +23,31 @@ Backpacks slow movement:
 Wearing a backpack reduces the player movement speed 20%
 
 Gradual Encumbrance:
-Movement speed is reduced at various intervals of encumbrance. Inventory weight at 50% of carry weight causes a 10% movement speed reduction. This increases to 20% speed reduction at 75% of carry weight and 30% speed reduction at 90% of carry weight. The inventory weight ignores the weight of worn armor since armor weight already has an inherent movement speed penalty.
+Movement speed is reduced at various levels of encumbrance. Inventory weight at 50% of carry weight causes a 10% movement speed reduction. This increases to 20% speed reduction at 75% of carry weight and 30% speed reduction at 90% of carry weight.
+
+
+*** Immersion (Roleplaying Bonus) Features ***
+(All Immersion Features configured with MCM Option - Roleplaying Bonus)
+
+Immersion: 
+New player stat that is gained through performing roleplaying actions. When full, the player is granted a bonus to Speechcraft skill advancement for 8 hours.
+
+Sit and Talk:
+Sit when talking to characters to have better chances to succeed with persuasion attempts, better prices with vendors, and earn extra Speechcraft XP from conversations.
+
+Unencumbered Rest:
+Rest while carrying less weight to wake with a higher Immersion value.
+
+Daily Immersion Action: 
+Doing any one of the following actions grants a bonus to Immersion until the player sleeps.
+- Eating a food item
+- Sitting for an hour or more (Game Time)
+- Working at a crafting station for an hour or more (Game Time)
 
 
 *** New Items ***
 
 Silver Arrows
-Damaged versions of basic weapons and armor
-Broken pieces of some weapon types
 Cleaned Pelts
 
 
