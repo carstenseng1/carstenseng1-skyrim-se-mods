@@ -52,3 +52,16 @@ Default - Enabled
 Activation Health Percentage:
 Health Percentage at which revival will activate. Recommended 10% to match Avoid Death Perk
 Default - 10%
+
+Dragonsoul Cost:
+Number of Dragon Souls it costs to revive
+Default - 1
+
+Versions
+
+v1.0.0
+Initial Release
+
+v1.1.0
+Added Dragon Soul Cost to MCM
+Fixed manager quest restart when disabling and re-enabling mod

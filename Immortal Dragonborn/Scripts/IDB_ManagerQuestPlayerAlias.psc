@@ -1,32 +1,53 @@
 Scriptname IDB_ManagerQuestPlayerAlias extends ReferenceAlias  
 {Quest Alias referencing the Player Actor to manage Immortal Dragonborn Mod}
 
-
-Int version = 0
-
 GlobalVariable Property IDB_Enabled  Auto
-Quest Property IDB_ManagerQuest  Auto
+GlobalVariable Property IDB_Debug  Auto
+
 SPELL Property IDB_AvoidDeathAbility  Auto 
 
+; SCRIPT VERSION ----------------------------------------------------------------------------------
+
+Int version = 0
+Int Function GetVersion()
+	return 1
+endFunction
+
+; INITIALIZATION -------------------------------------------------------------------------------
+
 Event OnInit()
-	RegisterForSingleUpdate(0.1)
+	Maintenance()
 endEvent
 
 Event OnPlayerLoadGame()
-	if version == 0 || version != 1 ; Hard coded script version. Set 0 to force update
-		RegisterForSingleUpdate(0.1)
+	if version == 0 || version != GetVersion()
+		Maintenance()
 	endIf
 endEvent
 
-Event OnUpdate()
-	version = 1
-	;Debug.Notification("Immortal Dragonborn")
+; EVENTS ------------------------------------------------------------------------------------------
+
+Event Maintenance()
+	version = GetVersion()
 	
+	Actor player = Game.GetPlayer()
+
 	if IDB_Enabled.GetValue() as Bool
-		GetActorRef().AddSpell(IDB_AvoidDeathAbility, false)
+		DebugScript("Immortal Dragonborn Enabled")
+		ForceRefTo(player)
+		player.AddSpell(IDB_AvoidDeathAbility, IDB_Debug.GetValue() as Bool)
 	else
-		GetActorRef().RemoveSpell(IDB_AvoidDeathAbility)
-		IDB_ManagerQuest.Stop()
+		DebugScript("Immortal Dragonborn Disabled")
+		player.RemoveSpell(IDB_AvoidDeathAbility)
 		Clear()
 	endIf
 endEvent
+
+; UTILITY ------------------------------------------------------------------------------------------
+
+Function DebugScript(String asMessage)
+	if IDB_Debug.GetValue() as Bool
+		Debug.Trace(asMessage)
+		Debug.Notification(asMessage)
+	endIf
+endFunction

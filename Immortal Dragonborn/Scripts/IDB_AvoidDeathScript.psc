@@ -1,6 +1,7 @@
 Scriptname IDB_AvoidDeathScript extends ActiveMagicEffect  
 
 GlobalVariable Property IDB_PercentHealth  Auto
+GlobalVariable Property IDB_DragonsoulCost  Auto
 GlobalVariable Property IDB_ParalysisEnabled  Auto
 
 EffectShader Property DragonPowerAbsorbFXS Auto
@@ -15,6 +16,12 @@ GlobalVariable Property GameDaysPassed  Auto
 Spell Property IDB_HealSpell  Auto 
 Spell Property IDB_ParalyzeSpell  Auto
 
+; PRIVATE VARIABLES -------------------------------------------------------------------------------
+
+Bool bIsUpdating = false
+
+; EVENTS ------------------------------------------------------------------------------------------
+
 ;Event OnEffectStart(Actor akTarget, Actor akCaster)
 ;	DragonPowerAbsorbFXS.Play(akTarget, 3.0)
 ;	NPCDragonDeathSequenceWind.play(akTarget) 
@@ -22,6 +29,19 @@ Spell Property IDB_ParalyzeSpell  Auto
 ;endEvent
 
 Event OnHit(ObjectReference akAggressor, Form akSource, Projectile akProjectile, bool abPowerAttack, bool abSneakAttack, bool abBashAttack, bool abHitBlocked )
+	; Rate-limit hit detection by registering for a single update
+	if bIsUpdating
+		return
+	else
+		bIsUpdating = true
+		RegisterForSingleUpdate(0.1)
+	endIf
+endEvent
+
+Event OnUpdate()
+	; Reset flag to allow subsequent updates
+	bIsUpdating = false
+
 	; Don't revive when brawling
 	if (DGIntimidateQuest.IsRunning())
 		return
@@ -44,7 +64,8 @@ Event OnHit(ObjectReference akAggressor, Form akSource, Projectile akProjectile,
 		endIf
 		
 		; Remove 1 Dragon Soul
-		player.ModAV("DragonSouls", -1.0)
+		int iCost = IDB_DragonsoulCost.GetValueInt()
+		player.ModAV("DragonSouls", -iCost)
 		
 		; Play FX and sound
 		DragonPowerAbsorbFXS.Play(player, 2.0)

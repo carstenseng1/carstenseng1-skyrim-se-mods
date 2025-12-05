@@ -20,7 +20,6 @@ int function GetVersion()
 	return 1 ; Default version
 endFunction
 
-
 ; PRIVATE VARIABLES -------------------------------------------------------------------------------
 
 Int iEnabledToggle
