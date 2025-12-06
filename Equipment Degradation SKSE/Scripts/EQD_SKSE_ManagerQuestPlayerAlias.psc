@@ -1,8 +1,6 @@
 Scriptname EQD_SKSE_ManagerQuestPlayerAlias extends ReferenceAlias  
 {PlayerAlias script to manage destructible armor}
 
-Int version = 0
-
 GlobalVariable Property EQD_Enabled  Auto
 GlobalVariable Property EQD_Debug  Auto
 
@@ -32,6 +30,15 @@ FormList Property EQD_WeaponMaterialsDurability03  Auto
 FormList Property EQD_WeaponMaterialsDurability04  Auto
 FormList Property EQD_WeaponMaterialsDurability05  Auto
 
+; SCRIPT VERSION ----------------------------------------------------------------------------------
+
+Int version = 0
+int function GetVersion()
+	return 1 ; Default version
+endFunction
+
+; PRIVATE VARIABLES -------------------------------------------------------------------------------
+
 ; Local variables to track slot masks for equipped armor
 ; Set on equip and cleared on unequip because masks may vary based on the item
 ; Weapon slot masks remain constant 0=left 1=right
@@ -50,36 +57,47 @@ Float gauntletsDurability = 1.0
 Float bootsDurability = 1.0
 Float shieldDurability = 1.0
 
-Event OnInit()
-	Maintenance()
-endEvent
+; Flags to rate limit updates
+Bool bIsRegisteredForUpdate = false
+Bool bIsWaitingForHit = false
 
-Event OnPlayerLoadGame()
-	if version == 0 || version != 1 ; Hard coded script version. Set 0 to force maintenance
+; INITIALIZATION -------------------------------------------------------------------------------
+
+Event OnInit()
+	if version == 0 || version == GetVersion()
 		Maintenance()
 	endIf
 endEvent
 
+Event OnPlayerLoadGame()
+	if version == 0 || version == GetVersion()
+		Maintenance()
+	endIf
+endEvent
 
 Function Maintenance()
-	
-	version = 1
+	; Update saved last version
+	version = GetVersion()
 
 	Actor player = Game.GetPlayer()
 
 	if EQD_Enabled.GetValue() as Bool
-		ScriptDebug("EQD Enabled")
+		DebugScript("Enabled")
 
 		; Force ref to reassign when enabling mod
 		ForceRefTo(player)
 
 		; Add perk to manage weapon damage
 		player.AddPerk(EQD_DamageWeaponPerk)
-
+		
+		; Reset update flags
+		bIsRegisteredForUpdate = false
+		bIsWaitingForHit = false
+		
 		; Register for update to assign weapon durability
-		RegisterForSingleUpdate(0.1)
+		RegisterForSafeUpdate(0.1, true)
 	else
-		ScriptDebug("EQD Disabled")
+		DebugScript("Disabled")
 
 		; Clear the alias reference to the player
 		Clear()
@@ -105,42 +123,46 @@ Function Maintenance()
 		bootsDurability = 1.0
 		shieldDurability = 1.0
 
-		; Stop any pending update
+		; Stop any pending update and reset flags
 		UnregisterForUpdate()
+		bIsRegisteredForUpdate = false
+		bIsWaitingForHit = false
 	endIf
-
 endFunction
 
+; EVENTS ------------------------------------------------------------------------------------------
 
 Event OnUpdate()
+{Weapon durability updates handled in event}
+	; Reset flag
+	bIsRegisteredForUpdate = false
+
+	Actor player = GetActorRef()
 	
-	Actor selfRef = GetActorRef()
-	
-	Weapon weaponRH = selfRef.GetEquippedWeapon()
+	Weapon weaponRH = player.GetEquippedWeapon()
 	if weaponRH
 		rightHandDurability = GetWeaponDurability(weaponRH)
-		ScriptDebug("RH Weapon: Durability: " + rightHandDurability + " Health: " + WornObject.GetItemHealthPercent(selfRef, 1, 0))
+		DebugScript("RH Weapon: Durability: " + rightHandDurability + " Health: " + WornObject.GetItemHealthPercent(player, 1, 0))
 	else
 		rightHandDurability = 1.0
 	endIf
 	
-	Weapon weaponLH = selfRef.GetEquippedWeapon(true)
+	Weapon weaponLH = player.GetEquippedWeapon(true)
 	if weaponLH
 		leftHandDurability = GetWeaponDurability(weaponLH)
-		ScriptDebug("LH Weapon: Durability: " + leftHandDurability + " Health: " + WornObject.GetItemHealthPercent(selfRef, 0, 0))
+		DebugScript("LH Weapon: Durability: " + leftHandDurability + " Health: " + WornObject.GetItemHealthPercent(player, 0, 0))
 	else
 		leftHandDurability = 1.0
 	endIf
-	
 endEvent
 
-
 Event OnObjectEquipped(Form akBaseObject, ObjectReference akReference)
-	
 	; Update durability for equipped weapons if a weapon was equipped
 	; Handle in OnUpdate event to only update once when equipping is completed
 	if akBaseObject as Weapon
-		RegisterForSingleUpdate(0.1)
+		if !RegisterForSafeUpdate()
+			DebugScript("Equip Weapon - Update already registered")
+		endIf
 		return
 	endIf
 	
@@ -155,34 +177,33 @@ Event OnObjectEquipped(Form akBaseObject, ObjectReference akReference)
 	if equippedArmor.isHelmet()
 		helmetSlotMask = slotMask
 		helmetDurability = GetArmorDurability(equippedArmor)
-		ScriptDebug("Helmet: Durability: " + helmetDurability)
+		DebugScript("Helmet: Durability: " + helmetDurability)
 	elseIf equippedArmor.isCuirass()
 		cuirassSlotMask = slotMask
 		cuirassDurability = GetArmorDurability(equippedArmor)
-		ScriptDebug("Cuirass: Durability: " +cuirassDurability)
+		DebugScript("Cuirass: Durability: " +cuirassDurability)
 	elseIf equippedArmor.isGauntlets()
 		gauntletsSlotMask = slotMask
 		gauntletsDurability = GetArmorDurability(equippedArmor)
-		ScriptDebug("Gauntlets: Durability: " + gauntletsDurability)
+		DebugScript("Gauntlets: Durability: " + gauntletsDurability)
 	elseIf equippedArmor.isBoots()
 		bootsSlotMask = slotMask
 		bootsDurability = GetArmorDurability(equippedArmor)
-		ScriptDebug("Boots: Durability: " + bootsDurability)
+		DebugScript("Boots: Durability: " + bootsDurability)
 	elseIf equippedArmor.isShield()
 		shieldSlotMask = slotMask
 		shieldDurability = GetArmorDurability(equippedArmor)
-		ScriptDebug("Shield: Durability: " + shieldDurability)
+		DebugScript("Shield: Durability: " + shieldDurability)
 	endIf
-
 endEvent
 
-
 Event OnObjectUnequipped(Form akBaseObject, ObjectReference akReference)
-	
 	; Update durability for equipped weapons if a weapon was equipped
 	; Handle in OnUpdate event to only update once when equipping is completed
 	if akBaseObject as Weapon
-		RegisterForSingleUpdate(0.1)
+		if !RegisterForSafeUpdate()
+			DebugScript("Unequip Weapon - Update already registered")
+		endIf
 		return
 	endIf
 	
@@ -209,13 +230,24 @@ Event OnObjectUnequipped(Form akBaseObject, ObjectReference akReference)
 		shieldSlotMask = -1
 		shieldDurability = 1.0
 	endIf
-	
 endEvent
 
-
 Event OnHit(ObjectReference akAggressor, Form akSource, Projectile akProjectile, bool abPowerAttack, bool abSneakAttack, bool abBashAttack, bool abHitBlocked)
-	
-	Actor selfRef = GetActorRef()
+	; Check flag to rate limit
+	if bIsWaitingForHit
+		DebugScript("OnHit waiting")
+		return
+	endIf
+
+	; Rate limit with Wait and flag
+	bIsWaitingForHit = true
+	Utility.Wait(0.1)
+	bIsWaitingForHit = false
+
+	Actor player = GetActorRef()
+	if !player
+		return
+	endIf
 	
 	; Add 0.05 bonus to damage value for power attacks
 	Float damageBonus = 0.0
@@ -225,24 +257,23 @@ Event OnHit(ObjectReference akAggressor, Form akSource, Projectile akProjectile,
 	
 	if abHitBlocked
 		; Hit the equipped shield or weapon used to parry
-		if selfRef.GetEquippedShield()
+		if player.GetEquippedShield()
 			HitShield(damageBonus)
-		elseIf selfRef.GetEquippedWeapon()
+		elseIf player.GetEquippedWeapon()
 			HitWeaponRH(damageBonus)
 		endIf
 	else
 		HitArmor(damageBonus)
 	endIf
- 
 endEvent
 
+; FUNCTIONS ------------------------------------------------------------------------------------------
 
 Function HitWeapon(Float damageBonus = 0.0)
+	Actor player = GetActorRef()
 	
-	Actor selfRef = GetActorRef()
-	
-	Weapon weaponRH = selfRef.GetEquippedWeapon()
-	Weapon weaponLH = selfRef.GetEquippedWeapon(true)
+	Weapon weaponRH = player.GetEquippedWeapon()
+	Weapon weaponLH = player.GetEquippedWeapon(true)
 
 	If weaponRH && weaponLH
 		; Choose right or left hand at random
@@ -256,36 +287,24 @@ Function HitWeapon(Float damageBonus = 0.0)
 	elseIf weaponLH
 		HitWeaponLH(damageBonus)
 	endIf
-
 endFunction
-
 
 Function HitWeaponRH(Float damageBonus = 0.0)
-	
-	ScriptDebug("Hit Weapon RH")
+	DebugScript("Hit Weapon RH")
 	HitSlotMask(1, rightHandDurability, damageBonus)
-
 endFunction
-
 
 Function HitWeaponLH(Float damageBonus = 0.0)
-	
-	ScriptDebug("Hit Weapon LH")
+	DebugScript("Hit Weapon LH")
 	HitSlotMask(0, leftHandDurability, damageBonus)
-
 endFunction
-
 
 Function HitShield(Float damageBonus = 0.0)
-
-	ScriptDebug("Hit Shield")
+	DebugScript("Hit Shield")
 	HitSlotMask(shieldSlotMask, shieldDurability, damageBonus)
-
 endFunction
 
-
 Function HitArmor(Float damageBonus = 0.0)
-
 		; Set array of armor slot masks
 		Int[] slotMaskArray = new Int[4]
 		slotMaskArray[0] = helmetSlotMask
@@ -302,23 +321,20 @@ Function HitArmor(Float damageBonus = 0.0)
 		
 		; Hit a random piece of armor
 		Int index = Utility.RandomInt(0, 3)
-		ScriptDebug("Hit Armor: Index: " + index)
+		DebugScript("Hit Armor: Index: " + index)
 		HitSlotMask(slotMaskArray[index], durabilityArray[index], damageBonus)
-
 endFunction
 
-
 Function HitSlotMask(Int slotMask, Float durability, Float damageBonus = 0.0)
-	
 	; Determine if a valid item slot mask was selected
 	if slotMask == -1
-		ScriptDebug("Hit Slot Mask -1")
+		DebugScript("Hit Slot Mask -1")
 		return
 	endIf
 	
 	; Don't run calculations if durability is max
 	if durability >= 1.0
-		ScriptDebug("Hit Slot Mask: " + slotMask + " Durability: " + durability)
+		DebugScript("Hit Slot Mask: " + slotMask + " Durability: " + durability)
 		return
 	endIf
 	
@@ -330,23 +346,24 @@ Function HitSlotMask(Int slotMask, Float durability, Float damageBonus = 0.0)
 		return
 	endif
 	
-	ScriptDebug("Hit Slot Mask: " + slotMask + " Durability: " + durability + " Damage: " + damage)
+	DebugScript("Hit Slot Mask: " + slotMask + " Durability: " + durability + " Damage: " + damage)
 	
 	; Get the current hit item health based on the selected slot mask, hand vs armor
-	Actor selfRef = GetActorRef()
+	Actor player = GetActorRef()
 	Float itemHealth = 0.0
+
 	If slotMask == 0 || slotMask == 1
 		; Hand slot mask; 0=left 1=right
 		; Must use 0 armor slot mask for hand slot mask to work
-		itemHealth = WornObject.GetItemHealthPercent(selfRef, slotMask, 0) 
+		itemHealth = WornObject.GetItemHealthPercent(player, slotMask, 0) 
 	else
 		; Must use invalid hand slot (-1) for armor slot mask to work
-		itemHealth = WornObject.GetItemHealthPercent(selfRef, -1, slotMask)
+		itemHealth = WornObject.GetItemHealthPercent(player, -1, slotMask)
 	endIf
 	
 	; Validate damageable item based on item health
 	if itemHealth < 1.1
-		ScriptDebug("Item health low: " + itemHealth)
+		DebugScript("Item health low: " + itemHealth)
 		return
 	endIf
 	
@@ -355,39 +372,18 @@ Function HitSlotMask(Int slotMask, Float durability, Float damageBonus = 0.0)
 	if slotMask == 0 || slotMask == 1
 		; Hand slot mask; 0=left 1=right
 		; Must use 0 armor slot mask for hand slot mask to work
-		WornObject.SetItemHealthPercent(selfRef, slotMask, 0, itemHealth)
+		WornObject.SetItemHealthPercent(player, slotMask, 0, itemHealth)
 		Debug.Notification("Your weapon was damaged")
-		ScriptDebug("New item health: " + WornObject.GetItemHealthPercent(selfRef, slotMask, 0))
+		DebugScript("New item health: " + WornObject.GetItemHealthPercent(player, slotMask, 0))
 	else
 		; Must use invalid hand slot (-1) for armor slot mask to work
-		WornObject.SetItemHealthPercent(selfRef, -1, slotMask, itemHealth)
+		WornObject.SetItemHealthPercent(player, -1, slotMask, itemHealth)
 		Debug.Notification("Your armor was damaged")
-		ScriptDebug("New item health: " + WornObject.GetItemHealthPercent(selfRef, -1, slotMask))
+		DebugScript("New item health: " + WornObject.GetItemHealthPercent(player, -1, slotMask))
 	endIf
-
 endFunction
 
-
-Bool Function HasKeywordInList(Form akBaseObject, FormList akList)
-	
-	Int iIndex = akList.GetSize() ; Indices are offset by 1 relative to size
-	while iIndex
-		iIndex -= 1
-		Keyword material = akList.GetAt(iIndex) As Keyword
-		if material
-			if akBaseObject.HasKeyword(material)
-				return true
-			endIf
-		endIf
-	endWhile
-
-	return false
-	
-EndFunction
-
-
 Float Function GetWeaponDurability(Form akWeapon)
-	
 	; Default to max durability for invalid input
 	If !akWeapon
 		return 1.0
@@ -407,12 +403,9 @@ Float Function GetWeaponDurability(Form akWeapon)
 
 	; Default to durability 5 for unknown materials
 	return EQD_WeaponDurability5.GetValue()
-
 EndFunction
 
-
 Float Function GetArmorDurability(Armor akArmor)
-	
 	; Default to max durability for invalid input
 	if !akArmor
 		return 1.0
@@ -432,13 +425,47 @@ Float Function GetArmorDurability(Armor akArmor)
 
 	; Default to durability 5 for unknown materials
 	return EQD_ArmorDurability5.GetValue()
-
 EndFunction
 
+; UTILITY ------------------------------------------------------------------------------------------
 
-Function ScriptDebug(String akMessage)
+Function DebugScript(String asMessage)
 	if EQD_Debug.GetValue() as Bool
-		Debug.Trace(akMessage)
-		Debug.Notification(akMessage)
+		Debug.Trace(asMessage)
+		Debug.Notification("EQD MNG: " + asMessage)
 	endIf
+endFunction
+
+Bool Function HasKeywordInList(Form akBaseObject, FormList akList)
+{Returns whether or not the given form has a keyword in the given list}
+
+	Int iIndex = akList.GetSize() ; Indices are offset by 1 relative to size
+	while iIndex
+		iIndex -= 1
+		Keyword material = akList.GetAt(iIndex) As Keyword
+		if material
+			if akBaseObject.HasKeyword(material)
+				return true
+			endIf
+		endIf
+	endWhile
+
+	return false
+EndFunction
+
+Bool Function RegisterForSafeUpdate(Float afTime = 0.1, Bool abForce = false)
+{Registers for single update only if not already registered or forced}
+
+	if bIsRegisteredForUpdate
+		if abForce
+			; Cancel previous update registrations
+			UnregisterForUpdate()
+		else
+			return false
+		endIf
+	endIf
+
+	bIsRegisteredForUpdate = true
+	RegisterForSingleUpdate(afTime)
+	return true
 endFunction
