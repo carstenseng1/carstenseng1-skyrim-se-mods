@@ -8,25 +8,49 @@ GlobalVariable Property ENMZ_SpawnCountExterior  Auto
 GlobalVariable Property ENMZ_SpawnChanceInterior  Auto
 GlobalVariable Property ENMZ_SpawnChanceExterior  Auto
 
+; SCRIPT VERSION ----------------------------------------------------------------------------------
 
-Event OnUpdate()
-	DebugScript("Enemizer Update")
-	
+Int version = 0
+Int Function GetVersion()
+	return 1 ; Default version
+endFunction
+
+; INITIALIZATION ----------------------------------------------------------------------------------
+
+Event OnInit()
+	; Run maintenance with version check
+	; Version check prevents double init
+	Maintenance(true)
+endEvent
+
+Function Maintenance(Bool bCheckVersion = false)
+	; If version check is set, cancel if script version matches last updated
+	if bCheckVersion
+		if version == GetVersion()
+			return ; Script up to date
+		endIf
+	endIf
+
+	; Record last updated version
+	version = GetVersion()
+
 	ReferenceAlias playerAlias = GetAlias(0) as ReferenceAlias
 
 	if ENMZ_Enabled.GetValue() as Bool
+		DebugScript("Enemizer Enabled")
 		playerAlias.ForceRefTo(Game.GetPlayer())
 	else
-		self.Stop()
+		DebugScript("Enemizer Disabled")
 		playerAlias.Clear()
 	endIf
-endEvent
+endFunction
 
+; FUNCTIONS ------------------------------------------------------------------------------------------
 
 Function Spawn(ENMZ_SpawnActor akActor)
 	; Check if mod is enabled
 	if !ENMZ_Enabled.GetValue() as Bool
-		DebugScript("No spawn attempt. Enemizer disabled.")
+		DebugScript("No spawn. Enemizer disabled.")
 		return
 	endIf
 
@@ -86,6 +110,7 @@ Function Spawn(ENMZ_SpawnActor akActor)
 
 endFunction
 
+; UTILITY ------------------------------------------------------------------------------------------
 
 Function DebugScript(String asMessage)
 	if ENMZ_Debug.GetValue() as Bool

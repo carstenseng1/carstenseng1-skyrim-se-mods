@@ -32,6 +32,22 @@ Int iDragonsoulCost
 
 ; EVENTS ------------------------------------------------------------------------------------------
 
+Event OnConfigClose()
+	{Called when this config menu is closed}
+	
+	; Set debug first in to show messages from MCM
+	IDB_Debug.SetValue(bDebug as Int)
+
+	; Check if a change was made
+	if bEnabled != IDB_Enabled.GetValue() as Bool
+		UpdateModEnabled()
+	endIf
+	
+	IDB_ParalysisEnabled.SetValue(bParalysisEnabled as Int)
+	IDB_PercentHealth.SetValue(fPercentHealth/100)
+	IDB_DragonsoulCost.SetValue(iDragonsoulCost)
+endEvent
+
 Event OnPageReset(String a_page)
 	{Called when a new page is selected, including the initial empty page}
 	
@@ -57,7 +73,7 @@ Event OnPageReset(String a_page)
 	iParalysisToggle = AddToggleOption("Enable Paralysis on Revive", bParalysisEnabled)
 
 	; Left 2 - Create Debug Toggle
-	iDebugToggle = AddToggleOption("Debugging", bDebug)
+	iDebugToggle = AddToggleOption("Debug Notifications", bDebug)
 
 	; Right 2 - Add Slider for setting HP threshold at which 25% Damage Resist is active
 	iPercentHealthSlider = AddSliderOption("Activation Health Percentage", fPercentHealth, "{0}%")
@@ -67,22 +83,6 @@ Event OnPageReset(String a_page)
 
 	; Right 3 - Add Slider for setting the Dragonsoul cost to revive
 	iDragonsoulCostSlider = AddSliderOption("Dragonsoul Revive Cost", iDragonsoulCost)
-endEvent
-
-Event OnConfigClose()
-	{Called when this config menu is closed}
-	
-	; Set debug first in to show messages from MCM
-	IDB_Debug.SetValue(bDebug as Int)
-
-	; Check if a change was made
-	if bEnabled != IDB_Enabled.GetValue() as Bool
-		UpdateModEnabled()
-	endIf
-	
-	IDB_ParalysisEnabled.SetValue(bParalysisEnabled as Int)
-	IDB_PercentHealth.SetValue(fPercentHealth/100)
-	IDB_DragonsoulCost.SetValue(iDragonsoulCost)
 endEvent
 
 Event OnOptionHighlight(int a_option)
@@ -185,7 +185,7 @@ Function UpdateModEnabled()
 		IDB_ManagerQuest.Stop()
 	endIf
 	
-	; Enable/Disable functionality is handled in the OnUpdate event
+	; Enable/Disable functionality
 	playerAlias.Maintenance()
 endFunction
 

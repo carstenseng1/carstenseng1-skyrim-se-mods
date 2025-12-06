@@ -1,14 +1,26 @@
 Scriptname ENMZ_MCMScript extends SKI_ConfigBase  
 
 GlobalVariable Property ENMZ_Enabled  Auto
+GlobalVariable Property ENMZ_Debug  Auto
 GlobalVariable Property ENMZ_SpawnCountInterior  Auto
 GlobalVariable Property ENMZ_SpawnCountExterior  Auto
 GlobalVariable Property ENMZ_SpawnChanceInterior  Auto
 GlobalVariable Property ENMZ_SpawnChanceExterior  Auto
 Quest Property ENMZ_ManagerQuest  Auto
 
+; SCRIPT VERSION ----------------------------------------------------------------------------------
+
+Int Function GetVersion()
+	return 1 ; Default version
+endFunction
+
+; PRIVATE VARIABLES -------------------------------------------------------------------------------
+
 Int iEnabledToggle
 Bool bEnabled
+
+Int iDebugToggle
+Bool bDebug
 
 Int iSpawnCountInteriorSlider
 Int iSpawnCountInterior
@@ -22,17 +34,14 @@ Float fSpawnChanceInterior
 Int iSpawnChanceExteriorSlider
 Float fSpawnChanceExterior
 
-; SCRIPT VERSION ----------------------------------------------------------------------------------
-
-Int Function GetVersion()
-	return 1 ; Default version
-endFunction
-
 ; EVENTS ------------------------------------------------------------------------------------------
 
 Event OnConfigClose()
 	{Called when this config menu is closed}
 	
+	; Set debug first in to show messages from MCM
+	ENMZ_Debug.SetValue(bDebug as Int)
+
 	; Check if a change was made
 	if bEnabled != ENMZ_Enabled.GetValue() as Bool
 		UpdateModEnabled()
@@ -42,38 +51,62 @@ Event OnConfigClose()
 	ENMZ_SpawnCountExterior.SetValue(iSpawnCountExterior)
 	ENMZ_SpawnChanceInterior.SetValue(fSpawnChanceInterior / 100.0)
 	ENMZ_SpawnChanceExterior.SetValue(fSpawnChanceExterior / 100.0)
-
 endEvent
-
 
 Event OnPageReset(String a_page)
 	{Called when a new page is selected, including the initial empty page}
 	
 	bEnabled = ENMZ_Enabled.GetValue() as Bool
+	bDebug = ENMZ_Debug.GetValue() as Bool
 	iSpawnCountInterior = ENMZ_SpawnCountInterior.GetValueInt()
 	iSpawnCountExterior = ENMZ_SpawnCountExterior.GetValueInt()
 	fSpawnChanceInterior = ENMZ_SpawnChanceInterior.GetValue() * 100.0
 	fSpawnChanceExterior = ENMZ_SpawnChanceExterior.GetValue() * 100.0
 	
-	SetCursorFillMode(TOP_TO_BOTTOM)
+	SetCursorFillMode(LEFT_TO_RIGHT)
 	
-	; Add Mod Enabled Toggle
+	; Left Heading
+	AddHeaderOption("General Settings")
+	
+	; Right Heading
+	AddTextOption("Mod Version", "1.1.1")
+	
+	; Left 1 - Add Mod Enabled Toggle
 	iEnabledToggle = AddToggleOption("Enable Enemizer", bEnabled)
-	
-	; Add sliders for spawn counts and chance
-	iSpawnCountInteriorSlider = AddSliderOption("Spawn Count Interior", iSpawnCountInterior)
-	iSpawnCountExteriorSlider = AddSliderOption("Spawn Count Exterior", iSpawnCountExterior)
-	iSpawnChanceInteriorSlider = AddSliderOption("Spawn Chance Interior", fSpawnChanceInterior, "{0}%")
-	iSpawnChanceExteriorSlider = AddSliderOption("Spawn Chance Exterior", fSpawnChanceExterior, "{0}%")
-	
-endEvent
+	AddEmptyOption()
 
+	; Left 2 - Debug
+	iDebugToggle = AddToggleOption("Debug Notifications", bDebug)
+	AddEmptyOption()
+	
+	; Left 3 - Heading
+	AddHeaderOption("Enemy Spawn Interior")
+
+	; Right 3 - Heading
+	AddHeaderOption("Enemy Spawn Exterior")
+
+	; Add sliders for spawn counts and chance
+
+	; Left 4 - Spawn count intererior
+	iSpawnCountInteriorSlider = AddSliderOption("Spawn Count Interior", iSpawnCountInterior)
+
+	; Right 4 - Spawn count exterior
+	iSpawnCountExteriorSlider = AddSliderOption("Spawn Count Exterior", iSpawnCountExterior)
+	
+	; Left 5 - Spawn chance interior
+	iSpawnChanceInteriorSlider = AddSliderOption("Spawn Chance Interior", fSpawnChanceInterior, "{0}%")
+	
+	; Right 5 - Spawn chance exterior
+	iSpawnChanceExteriorSlider = AddSliderOption("Spawn Chance Exterior", fSpawnChanceExterior, "{0}%")
+endEvent
 
 Event OnOptionHighlight(int a_option)
 	{Called when highlighting an option}
 	
 	if a_option == iEnabledToggle
 		SetInfoText("Enable/Disable Enemizer. Recommended to use this to disable the mod before uninstalling")
+	elseIf a_option == iDebugToggle
+		SetInfoText("Enable/Disable script debug notifications")
 	elseIf a_option == iSpawnCountInteriorSlider
 		SetInfoText("Number of times to attempt to spawn additional enemy when enemy loads in iterior")
 	elseIf a_option == iSpawnCountExteriorSlider
@@ -85,9 +118,7 @@ Event OnOptionHighlight(int a_option)
 	else
 		SetInfoText("")
 	endIf
-	
 endEvent
-
 
 Event OnOptionSelect(int a_option)
 	{Called when a non-interactive option has been selected}
@@ -95,10 +126,11 @@ Event OnOptionSelect(int a_option)
 	if a_option == iEnabledToggle
 		bEnabled = !bEnabled
 		SetToggleOptionValue(a_option, bEnabled)
+	elseIf a_option == iDebugToggle
+		bDebug = !bDebug
+		SetToggleOptionValue(a_option, bDebug)
 	endIf
-
 endEvent
-
 
 Event OnOptionDefault(int a_option)
 	{Called when resetting an option to its default value}
@@ -106,6 +138,9 @@ Event OnOptionDefault(int a_option)
 	if a_option == iEnabledToggle
 		bEnabled = true
 		SetToggleOptionValue(iEnabledToggle, bEnabled)
+	elseIf a_option == iDebugToggle
+		bDebug = false
+		SetToggleOptionValue(a_option, false)
 	elseIf a_option == iSpawnCountInteriorSlider
 		iSpawnCountInterior = 1
 		SetSliderOptionValue(a_option, 1)
@@ -119,9 +154,7 @@ Event OnOptionDefault(int a_option)
 		fSpawnChanceExterior = 50.0
 		SetSliderOptionValue(a_option, 50.0, "{0}%")
 	endIf
-	
 endEvent
-
 
 Event OnOptionSliderOpen(int a_option)
 	{Called when a slider option has been selected}
@@ -147,9 +180,7 @@ Event OnOptionSliderOpen(int a_option)
 		SetSliderDialogRange(0.0, 100.0)
 		SetSliderDialogInterval(5.0)
 	endIf
-	
 endEvent
-
 
 Event OnOptionSliderAccept(int a_option, float a_value)
 	{Called when a new slider value has been accepted}
@@ -167,9 +198,7 @@ Event OnOptionSliderAccept(int a_option, float a_value)
 		fSpawnChanceExterior = a_value
 		SetSliderOptionValue(a_option, a_value, "{0}%")
 	endIf
-	
 endEvent
-
 
 Function UpdateModEnabled()
 	; Update the global variable. This will be reference by the manager quest
@@ -178,9 +207,22 @@ Function UpdateModEnabled()
 	; Start the manager quest as needed if mod is being enabled
 	if bEnabled && !ENMZ_ManagerQuest.isRunning()
 		ENMZ_ManagerQuest.Start()
+		If !ENMZ_ManagerQuest.isRunning()
+			DebugScript("Enemizer manager failed to start. Clean reinstall of mod recommended")
+		endIf
+	else
+		ENMZ_ManagerQuest.Stop()
 	endIf
 	
-	; Enable/Disable functionality is handled in the OnUpdate event
-	ENMZ_ManagerQuest.RegisterForSingleUpdate(0.1)
+	; Enable/Disable functionality
+	(ENMZ_ManagerQuest as ENMZ_ManagerQuestScript).Maintenance()
+endFunction
 
+; UTILITY ------------------------------------------------------------------------------------------
+
+Function DebugScript(String asMessage)
+	if ENMZ_Debug.GetValue() as Bool
+		Debug.Trace(asMessage)
+		Debug.Notification(asMessage)
+	endIf
 endFunction
