@@ -1,13 +1,25 @@
 Scriptname LastStandMCMScript extends SKI_ConfigBase  
 
 GlobalVariable Property LastStandEnabled  Auto
+GlobalVariable Property LastStandDebug  Auto
 GlobalVariable Property LastStandDamageResist25HP  Auto
 GlobalVariable Property LastStandDamageResist50HP  Auto
 GlobalVariable Property LastStandSlowTimeHP  Auto
 Quest Property LastStandQuest  Auto
 
+; SCRIPT VERSION ----------------------------------------------------------------------------------
+
+int function GetVersion()
+	return 1 ; Default version
+endFunction
+
+; PRIVATE VARIABLES -------------------------------------------------------------------------------
+
 Int iEnabledToggle
 Bool bEnabled
+
+Int iDebugToggle
+Bool bDebug
 
 Int iDamageResist25HPSlider
 Float fDamageResist25HP
@@ -18,55 +30,13 @@ Float fDamageResist50HP
 Int iSlowTimeHPSlider
 Float fSlowTimeHP
 
-; SCRIPT VERSION ----------------------------------------------------------------------------------
-
-int function GetVersion()
-	return 1 ; Default version
-endFunction
-
-
-; PRIVATE VARIABLES -------------------------------------------------------------------------------
-
-; OIDs (T:Text B:Toggle S:Slider M:Menu, C:Color, K:Key)
-int			_myTextOID_T
-int			_myToggle_OID_B
-int			_mySliderOID_S
-int			_myMenuOID_M
-int			_myColorOID_C
-int			_myKeyOID_K
-int			_myInputOID_I
-
-; State
-
-; ...
-
-; Internal
-
-; ...
-
-
-; INITIALIZATION ----------------------------------------------------------------------------------
-
-; @implements SKI_ConfigBase
-event OnConfigInit()
-	{Called when this config menu is initialized}
-	
-	; ...
-endEvent
-
-; @implements SKI_QuestBase
-event OnVersionUpdate(int a_version)
-	{Called when a version update of this script has been detected}
-
-	; ...
-endEvent
-
-
 ; EVENTS ------------------------------------------------------------------------------------------
 
-event OnConfigClose()
-	{Called when this config menu is closed}
-	
+Event OnConfigClose()
+{Called when this config menu is closed}
+	; Update debug setting first
+	LastStandDebug.SetValue(bDebug as Int)
+
 	; Check if a change was made
 	if bEnabled != LastStandEnabled.GetValue() as Bool
 		UpdateModEnabled()
@@ -77,38 +47,54 @@ event OnConfigClose()
 	LastStandSlowTimeHP.SetValue(fSlowTimeHP/100)
 endEvent
 
-; @implements SKI_ConfigBase
-event OnPageReset(string a_page)
-	{Called when a new page is selected, including the initial empty page}
+Event OnPageReset(string a_page)
+{Called when a new page is selected, including the initial empty page}
 	
 	bEnabled = LastStandEnabled.GetValue() as Bool
+	bDebug = LastStandDebug.GetValue() as Bool
+
 	fDamageResist25HP = LastStandDamageResist25HP.GetValue() * 100
 	fDamageResist50HP = LastStandDamageResist50HP.GetValue() * 100
 	fSlowTimeHP = LastStandSlowTimeHP.GetValue() * 100
 	
-	SetCursorFillMode(TOP_TO_BOTTOM)
+	SetCursorFillMode(LEFT_TO_RIGHT)
 	
-	; Add Mod Enabled Toggle
+	; Left 0, Right 0 - General Settings Heading and Version
+	AddHeaderOption("General")
+	AddTextOption("Mod Version", "1.1.1")
+
+	; Left 1 - Enabled Toggle
 	iEnabledToggle = AddToggleOption("Enable Mod", bEnabled)
+	AddEmptyOption()
+
+	; Left 2 - Debug Toggle
+	iDebugToggle = AddToggleOption("Debug Notifications", bDebug)
+	AddEmptyOption()
+
+	; Left 3 Damage Resist Heading, Right 3 - Slow Time Heading
+	AddHeaderOption("Damage Resist")
+	AddHeaderOption("Slow Time")
 	
+	; Left 4 - Damage Resist 25%
 	; Add Slider for setting HP threshold at which 25% Damage Resist is active
 	iDamageResist25HPSlider = AddSliderOption("25% Damage Resist Health Percentage", fDamageResist25HP, "{0}%")
 	
-	; Add Slider for setting HP threshold at which 50% Damage Resist is active
-	iDamageResist50HPSlider = AddSliderOption("50% Damage Resist Health Percentage", fDamageResist50HP, "{0}%")
-	
+	; Right 4 - Slow Time
 	; Add Slider for setting HP threshold at which Slow Time is activated on hits
 	iSlowTimeHPSlider = AddSliderOption("Slow Time Health Percentage", fSlowTimeHP, "{0}%")
-	
-	; ...
+
+	; Left 5 - Damage Resist 50%
+	; Add Slider for setting HP threshold at which 50% Damage Resist is active
+	iDamageResist50HPSlider = AddSliderOption("50% Damage Resist Health Percentage", fDamageResist50HP, "{0}%")
 endEvent
 
-; @implements SKI_ConfigBase
-event OnOptionHighlight(int a_option)
-	{Called when highlighting an option}
+Event OnOptionHighlight(int a_option)
+{Called when highlighting an option}
 	
 	if a_option == iEnabledToggle
-		SetInfoText("Enable/Disable the mod. Recommended to use this to disable the mod before uninstalling")
+		SetInfoText("Enable/Disable  mod. Recommended to use this to disable the mod before uninstalling")
+	elseIf a_option == iDebugToggle
+		SetInfoText("Enable/Disable Debug Notifications")
 	elseIf a_option == iDamageResist25HPSlider
 		SetInfoText("Health Percentage below which 25% Damage Resist will activate. Set 0 to disable.")
 	elseIf a_option == iDamageResist50HPSlider
@@ -118,28 +104,29 @@ event OnOptionHighlight(int a_option)
 	else
 		SetInfoText("")
 	endIf
-	; ...
 endEvent
 
-; @implements SKI_ConfigBase
-event OnOptionSelect(int a_option)
-	{Called when a non-interactive option has been selected}
+Event OnOptionSelect(int a_option)
+{Called when a non-interactive option has been selected}
 	
 	if a_option == iEnabledToggle
 		bEnabled = !bEnabled
 		SetToggleOptionValue(iEnabledToggle, bEnabled)
+	elseIf a_option == iDebugToggle
+		bDebug = !bDebug
+		SetToggleOptionValue(iDebugToggle, bDebug)
 	endIf
-	
-	; ...
 endEvent
 
-; @implements SKI_ConfigBase
-event OnOptionDefault(int a_option)
-	{Called when resetting an option to its default value}
+Event OnOptionDefault(int a_option)
+{Called when resetting an option to its default value}
 
 	if a_option == iEnabledToggle
 		bEnabled = true
 		SetToggleOptionValue(iEnabledToggle, bEnabled)
+	elseIf a_option == iDebugToggle
+		bDebug = false
+		SetToggleOptionValue(a_option, bDebug)
 	elseIf a_option == iDamageResist25HPSlider
 		fDamageResist25HP = 50.0
 		SetSliderOptionValue(a_option, 50.0, "{0}%")
@@ -150,12 +137,9 @@ event OnOptionDefault(int a_option)
 		fSlowTimeHP = 25.0
 		SetSliderOptionValue(a_option, 25.0, "{0}%")
 	endIf
-	
-	; ...
 endEvent
 
-; @implements SKI_ConfigBase
-event OnOptionSliderOpen(int a_option)
+Event OnOptionSliderOpen(int a_option)
 	{Called when a slider option has been selected}
 
 	If a_option == iDamageResist25HPSlider
@@ -174,11 +158,9 @@ event OnOptionSliderOpen(int a_option)
 		SetSliderDialogRange(0.0, 100.0)
 		SetSliderDialogInterval(5.0)
 	endIf
-	; ...
 endEvent
 
-; @implements SKI_ConfigBase
-event OnOptionSliderAccept(int a_option, float a_value)
+Event OnOptionSliderAccept(int a_option, float a_value)
 	{Called when a new slider value has been accepted}
 
 	if a_option == iDamageResist25HPSlider
@@ -190,72 +172,36 @@ event OnOptionSliderAccept(int a_option, float a_value)
 	endIf
 	
 	SetSliderOptionValue(a_option, a_value, "{0}%")
-	
-	; ...
 endEvent
 
-; @implements SKI_ConfigBase
-event OnOptionMenuOpen(int a_option)
-	{Called when a menu option has been selected}
-
-	; ...
-endEvent
-
-; @implements SKI_ConfigBase
-event OnOptionMenuAccept(int a_option, int a_index)
-	{Called when a menu entry has been accepted}
-	
-	
-	; ...
-endEvent
-
-; @implements SKI_ConfigBase
-event OnOptionColorOpen(int a_option)
-	{Called when a color option has been selected}
-
-	; ...
-endEvent
-
-; @implements SKI_ConfigBase
-event OnOptionColorAccept(int a_option, int a_color)
-	{Called when a new color has been accepted}
-
-	; ...
-endEvent
-
-; @implements SKI_ConfigBase
-event OnOptionKeyMapChange(int a_option, int a_keyCode, string a_conflictControl, string a_conflictName)
-	{Called when a key has been remapped}
-
-	; ...
-endEvent
-
-; @implements SKI_ConfigBase
-event OnOptionInputOpen(int a_option)
-	{Called when a text input option has been selected}
-
-	; ...
-endEvent
-
-; @implements SKI_ConfigBase
-event OnOptionInputAccept(int a_option, string a_input)
-	{Called when a new text input has been accepted}
-
-	; ...
-endEvent
+; FUNCTIONS ------------------------------------------------------------------------------------------
 
 Function UpdateModEnabled()
 	; Update the global variable. This will be reference by the manager quest
 	LastStandEnabled.SetValue(bEnabled as Int)
 	
-	ReferenceAlias playerAlias = LastStandQuest.GetAlias(1) as ReferenceAlias
+	; Reference the manager quest alias tab for player alias ID
+	LastStandPlayerAlias playerAlias = LastStandQuest.GetAlias(1) as LastStandPlayerAlias
 	
 	; Start the manager quest as needed if mod is being enabled
-	if bEnabled && !LastStandQuest.isRunning()
+	if bEnabled
 		LastStandQuest.Start()
-		playerAlias.ForceRefTo(Game.GetPlayer())
+		If !LastStandQuest.isRunning()
+			DebugScript("Manager Quest failed to start. Clean reinstall recommended")
+		endIf
+	else
+		LastStandQuest.Stop()
 	endIf
 	
-	; Enable/Disable functionality is handled in the OnUpdate event of the manager quest
-	playerAlias.RegisterForSingleUpdate(1.0)
+	; Enable/Disable functionality is handled in Maintenance
+	playerAlias.Maintenance()
+endFunction
+
+; UTILITY ------------------------------------------------------------------------------------------
+
+Function DebugScript(String asMessage)
+	if LastStandDebug.GetValue() as Bool
+		Debug.Trace(asMessage)
+		Debug.Notification("Last Stand: " + asMessage)
+	endIf
 endFunction

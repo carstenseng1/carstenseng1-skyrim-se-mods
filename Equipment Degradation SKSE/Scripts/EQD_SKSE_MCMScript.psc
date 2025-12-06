@@ -64,14 +64,14 @@ Float fArmorDurability5
 ; EVENTS ------------------------------------------------------------------------------------------
 
 Event OnConfigClose()
-	{Called when this config menu is closed}
-	
+{Called when this config menu is closed}
+	; Update debug setting first
+	EQD_Debug.SetValue(bDebug as Int)
+
 	; Check if a change was made
 	if bEnabled != EQD_Enabled.GetValue() as Bool
 		UpdateModEnabled()
 	endIf
-
-	EQD_Debug.SetValue(bDebug as Int)
 
 	EQD_WeaponDurability1.SetValue(fWeaponDurability1 / 1000.0)
 	EQD_WeaponDurability2.SetValue(fWeaponDurability2 / 1000.0)
@@ -87,7 +87,7 @@ Event OnConfigClose()
 endEvent
 
 Event OnPageReset(string a_page)
-	{Called when a new page is selected, including the initial empty page}
+{Called when a new page is selected, including the initial empty page}
 	
 	bEnabled = EQD_Enabled.GetValue() as Bool
 	bDebug = EQD_Debug.GetValue() as Bool
@@ -144,13 +144,13 @@ Event OnPageReset(string a_page)
 endEvent
 
 Event OnOptionHighlight(int a_option)
-	{Called when highlighting an option}
+{Called when highlighting an option}
 	
 	SetInfoTextForOption(a_option)
 endEvent
 
 Event OnOptionSelect(int a_option)
-	{Called when a non-interactive option has been selected}
+{Called when a non-interactive option has been selected}
 	
 	if a_option == iEnabledToggle
 		bEnabled = !bEnabled
@@ -162,7 +162,7 @@ Event OnOptionSelect(int a_option)
 endEvent
 
 Event OnOptionDefault(int a_option)
-	{Called when resetting an option to its default value}
+{Called when resetting an option to its default value}
 
 	if a_option == iEnabledToggle
 		bEnabled = true
@@ -208,7 +208,7 @@ Event OnOptionDefault(int a_option)
 endEvent
 
 Event OnOptionSliderOpen(int a_option)
-	{Called when a slider option has been selected}
+{Called when a slider option has been selected}
 	
 	If a_option == iWeaponDurability1Slider
 		SetupSliderDialog(a_option, fWeaponDurability1)
@@ -234,7 +234,7 @@ Event OnOptionSliderOpen(int a_option)
 endEvent
 
 Event OnOptionSliderAccept(int a_option, float a_value)
-	{Called when a new slider value has been accepted}
+{Called when a new slider value has been accepted}
 	
 	If a_option == iWeaponDurability1Slider
 		fWeaponDurability1 = a_value
@@ -286,21 +286,21 @@ Function UpdateModEnabled()
 	if bEnabled
 		EQD_ManagerQuest.Start()
 		If !EQD_ManagerQuest.isRunning()
-			DebugScript("Enemizer manager failed to start. Clean reinstall of mod recommended")
+			DebugScript("Manager Quest failed to start. Clean reinstall recommended")
 		endIf
 	else
 		EQD_ManagerQuest.Stop()
 	endIf
 	
-	; Enable/Disable functionality is handled in Maintenance function
+	; Enable/Disable functionality is handled in Maintenance
 	playerAlias.Maintenance()
 endFunction
 
 Function SetInfoTextForOption(int a_option)
-	{Sets the text for the info text field below the option panel}
+{Sets the text for the info text field below the option panel}
 
 	if a_option == iEnabledToggle
-		SetInfoText("Enable/Disable the mod. Recommended to use this to disable the mod before uninstalling")
+		SetInfoText("Enable/Disable mod. Recommended to use this to disable the mod before uninstalling")
 	elseIf a_option == iDebugToggle
 		SetInfoText("Enable/Disable Debug Notifications")
 	elseIf a_option == iWeaponDurability1Slider
@@ -376,7 +376,7 @@ endFunction
 Function DebugScript(String asMessage)
 	if EQD_Debug.GetValue() as Bool
 		Debug.Trace(asMessage)
-		Debug.Notification("EQD MCM: " + asMessage)
+		Debug.Notification("EQD: " + asMessage)
 	endIf
 endFunction
 

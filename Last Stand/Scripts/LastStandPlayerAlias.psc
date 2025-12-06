@@ -1,42 +1,55 @@
 Scriptname LastStandPlayerAlias extends ReferenceAlias
 {Reference Alias Script for Player to manage Last Stand}
 
-Int version = 0
-
 GlobalVariable Property LastStandEnabled  Auto
-Quest Property LastStandQuest  Auto
+GlobalVariable Property LastStandDebug  Auto
 Spell Property LastStandAbility  Auto  
 
+; SCRIPT VERSION ----------------------------------------------------------------------------------
+
+Int version = 0
+int function GetVersion()
+	return 1 ; Default version
+endFunction
+
+; INITIALIZATION ----------------------------------------------------------------------------------
 
 Event OnInit()
-	RegisterForSingleUpdate(0.1)
+	if version == 0 || version != GetVersion()
+		Maintenance()
+	endIf
 endEvent
 
 Event OnPlayerLoadGame()
-	if version == 0 || version != 1 ; Hard coded script version. Set 0 to force maintenance
-		RegisterForSingleUpdate(0.1)
+	if version == 0 || version != GetVersion()
+		Maintenance()
 	endIf
 endEvent
 
+; FUNCTIONS ------------------------------------------------------------------------------------------
 
-Event OnUpdate()
-	
-	Actor player = GetActorRef()
+Function Maintenance()
+	; Save last updated version
+	version = GetVersion()
+
+	Actor player = Game.GetPlayer()
+
 	if LastStandEnabled.GetValue() as Bool
-		version = 1
-		DebugScript("Last Stand v" + version)
-		player.AddSpell(LastStandAbility, false)
+		DebugScript("Enabled")
+		ForceRefTo(player)
+		player.AddSpell(LastStandAbility, LastStandDebug.GetValue() as Bool)
 	else
-		DebugScript("Last Stand Disabled")
+		DebugScript("Disabled")
 		player.RemoveSpell(LastStandAbility)
-		LastStandQuest.Stop()
 		Clear()
 	endIf
+endFunction
 
-endEvent
+; UTILITY ------------------------------------------------------------------------------------------
 
-
-Function DebugScript(String akMessage)
-	;Debug.Trace(akMessage)
-	;Debug.Notification(akMessage)
+Function DebugScript(String asMessage)
+	if LastStandDebug.GetValue() as Bool
+		Debug.Trace(asMessage)
+		Debug.Notification("LastStand: " + asMessage)
+	endIf
 endFunction

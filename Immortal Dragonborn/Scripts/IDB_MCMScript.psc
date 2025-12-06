@@ -61,25 +61,25 @@ Event OnPageReset(String a_page)
 	SetCursorFillMode(LEFT_TO_RIGHT)
 	
 	; Left Heading
-	AddHeaderOption("General Settings")
+	AddHeaderOption("General")
 
 	; Right Heading
-	AddHeaderOption("Feature Settings")
+	AddHeaderOption("Revival")
 
-	; Left 1 - Add Mod Enabled Toggle
-	iEnabledToggle = AddToggleOption("Enable Immortal Dragonborn", bEnabled)
+	; Left 1 - Enabled Toggle
+	iEnabledToggle = AddToggleOption("Enable Mod", bEnabled)
 
-	; Right 1 - Add Paralysis Toggle
+	; Right 1 - Paralysis Toggle
 	iParalysisToggle = AddToggleOption("Enable Paralysis on Revive", bParalysisEnabled)
 
-	; Left 2 - Create Debug Toggle
+	; Left 2 - Debug Toggle
 	iDebugToggle = AddToggleOption("Debug Notifications", bDebug)
 
-	; Right 2 - Add Slider for setting HP threshold at which 25% Damage Resist is active
+	; Right 2 - Slider for setting HP threshold at which 25% Damage Resist is active
 	iPercentHealthSlider = AddSliderOption("Activation Health Percentage", fPercentHealth, "{0}%")
 
 	; Left 3
-	AddEmptyOption()
+	AddTextOption("Mod Version", "1.1.1")
 
 	; Right 3 - Add Slider for setting the Dragonsoul cost to revive
 	iDragonsoulCostSlider = AddSliderOption("Dragonsoul Revive Cost", iDragonsoulCost)
@@ -89,7 +89,7 @@ Event OnOptionHighlight(int a_option)
 	{Called when highlighting an option}
 	
 	if a_option == iEnabledToggle
-		SetInfoText("Enable/Disable Immortal Dragonborn. Recommended to use this to disable the mod before uninstalling")
+		SetInfoText("Enable/Disable mod. Recommended to use this to disable the mod before uninstalling")
 	elseIf a_option == iDebugToggle
 		SetInfoText("Enable/Disable script debug notifications")
 	elseIf a_option == iParalysisToggle
@@ -179,7 +179,7 @@ Function UpdateModEnabled()
 	if bEnabled && !IDB_ManagerQuest.isRunning()
 		IDB_ManagerQuest.Start()
 		If !IDB_ManagerQuest.isRunning()
-			DebugScript("Immortal Dragonborn manager failed to start. Clean reinstall of mod recommended")
+			DebugScript("Manager Quest failed to start. Clean reinstall recommended")
 		endIf
 	else
 		IDB_ManagerQuest.Stop()
@@ -194,6 +194,6 @@ endFunction
 Function DebugScript(String asMessage)
 	if IDB_Debug.GetValue() as Bool
 		Debug.Trace(asMessage)
-		Debug.Notification(asMessage)
+		Debug.Notification("IDB: " + asMessage)
 	endIf
 endFunction

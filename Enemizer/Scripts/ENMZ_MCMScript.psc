@@ -66,13 +66,13 @@ Event OnPageReset(String a_page)
 	SetCursorFillMode(LEFT_TO_RIGHT)
 	
 	; Left Heading
-	AddHeaderOption("General Settings")
+	AddHeaderOption("General")
 	
 	; Right Heading
-	AddTextOption("Mod Version", "1.1.1")
+	AddTextOption("Mod Version", "1.1.2")
 	
 	; Left 1 - Add Mod Enabled Toggle
-	iEnabledToggle = AddToggleOption("Enable Enemizer", bEnabled)
+	iEnabledToggle = AddToggleOption("Enable Mod", bEnabled)
 	AddEmptyOption()
 
 	; Left 2 - Debug
@@ -104,7 +104,7 @@ Event OnOptionHighlight(int a_option)
 	{Called when highlighting an option}
 	
 	if a_option == iEnabledToggle
-		SetInfoText("Enable/Disable Enemizer. Recommended to use this to disable the mod before uninstalling")
+		SetInfoText("Enable/Disable mod. Recommended to use this to disable the mod before uninstalling")
 	elseIf a_option == iDebugToggle
 		SetInfoText("Enable/Disable script debug notifications")
 	elseIf a_option == iSpawnCountInteriorSlider
@@ -208,7 +208,7 @@ Function UpdateModEnabled()
 	if bEnabled && !ENMZ_ManagerQuest.isRunning()
 		ENMZ_ManagerQuest.Start()
 		If !ENMZ_ManagerQuest.isRunning()
-			DebugScript("Enemizer manager failed to start. Clean reinstall of mod recommended")
+			DebugScript("Manager Quest failed to start. Clean reinstall recommended")
 		endIf
 	else
 		ENMZ_ManagerQuest.Stop()
@@ -223,6 +223,6 @@ endFunction
 Function DebugScript(String asMessage)
 	if ENMZ_Debug.GetValue() as Bool
 		Debug.Trace(asMessage)
-		Debug.Notification(asMessage)
+		Debug.Notification("ENMZ: " + asMessage)
 	endIf
 endFunction

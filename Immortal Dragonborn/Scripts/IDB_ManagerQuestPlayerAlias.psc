@@ -16,7 +16,9 @@ endFunction
 ; INITIALIZATION -------------------------------------------------------------------------------
 
 Event OnInit()
-	Maintenance()
+	if version == 0 || version != GetVersion()
+		Maintenance()
+	endIf
 endEvent
 
 Event OnPlayerLoadGame()
@@ -33,11 +35,11 @@ Event Maintenance()
 	Actor player = Game.GetPlayer()
 
 	if IDB_Enabled.GetValue() as Bool
-		DebugScript("Immortal Dragonborn Enabled")
+		DebugScript("Enabled")
 		ForceRefTo(player)
 		player.AddSpell(IDB_AvoidDeathAbility, IDB_Debug.GetValue() as Bool)
 	else
-		DebugScript("Immortal Dragonborn Disabled")
+		DebugScript("Disabled")
 		player.RemoveSpell(IDB_AvoidDeathAbility)
 		Clear()
 	endIf
@@ -48,6 +50,6 @@ endEvent
 Function DebugScript(String asMessage)
 	if IDB_Debug.GetValue() as Bool
 		Debug.Trace(asMessage)
-		Debug.Notification(asMessage)
+		Debug.Notification("IDB: " + asMessage)
 	endIf
 endFunction

@@ -37,10 +37,10 @@ Function Maintenance(Bool bCheckVersion = false)
 	ReferenceAlias playerAlias = GetAlias(0) as ReferenceAlias
 
 	if ENMZ_Enabled.GetValue() as Bool
-		DebugScript("Enemizer Enabled")
+		DebugScript("Enabled")
 		playerAlias.ForceRefTo(Game.GetPlayer())
 	else
-		DebugScript("Enemizer Disabled")
+		DebugScript("Disabled")
 		playerAlias.Clear()
 	endIf
 endFunction
@@ -115,6 +115,6 @@ endFunction
 Function DebugScript(String asMessage)
 	if ENMZ_Debug.GetValue() as Bool
 		Debug.Trace(asMessage)
-		Debug.Notification(asMessage)
+		Debug.Notification("ENMZ: " + asMessage)
 	endIf
 endFunction
