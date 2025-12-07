@@ -49,6 +49,11 @@ Enable/Disable the Mass Paralysis spell cast when revived
 Default - Enabled
 
 
+Enable Fear on Revive:
+Enable/Disable the Mass Fear spell cast when revived
+Default - Enabled
+
+
 Activation Health Percentage:
 Health Percentage at which revival will activate. Recommended 10% to match Avoid Death Perk
 Default - 10%
