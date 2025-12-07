@@ -6,22 +6,31 @@ GlobalVariable Property _RO_Debug  Auto
 GlobalVariable Property _RO_DrunkEnabled  Auto
 
 SPELL Property _RO_DrunkAbility  Auto  
-FormList Property AlcoholicDrinksList  Auto  
+FormList Property _RO_IntoxicantsList  Auto  
+
+; SCRIPT VERSION ----------------------------------------------------------------------------------
 
 Int version = 0
+Int Function GetVersion()
+	return 2 ; _RO_IntoxicantsList Updated
+endFunction
+
+; INITIALIZATION ----------------------------------------------------------------------------------
 
 Event OnInit()
-	Maintenance()
+	if version == 0 || version != GetVersion()
+		Maintenance()
+	endIf
 endEvent
 
 Event OnPlayerLoadGame()
-	if version == 0 || version != 1
+	if version == 0 || version != GetVersion()
 		Maintenance()
 	endIf
 endEvent
 
 Function Maintenance()
-	version = 1
+	version = GetVersion()
 
 	; Clear all inventory event filters to set as needed for script version
 	RemoveAllInventoryEventFilters()
@@ -33,7 +42,7 @@ Function Maintenance()
 		ForceRefTo(player)
 
 		; Add inventory event filter to only receive for alcoholic drinks
-		AddInventoryEventFilter(AlcoholicDrinksList)
+		AddInventoryEventFilter(_RO_IntoxicantsList)
 
 		DebugScript("Drunk effect enabled")
 	else
@@ -47,15 +56,19 @@ Function Maintenance()
 	endIf
 endFunction
 
+; EVENTS ------------------------------------------------------------------------------------------
+
 Event OnObjectEquipped(Form akBaseObject, ObjectReference akReference)
-	if AlcoholicDrinksList.Find(akBaseObject) != -1
+	if _RO_IntoxicantsList.Find(akBaseObject) != -1
 		GetActorRef().AddSpell(_RO_DrunkAbility, false)
 	endIf
 endEvent
 
-Function DebugScript(String akMessage)
+; UTILITY ------------------------------------------------------------------------------------------
+
+Function DebugScript(String asMessage)
 	if _RO_Debug.GetValue() as Bool
-		Debug.Trace(akMessage)
-		Debug.Notification(akMessage)
+		Debug.Trace(asMessage)
+		Debug.Notification(asMessage)
 	endIf
 endFunction

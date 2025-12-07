@@ -20,19 +20,23 @@ Spell Property IDB_FearSpell  Auto
 
 ; PRIVATE VARIABLES -------------------------------------------------------------------------------
 
+Actor player
 Bool bIsUpdating = false
 
 ; EVENTS ------------------------------------------------------------------------------------------
 
-;Event OnEffectStart(Actor akTarget, Actor akCaster)
+Event OnEffectStart(Actor akTarget, Actor akCaster)
+	; Save ref to player
+	player = GetTargetActor()
+
 ;	DragonPowerAbsorbFXS.Play(akTarget, 3.0)
 ;	NPCDragonDeathSequenceWind.play(akTarget) 
 ;	Debug.Notification("A great power stirs within you.")
-;endEvent
+endEvent
 
 Event OnHit(ObjectReference akAggressor, Form akSource, Projectile akProjectile, bool abPowerAttack, bool abSneakAttack, bool abBashAttack, bool abHitBlocked )
 	; Rate-limit hit detection by registering for a single update
-	if bIsUpdating
+	if bIsUpdating || player.isDead()
 		return
 	else
 		bIsUpdating = true
@@ -43,13 +47,16 @@ endEvent
 Event OnUpdate()
 	; Reset flag to allow subsequent updates
 	bIsUpdating = false
-
+	
+	; Stop! He's already dead!
+	if player.isDead()
+		return
+	endIf
+	
 	; Don't revive when brawling
 	if (DGIntimidateQuest.IsRunning())
 		return
 	endIf
-	
-	Actor player = GetTargetActor()
 	
 	; Don't revive when the Avoid Death Perk should activate
 	if player.HasSpell(PerkAvoidDeathAbility) && PerkAvoidDeathTimer.GetValue() < GameDaysPassed.GetValue()
@@ -79,5 +86,10 @@ Event OnUpdate()
 		; Play FX and sound
 		DragonPowerAbsorbFXS.Play(player, 2.0)
 		NPCDragonDeathSequenceWind.play(player) 
+		
+		; Wait to prevent effect spamming
+		bIsUpdating = true
+		Utility.Wait(2.0)
+		bIsUpdating = false
 	endIf
 endEvent
