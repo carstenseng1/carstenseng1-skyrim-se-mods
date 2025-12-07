@@ -45,45 +45,8 @@ Bool bUndeadCurseEnabled
 
 ; EVENTS ------------------------------------------------------------------------------------------
 
-; @implements SKI_ConfigBase
-event OnPageReset(string a_page)
-	{Called when a new page is selected, including the initial empty page}
-	
-	SetCursorFillMode(LEFT_TO_RIGHT)
-	
-	; Create Enabled Toggle
-	bEnabled = _RO_Enabled.GetValue() as Bool
-	iEnabledToggle = AddToggleOption("Enable Mod Featured", bEnabled)
-
-	; Create Debug Toggle
-	bDebug = _RO_Debug.GetValue() as Bool
-	iDebugToggle = AddToggleOption("Debugging", bDebug)
-
-	; Create Slow Skill Advancement Toggle
-	bSlowSkillAdvancementEnabled = _RO_SlowSkillAdvancementEnabled.GetValue() as Bool
-	iSlowSkillAdvancementToggle = AddToggleOption("Slow Skill Advancement", bSlowSkillAdvancementEnabled)
-
-	; Create Drunk Enabled Toggle
-	bDrunkEnabled = _RO_DrunkEnabled.GetValue() as Bool
-	iDrunkToggle = AddToggleOption("Enable Drunk Effects", bDrunkEnabled)
-
-	; Create Encumbrance Enabled Toggle
-	bEncumbranceEnabled = _RO_EncumbranceEnabled.GetValue() as Bool
-	iEncumbranceToggle = AddToggleOption("Enable Gradual Encumbrance", bEncumbranceEnabled)
-
-	; Create Roleplaying Enabled Toggle
-	bRoleplayingEnabled = _RO_RoleplayingEnabled.GetValue() as Bool
-	iRoleplayingToggle = AddToggleOption("Enable Roleplaying Bonuses", bRoleplayingEnabled)
-
-	; Create Undead Curse Enabled Toggle
-	bUndeadCurseEnabled = _RO_UndeadCurseEnabled.GetValue() as Bool
-	iUndeadCurseToggle = AddToggleOption("Enable Undead Curse", bUndeadCurseEnabled)
-	
-	; ...
-endEvent
-
 Event OnConfigClose()
-	{Called when this config menu is closed}
+{Called when this config menu is closed}
 	
 	; Update debugging befor all other updates
 	_RO_Debug.SetValue(bDebug as Int)
@@ -102,16 +65,64 @@ Event OnConfigClose()
 	UpdateEncumbranceEnabled()
 	UpdateRoleplayingEnabled()
 	UpdateUndeadCurseEnabled()
-
-	; ...
 endEvent
 
-; @implements SKI_ConfigBase
-event OnOptionHighlight(int a_option)
-	{Called when highlighting an option}
+Event OnPageReset(string a_page)
+	{Called when a new page is selected, including the initial empty page}
+	
+	; Initialize private variables for settings
+	bEnabled = _RO_Enabled.GetValue() as Bool
+	bDebug = _RO_Debug.GetValue() as Bool
+	bSlowSkillAdvancementEnabled = _RO_SlowSkillAdvancementEnabled.GetValue() as Bool
+	bDrunkEnabled = _RO_DrunkEnabled.GetValue() as Bool
+	bEncumbranceEnabled = _RO_EncumbranceEnabled.GetValue() as Bool
+	bRoleplayingEnabled = _RO_RoleplayingEnabled.GetValue() as Bool
+	bUndeadCurseEnabled = _RO_UndeadCurseEnabled.GetValue() as Bool
+
+	SetCursorFillMode(LEFT_TO_RIGHT)
+	
+	; Left 0 - General Heading
+	AddHeaderOption("General")
+
+	; Right 0 - Features Heading
+	AddHeaderOption("Features")
+
+	; Left 1 - Enabled Toggle
+	iEnabledToggle = AddToggleOption("Enable Mod", bEnabled)
+
+	; Right 1 - Slow Skill Advancement Toggle
+	iSlowSkillAdvancementToggle = AddToggleOption("Slow Skill Advancement", bSlowSkillAdvancementEnabled)
+
+	; Left 2 - Debug Toggle
+	iDebugToggle = AddToggleOption("Debugging", bDebug)
+
+	; Right 2 - Drunk Toggle
+	iDrunkToggle = AddToggleOption("Enable Drunk Effects", bDrunkEnabled)
+
+	; Left 3 - Version
+	AddTextOption("Mod Version", "1.0.1")
+
+	; Right 3 - Encumbrance Toggle
+	iEncumbranceToggle = AddToggleOption("Enable Gradual Encumbrance", bEncumbranceEnabled)
+
+	; Left 4
+	AddEmptyOption()
+
+	; Right 4 - Roleplaying Toggle
+	iRoleplayingToggle = AddToggleOption("Enable Roleplaying Bonuses", bRoleplayingEnabled)
+
+	; Left 5
+	AddEmptyOption()
+
+	; Right 5 - Undead Curse Toggle
+	iUndeadCurseToggle = AddToggleOption("Enable Undead Curse", bUndeadCurseEnabled)
+endEvent
+
+Event OnOptionHighlight(int a_option)
+{Called when highlighting an option}
 
 	if a_option == iEnabledToggle
-		SetInfoText("Enable/Disable configurable mod features. Recommended to use this to disable the mod before uninstalling")
+		SetInfoText("Enable/Disable all configurable mod features. Recommended to use this to disable the mod before uninstalling")
 	elseIf a_option == iDebugToggle
 		SetInfoText("Enable/Disable script debug notifications")
 	elseIf a_option == iSlowSkillAdvancementToggle
@@ -127,12 +138,10 @@ event OnOptionHighlight(int a_option)
 	else
 		SetInfoText("")
 	endIf
-	; ...
 endEvent
 
-; @implements SKI_ConfigBase
 event OnOptionSelect(int a_option)
-	{Called when a non-interactive option has been selected}
+{Called when a non-interactive option has been selected}
 	
 	if a_option == iEnabledToggle
 		bEnabled = !bEnabled
@@ -156,13 +165,10 @@ event OnOptionSelect(int a_option)
 		bUndeadCurseEnabled = !bUndeadCurseEnabled
 		SetToggleOptionValue(a_option, bUndeadCurseEnabled)
 	endIf
-	
-	; ...
 endEvent
 
-; @implements SKI_ConfigBase
-event OnOptionDefault(int a_option)
-	{Called when resetting an option to its default value}
+Event OnOptionDefault(int a_option)
+{Called when resetting an option to its default value}
 	
 	if a_option == iEnabledToggle
 		bEnabled = true
@@ -186,8 +192,6 @@ event OnOptionDefault(int a_option)
 		bUndeadCurseEnabled = true
 		SetToggleOptionValue(a_option, true)
 	endIf
-	
-	; ...
 endEvent
 
 ; FUNCTIONS ------------------------------------------------------------------------------------------
@@ -331,7 +335,7 @@ endFunction
 Function DebugScript(String asMessage)
 	if _RO_Debug.GetValue() as Bool
 		Debug.Trace(asMessage)
-		Debug.Notification(asMessage)
+		Debug.Notification("Fjør Tal: " + asMessage)
 	endIf
 endFunction
 
