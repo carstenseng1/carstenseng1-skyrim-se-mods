@@ -8,7 +8,7 @@ Requires Skyrim Special Edition with Anniversary Edition Update.
 *** Features ***
 
 Slower Skill Advancement: (Configurable with MCM)
-Skills advance at 50% of the normal rate.
+Skills advance at 75% of the normal rate.
 
 Curse of the Dead: (Configurable with MCM)
 Taking gold and other treasure from crypts may cause the player to incur the "Curse of the Dead". When cursed the player deals 50% damage to undead.
@@ -17,7 +17,7 @@ Drunkenness: (Configurable with MCM)
 New visual effects from drinking alcohol and skooma.
 
 Gold has weight:
-Each gold piece weighs 0.01 weight. Gold can be dropped with a new power.
+Each gold piece weighs 0.01 weight. Gold CAN BE DROPPED with a new power.
 
 Backpacks slow movement:
 Wearing a backpack reduces the player movement speed 20%
@@ -43,6 +43,18 @@ Doing any one of the following actions grants a bonus to Immersion until the pla
 - Eating a food item
 - Sitting for an hour or more (Game Time)
 - Working at a crafting station for an hour or more (Game Time)
+
+Silver Weapons Damage:
+Silver weapons deal double damage against undead instead of a flat 20 point increase to offset added physical damage resistances to Draugr and Ghosts
+
+Food and Hunger(Survival Mode) Rebalance:
+The amount of Hunger foods restore has been adjusted to better match the weight of the item. Several foods that had the "Very Small" Hunger restoration now have "Small" Hunger restoration at the updated amount. (You won't need to eat 100 raw cabbages just to be satisfied). Also, several recipes have been updated to create multiple servings of the cooked food, so weight of the total ingredients more closely matches the weight of what is produced.
+
+The list below shows the new Restore Hunger amounts for the various food sizes.
+ - Large: 380 >> 400
+ - Medium: 220 >> 250
+ - Small: 18 >> 50
+ - Very Small: 2 >> 10
 
 
 *** New Items ***
@@ -76,14 +88,15 @@ Thalmor use primarily Elven weapons
 *** Enemy Resistance, Weakness, and Ability Increases ***
 
 Atronach (Flame/Frost): Weakness to (Frost/Fire) 33 >> 66
-Atronac (Flame/Frost/Shock): Cloak Spell Damage 10 > 15
-Draugr: Resist Damage 66 (Added)
-Draugr: Resist Frost 50 >> 75
-Draugr: Weakness to Magic 33 >> 66 (Added to AbDragr)
+Atronach (Flame/Frost/Shock): Cloak Spell Damage 10 > 15
+Draugr: Resist Damage 50 (Added)
+Draugr: Resist Frost 50 >> 90
+Draugr: Weakness to Magic 33 >> 50 (Added to AbDraugr)
 Draugr: Weakness to Fire 50 (Added)
-Dwarven Automatron: Resist Magic 25 >> 50
+Dwarven Automaton: Resist Magic 25 >> 50
 Frost Troll: Fortify Combat Heal Rate 1.0 (Added, Less than basic troll ability)
 Frost Troll: Resist Frost 33 >> 66
+Ghosts: Resist Damage 50 (Added)
 Giant: Resist Magic 33 >> 66
 Horker: Resist Frost 50 >> 75
 Ice Wolf: Resist Frost 50 >> 75
@@ -93,15 +106,15 @@ Mammoth: Resist Frost 33 >> 66
 Skeleton: Resist Frost 25 >> 50
 Snow Bear: Resist Frost 50 >> 75
 Snow Sabercat: Resist Frost 50 >> 75
-Spider (Fostbite/Giant/Large): Resist Frost 50 >> 75
+Spider (Frostbite/Giant/Large): Resist Frost 50 >> 75
 Spriggan: Weakness to Fire 33 >> 66
 Spriggan: Fortify Combat Heal Rate 0.5 (Added)
 Troll: Fortify Combat Heal Rate 0.5 >> 2.0
 Troll (Normal/Frost): Weakness to Fire 50 >> 75
-Vampire (Creature): Resist Frost, Weakness to Fire 50 >> 75
+Vampire (Creature): Resist Frost, Weakness to Fire 50 >> 75 
 Werewolf: Fortify Health 50 >> 100
 Werewolf: Resist Damage 50 (Added)
-Wisp: Fortify Comat Healing 0.25 >> 0.5
+Wisp: Fortify Combat Healing 0.25 >> 0.5
 
 - DLC Enemies -
 Fire Wym: Weakness to Frost 25 >> 50
@@ -113,17 +126,19 @@ Stormcloak Cuirass: Rating 21 >> 23 (To match guard armor rating)
 Stormcloak Helmet: Rating 10 >> 11 (To match guard armor rating)
 Fur Armor(s): Rating 23 >> 18-21 (Reduced armor rating and weight based on style)
 Fur Boots: Rating 5 >> 6 (to match fur shoes)
-Fur Guantlets: Rating 5 >> 6 (to match fur bracers)
+Fur Gauntlets: Rating 5 >> 6 (to match fur bracers)
 Wolf Armor Warmth (Survival Mode): Default >> Warm
 
 
 *** Crafting Recipes & Adjustments ***
 
+Arcane Blacksmith Perk is required to craft jewelry
 Material weights and crafting recipes adjusted so results never weigh more than source materials
 Skyforge Steel Dagger can be tempered
 Craft Ingots from Arrows: Melt down 24 arrows to an ingot of their respective type (Matches Dawnguard DLC arrow crafting count)
 Craft Silver Arrows (New Item with this mod): 1 Silver Ingot, 1 Firewood >> 24 Silver Arrows
-Temper Silver Weapons
+Craft Silver Weapons (Arcane Blacksmith Perk required)
+Temper Silver Weapons (Enhanced with Arcane Blacksmith Perk)
 Steel Ingots from Iron and Corundum Ingots
 Fur Armor can be crafted from Cleaned Pelts at a blacksmithing station
 Cleaned Pelts can be crafted from animal pelts at a tanning rack
