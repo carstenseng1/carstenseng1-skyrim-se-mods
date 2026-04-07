@@ -7,13 +7,13 @@ Requires Skyrim Special Edition with Anniversary Edition Update.
 
 *** Features ***
 
-Slower Skill Advancement: (Configurable with MCM)
-Skills advance at 75% of the normal rate.
+Slower Skill Advancement: (Toggle on/off with MCM)
+Skills advance at 50% of the normal rate.
 
-Curse of the Dead: (Configurable with MCM)
+Curse of the Dead: (Toggle on/off with MCM)
 Taking gold and other treasure from crypts may cause the player to incur the "Curse of the Dead". When cursed the player deals 50% damage to undead.
 
-Drunkenness: (Configurable with MCM)
+Drunkenness: (Toggle on/off with MCM)
 New visual effects from drinking alcohol and skooma.
 
 Gold has weight:
@@ -48,13 +48,7 @@ Silver Weapons Damage:
 Silver weapons deal double damage against undead instead of a flat 20 point increase to offset added physical damage resistances to Draugr and Ghosts
 
 Food and Hunger(Survival Mode) Rebalance:
-The amount of Hunger foods restore has been adjusted to better match the weight of the item. Several foods that had the "Very Small" Hunger restoration now have "Small" Hunger restoration at the updated amount. (You won't need to eat 100 raw cabbages just to be satisfied). Also, several recipes have been updated to create multiple servings of the cooked food, so weight of the total ingredients more closely matches the weight of what is produced.
-
-The list below shows the new Restore Hunger amounts for the various food sizes.
- - Large: 380 >> 400
- - Medium: 220 >> 250
- - Small: 18 >> 50
- - Very Small: 2 >> 10
+The amounts of Hunger foods restore have been adjusted to better match the weight of the item. Several foods that had the "Very Small" Hunger restoration now have "Small" Hunger restoration. (You won't need to eat 100 raw cabbages just to be satisfied). Also, several recipes have been updated to create multiple servings of the cooked food, so weight of the total ingredients more closely matches the weight of what is produced.
 
 
 *** New Items ***

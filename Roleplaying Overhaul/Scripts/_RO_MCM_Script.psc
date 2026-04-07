@@ -126,7 +126,7 @@ Event OnOptionHighlight(int a_option)
 	elseIf a_option == iDebugToggle
 		SetInfoText("Enable/Disable script debug notifications")
 	elseIf a_option == iSlowSkillAdvancementToggle
-		SetInfoText("Enable/Disable slow skill advancement. Skills advance at 75% rate when enabled.")
+		SetInfoText("Enable/Disable slow skill advancement. Skills advance at 50% rate when enabled.")
 	elseIf a_option == iDrunkToggle
 		SetInfoText("Enable/Disable visual effects from drinking alcohol")
 	elseIf a_option == iEncumbranceToggle
