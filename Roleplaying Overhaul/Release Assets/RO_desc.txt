@@ -48,7 +48,7 @@ Silver Weapons Damage:
 Silver weapons deal double damage against undead instead of a flat 20 point increase to offset added physical damage resistances to Draugr and Ghosts
 
 Food and Hunger(Survival Mode) Rebalance:
-The amounts of Hunger foods restore have been adjusted to better match the weight of the item. Several foods that had the "Very Small" Hunger restoration now have "Small" Hunger restoration. (You won't need to eat 100 raw cabbages just to be satisfied). Also, several recipes have been updated to create multiple servings of the cooked food, so weight of the total ingredients more closely matches the weight of what is produced.
+The amounts of Hunger foods restore have been adjusted to better match the weight of the item. Several foods that had the "Very Small" Hunger restoration now have "Small" Hunger restoration. (You won't need to eat 100 raw cabbages just to be satisfied). Prices and weights of several foods have been adjusted to better match their in-word models and rarity. Several recipes have been updated to create multiple servings of the cooked food, so weight of the total ingredients more closely matches the weight of what is produced. There are also new recipes added to create already existing foods in different ways (ex: Make Apple Cabbage Stew with multiple apple types); To avoid making the food crafting lists too long, food recipes are filtered so you only see recipes for which you have at least one ingredient (excluding salt).
 
 
 *** New Items ***
