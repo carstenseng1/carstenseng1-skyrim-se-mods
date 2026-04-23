@@ -8,7 +8,7 @@ Requires Skyrim Special Edition with Anniversary Edition Update.
 *** Features ***
 
 Slower Skill Advancement: (Toggle on/off with MCM)
-Skills advance at 50% of the normal rate.
+Skills advance at 60% of the normal rate. I selected 60%, because at 50% or lower reading skill books will fail to grant a skill point.
 
 Curse of the Dead: (Toggle on/off with MCM)
 Taking gold and other treasure from crypts may cause the player to incur the "Curse of the Dead". When cursed the player deals 50% damage to undead.
@@ -24,6 +24,9 @@ Wearing a backpack reduces the player movement speed 20%
 
 Gradual Encumbrance:
 Movement speed is reduced at various levels of encumbrance. Inventory weight at 50% of carry weight causes a 10% movement speed reduction. This increases to 20% speed reduction at 75% of carry weight and 30% speed reduction at 90% of carry weight.
+
+Survival Crafting:
+Craft torches and camping supplies anywhere with no need for a crafting station. Clothing items can be turned into scrap cloth for making torches. You can also add oil to torches to make an "Oiled Torch" which burns significantly longer. The book "Manual of Fieldcraft" can be found for sale at the Riverwood Trader. Reading the book grants a Lesser Power which opens the survival crafting menu. 
 
 
 *** Immersion (Roleplaying Bonus) Features ***
@@ -49,14 +52,11 @@ Silver weapons deal double damage against undead instead of a flat 20 point incr
 Dawnbreaker also now has this functionality to deal double damage to undead, which includes ghosts.
 - Note below that ghosts and werwolves now have a 50% resistance to physical damage.
 
+Food Effects Overhaul:
+The positive effects gained from eating food items have been overhauled. All foods grant restorative effects that last for a long duration. However, these effects will no longer stack. Instead, foods grant restoration to Health, Stamina, or Magicka based on their type. Meats generally restore Health, fruits and vegetables restore Stamina, and wine and some other special items restore Magicka. Each restore effect has 4 tiers. The tier of stat restoration which is granted is based on the quality of the food. Each tier of stat restoration lasts for 2 hours in game, at which point the stat restoration effect reduces one tier.
+
 Food and Hunger(Survival Mode) Rebalance:
 The amounts of Hunger foods restore have been adjusted to better match the weight of the item. Several foods that had the "Very Small" Hunger restoration now have "Small" Hunger restoration. (You won't need to eat 100 raw cabbages just to be satisfied). Prices and weights of several foods have been adjusted to better match their in-word models and rarity. Several recipes have been updated to create multiple servings of the cooked food, so weight of the total ingredients more closely matches the weight of what is produced. There are also new recipes added to create already existing foods in different ways (ex: Make Apple Cabbage Stew with multiple apple types); To avoid making the food crafting lists too long, food recipes are filtered so you only see recipes for which you have at least one ingredient (excluding salt).
-
-
-*** New Items ***
-
-Silver Arrows
-Cleaned Pelts
 
 
 *** Animal Loot Overhaul ***
@@ -72,6 +72,15 @@ Additional paralysis effect is added to some poison attacks.
 Additional visual effects are added to some poison effects.
 
 
+*** New Items ***
+
+Silver Arrows
+Cleaned Pelts
+Cloth Scrap
+Oiled Torches
+Several new foods and recipes
+
+
 *** Enemy spells and inventory ***
 
 Bandit equipment remains low level (Fur, Iron, Steel)
@@ -81,7 +90,7 @@ Silver Hand Weapons include tempered silver weapons
 Thalmor use primarily Elven weapons
 
 
-*** Enemy Resistance, Weakness, and Ability Increases ***
+*** Enemy Resistance, Weakness, and Ability Changes ***
 
 Atronach (Flame/Frost): Weakness to (Frost/Fire) 33 >> 66
 Atronach (Flame/Frost/Shock): Cloak Spell Damage 10 > 15
