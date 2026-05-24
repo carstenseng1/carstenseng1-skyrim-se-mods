@@ -3,14 +3,13 @@ Scriptname _RO_EncumbranceQuestPlayerAlias extends ReferenceAlias
 GlobalVariable Property _RO_Enabled  Auto
 GlobalVariable Property _RO_Debug  Auto
 GlobalVariable Property _RO_EncumbranceEnabled  Auto
+GlobalVariable Property _RO_EncumbranceStage01Val  Auto
+GlobalVariable Property _RO_EncumbranceStage02Val  Auto
+GlobalVariable Property _RO_EncumbranceStage03Val  Auto
 
 SPELL Property _RO_EncumbranceStage1 Auto
 SPELL Property _RO_EncumbranceStage2 Auto
 SPELL Property _RO_EncumbranceStage3 Auto
-
-Float Property pEncumbrance1  Auto
-Float Property pEncumbrance2  Auto
-Float Property pEncumbrance3  Auto
 
 Int version = 0
 
@@ -76,12 +75,12 @@ Function UpdateEncumbrance()
 	player.RemoveSpell(_RO_EncumbranceStage2)
 	player.RemoveSpell(_RO_EncumbranceStage3)
 	
-	if carryWeightPercent < pEncumbrance1 || player.IsOverEncumbered()
+	if carryWeightPercent < _RO_EncumbranceStage01Val.GetValue() || player.IsOverEncumbered()
 		; No encumbrance penalty
-	elseIf carryWeightPercent >= pEncumbrance3
+	elseIf carryWeightPercent >= _RO_EncumbranceStage03Val.GetValue()
 		; Encumbrance stage 3
 		player.AddSpell(_RO_EncumbranceStage3, false)
-	elseIf carryWeightPercent > pEncumbrance2
+	elseIf carryWeightPercent > _RO_EncumbranceStage02Val.GetValue()
 		;Encumbrance stage 2
 		player.AddSpell(_RO_EncumbranceStage2, false)
 	else
