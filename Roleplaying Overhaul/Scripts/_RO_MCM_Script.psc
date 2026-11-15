@@ -2,6 +2,9 @@ Scriptname _RO_MCM_Script extends SKI_ConfigBase
 
 GlobalVariable Property _RO_Enabled  Auto
 GlobalVariable Property _RO_Debug  Auto
+GlobalVariable Property _RO_Version0  Auto
+GlobalVariable Property _RO_Version1  Auto
+GlobalVariable Property _RO_Version2  Auto
 GlobalVariable Property _RO_SlowSkillAdvancementEnabled  Auto
 GlobalVariable Property _RO_DrunkEnabled  Auto
 GlobalVariable Property _RO_EncumbranceEnabled  Auto
@@ -100,7 +103,7 @@ Event OnPageReset(string a_page)
 	iDrunkToggle = AddToggleOption("Enable Drunk Effects", bDrunkEnabled)
 
 	; Left 3 - Version
-	AddTextOption("Mod Version", "1.0.1")
+	AddTextOption("Mod Version", _RO_Version0.GetValueInt()+"."+_RO_Version1.GetValueInt()+"."+_RO_Version2.GetValueInt())
 
 	; Right 3 - Encumbrance Toggle
 	iEncumbranceToggle = AddToggleOption("Enable Gradual Encumbrance", bEncumbranceEnabled)
