@@ -1,8 +1,7 @@
 Fjør Tal is a roleplaying overhaul which adds a number of roleplaying and simulation features as well as other changes for more varied, challenging, and realistic gameplay.
 
-Compatible with Skyrim Anniversary Edition Content, including Survival Mode.
-
-Requires Skyrim Special Edition with Anniversary Edition Update.
+Compatible with Skyrim Special Edition 1.7.99.
+Requires Anniversary Edition Update.
 
 
 *** Features ***
@@ -20,7 +19,7 @@ Gold has weight:
 Each gold piece weighs 0.01 weight. Gold CAN BE DROPPED with a new power.
 
 Backpacks slow movement:
-Wearing a backpack reduces the player movement speed 20%
+Wearing a backpack reduces the player movement speed.
 
 Gradual Encumbrance:
 Movement speed is reduced at various levels of encumbrance. Inventory weight at 50% of carry weight causes a 10% movement speed reduction. This increases to 20% speed reduction at 75% of carry weight and 30% speed reduction at 90% of carry weight.
@@ -56,7 +55,7 @@ Food Effects Overhaul:
 The positive effects gained from eating food items have been overhauled. All foods grant restorative effects that last for a long duration. However, these effects will no longer stack. Instead, foods grant restoration to Health, Stamina, or Magicka based on their type. Meats generally restore Health, fruits and vegetables restore Stamina, and wine and some other special items restore Magicka. Each restore effect has 4 tiers. The tier of stat restoration which is granted is based on the quality of the food. Each tier of stat restoration lasts for 2 hours in game, at which point the stat restoration effect reduces one tier.
 
 Food and Hunger(Survival Mode) Rebalance:
-The amounts of Hunger foods restore have been adjusted to better match the weight of the item. Several foods that had the "Very Small" Hunger restoration now have "Small" Hunger restoration. (You won't need to eat 100 raw cabbages just to be satisfied). Prices and weights of several foods have been adjusted to better match their in-word models and rarity. Several recipes have been updated to create multiple servings of the cooked food, so weight of the total ingredients more closely matches the weight of what is produced. There are also new recipes added to create already existing foods in different ways (ex: Make Apple Cabbage Stew with multiple apple types); To avoid making the food crafting lists too long, food recipes are filtered so you only see recipes for which you have at least one ingredient (excluding salt).
+The amounts of Hunger foods restore have been adjusted to better match the weight of the item. Several foods that had the "Very Small" Hunger restoration now have "Small" Hunger restoration. (You won't need to eat 100 raw cabbages just to be satisfied). Prices and weights of several foods have been adjusted to better match their in-world models and rarity. Several recipes have been updated to create multiple servings of the cooked food, so weight of the total ingredients more closely matches the weight of what is produced. There are also new recipes added to create already existing foods in different ways (ex: Make Apple Cabbage Stew with multiple apple types); To avoid making the food crafting lists too long, food recipes are filtered so you only see recipes for which you have at least one ingredient (excluding salt).
 
 
 *** Animal Loot Overhaul ***
